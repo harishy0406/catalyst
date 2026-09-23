@@ -5,7 +5,8 @@
 !.gitignore
 !requirements.txt
 !ml/
-
+!ml/anomaly/
+!ml/anomaly/**
 !ml/datasets/
 !ml/datasets/**
 !ml/task_time/
