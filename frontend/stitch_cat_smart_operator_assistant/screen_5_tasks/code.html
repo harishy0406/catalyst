@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Today's Tasks — Operator Cockpit</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col pb-24 select-none">
+<!-- TOP APP BAR (Shared Component Anchor) -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container dark:bg-surface-container border-b-2 border-surface-container-highest dark:border-surface-container-highest docked full-width top-0 z-40 sticky">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-primary-container text-2xl" data-icon="construction">construction</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary-container dark:text-primary-container tracking-wider uppercase">EXC001 • SHIFT ACTIVE</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="px-2.5 py-1 bg-surface-container-high border border-outline-variant font-label-sm text-label-sm text-on-surface uppercase tracking-wider">
+        CAB TELEMETRY OK
+      </span>
+<button aria-label="Alerts" class="w-10 h-10 flex items-center justify-center hover:bg-surface-container-high text-on-surface-variant active:bg-surface-container-highest">
+<span class="material-symbols-outlined text-primary-container" data-icon="warning">warning</span>
+</button>
+</div>
+</header>
+<!-- MAIN OPERATOR CONTENT (Cab High-Vibration Layout) -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 py-4 md:py-6 space-y-5">
+<!-- SUBHEADER / SHIFT TELEMETRY STRIP -->
+<div class="flex flex-col md:flex-row md:items-center justify-between bg-surface-container-low border-2 border-surface-container-highest p-4 gap-3">
+<div class="flex items-center gap-3">
+<div class="w-3.5 h-10 bg-primary-container"></div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold uppercase tracking-wider text-on-surface leading-none">
+            TODAY'S TASKS
+          </h1>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase mt-1 tracking-wider">
+            OPERATOR DISPATCH ROSTER • CATERPILLAR 349 HYDRAULIC
+          </p>
+</div>
+</div>
+<!-- Tactile Status Badge -->
+<div class="flex items-center gap-2 self-start md:self-auto">
+<div class="bg-surface-container border-2 border-outline-variant px-3 py-2 flex items-center gap-2">
+<span class="w-3 h-3 bg-tertiary-container animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface font-bold tracking-wider">SHIFT: MORNING • EXC001</span>
+</div>
+<div class="bg-surface-container border border-surface-container-highest px-3 py-2 font-label-md text-label-md text-on-surface-variant">
+          SITE: SECTOR 4A
+        </div>
+</div>
+</div>
+<!-- PRIMARY ACTIVE TASK: CHUNKY CARD WITH HIGH-CONTRAST CAT YELLOW BORDER -->
+<section class="border-4 border-primary-container bg-surface-container p-4 md:p-6 shadow-none relative">
+<!-- High visibility banner -->
+<div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-surface-container-highest pb-3 mb-4">
+<div class="flex items-center gap-2">
+<span class="px-3 py-1.5 bg-primary-container text-on-primary-container font-label-md text-label-md font-extrabold uppercase tracking-wider">
+            CURRENT • IN PROGRESS
+          </span>
+<span class="px-2.5 py-1.5 bg-surface-container-highest text-on-surface font-label-md text-label-md font-bold uppercase tracking-wider">
+            CODE: T001
+          </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="timer">timer</span>
+<span class="font-label-md text-label-md text-primary-container uppercase font-bold tracking-wider">
+            CRITICAL PATH ACTIVE
+          </span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+<!-- Task Details (Left 7 Cols) -->
+<div class="lg:col-span-7 space-y-4">
+<div class="space-y-1">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">PRIMARY PRODUCTION RUN</span>
+<h2 class="font-headline-xl text-headline-xl font-bold uppercase tracking-wide text-on-surface leading-tight">
+              EARTH EXCAVATION
+            </h2>
+</div>
+<!-- Glancing Badges Row -->
+<div class="flex flex-wrap gap-2.5 pt-1">
+<div class="flex items-center gap-1.5 bg-surface-container-high border-2 border-surface-container-highest px-3 py-2">
+<span class="text-base">☀️</span>
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">Sunny</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-high border-2 border-surface-container-highest px-3 py-2">
+<span class="material-symbols-outlined text-primary-container text-lg" data-icon="military_tech">military_tech</span>
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">Expert Tier</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-high border-2 border-surface-container-highest px-3 py-2">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">Est: 60 min</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-high border-2 border-surface-container-highest px-3 py-2">
+<span class="material-symbols-outlined text-tertiary-container text-lg" data-icon="line_weight">line_weight</span>
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">Vol: 420m³</span>
+</div>
+</div>
+<!-- Progress Block: Debossed Look -->
+<div class="bg-surface-container-lowest border-2 border-surface-container-highest p-4 space-y-2.5">
+<div class="flex justify-between items-baseline">
+<span class="font-label-md text-label-md uppercase font-bold tracking-wider text-on-surface-variant">
+                CYCLE PROGRESSION
+              </span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">58</span>
+<span class="font-headline-sm text-headline-sm text-on-surface-variant">/ 60 MIN</span>
+<span class="font-label-md text-label-md text-primary-container font-extrabold ml-2 bg-surface-container-high px-2 py-0.5 border border-outline-variant">96%</span>
+</div>
+</div>
+<!-- Progress Bar High Vibrancy -->
+<div class="w-full bg-surface-container-highest h-5 p-0.5 border border-outline-variant">
+<div class="bg-primary-container h-full w-[96%] flex items-center justify-end pr-1">
+<div class="w-1.5 h-full bg-on-primary-container"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Touch Target Action (Right 5 Cols) -->
+<div class="lg:col-span-5 flex flex-col justify-center space-y-3">
+<button class="w-full min-h-[64px] bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container active:bg-on-primary-container active:text-primary-container border-2 border-on-primary-container font-headline-md text-headline-md font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-colors duration-75 px-6 shadow-none">
+<span>CONTINUE TASK</span>
+<span class="material-symbols-outlined text-2xl" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="grid grid-cols-2 gap-2">
+<button class="min-h-[56px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-container-highest text-on-surface font-label-md text-label-md font-bold uppercase flex items-center justify-center gap-1 active:border-primary-container">
+<span class="material-symbols-outlined text-base" data-icon="pause_circle">pause_circle</span>
+<span>PAUSE LOG</span>
+</button>
+<button class="min-h-[56px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-container-highest text-on-surface font-label-md text-label-md font-bold uppercase flex items-center justify-center gap-1 active:border-primary-container">
+<span class="material-symbols-outlined text-base" data-icon="checklist">checklist</span>
+<span>CHECKLIST</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- TWO COLUMN LAYOUT: UP NEXT (SPOTLIGHT) & UPCOMING QUEUE -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+<!-- UP NEXT CARD (Left 6 Cols) -->
+<section class="lg:col-span-6 bg-surface-container border-2 border-surface-container-highest p-4 md:p-5 flex flex-col justify-between">
+<div>
+<!-- Header Bar -->
+<div class="flex items-center justify-between border-b-2 border-surface-container-highest pb-3 mb-4">
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 bg-surface-bright text-on-surface font-label-md text-label-md font-extrabold uppercase tracking-wider border border-outline-variant">
+                UP NEXT
+              </span>
+<span class="px-2 py-1 bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md font-bold">
+                CODE: T002
+              </span>
+</div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">STAGED AFTER T001</span>
+</div>
+<div class="space-y-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">UTILITY INFRASTRUCTURE</span>
+<h3 class="font-headline-lg text-headline-lg font-bold uppercase tracking-wide text-on-surface leading-tight">
+              TRENCHING
+            </h3>
+<!-- Glancing Badges -->
+<div class="flex flex-wrap gap-2 pt-1">
+<div class="flex items-center gap-1.5 bg-surface-container-high border border-outline-variant px-2.5 py-1.5">
+<span class="text-base">🌧</span>
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">Rainy</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-high border border-outline-variant px-2.5 py-1.5">
+<span class="material-symbols-outlined text-primary-container text-base" data-icon="construction">construction</span>
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">Intermediate</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-high border border-outline-variant px-2.5 py-1.5">
+<span class="material-symbols-outlined text-outline text-base" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">Est: 45 min</span>
+</div>
+</div>
+<!-- Cab Note Deboss -->
+<div class="bg-surface-container-lowest p-3 border border-surface-container-highest text-on-surface-variant font-body-sm text-body-sm">
+<span class="text-primary-container font-bold uppercase font-label-sm text-label-sm mr-1">CAUTION:</span>
+              High moisture index in ditch zone B. Utilize standard 36-inch trenching bucket with rock teeth.
+            </div>
+</div>
+</div>
+<div class="pt-5 mt-4 border-t-2 border-surface-container-highest">
+<button class="w-full min-h-[56px] bg-surface-container-high hover:bg-surface-container-highest text-on-surface border-2 border-outline font-headline-sm text-headline-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:bg-surface-bright">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<span>VIEW TASK</span>
+</button>
+</div>
+</section>
+<!-- UPCOMING QUEUE (Right 6 Cols) -->
+<section class="lg:col-span-6 bg-surface-container-low border-2 border-surface-container-highest p-4 md:p-5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b-2 border-surface-container-highest pb-3 mb-4">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-5 bg-outline"></span>
+<h3 class="font-headline-sm text-headline-sm font-bold uppercase tracking-wider text-on-surface">
+                UPCOMING QUEUE
+              </h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">3 TASKS PENDING</span>
+</div>
+<!-- Queue Chunky Card Stack (Tactile 60px+ Rows) -->
+<div class="space-y-3">
+<!-- T003 Card -->
+<div class="bg-surface-container border-l-4 border-l-tertiary-container border-y border-r border-surface-container-highest p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-h-[64px] active:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface-variant bg-surface-container-lowest px-2 py-1 border border-surface-container-highest">
+                  T003
+                </span>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-bold uppercase text-on-surface leading-snug">
+                    Material Loading
+                  </h4>
+<div class="flex items-center gap-3 font-label-sm text-label-sm text-on-surface-variant uppercase mt-0.5">
+<span>Est 30 min</span>
+<span>•</span>
+<span class="text-tertiary-container">Standard</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end">
+<button aria-label="Open T003" class="w-12 h-12 bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface hover:bg-surface-container-highest active:bg-primary-container active:text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- T004 Card -->
+<div class="bg-surface-container border-l-4 border-l-primary-container border-y border-r border-surface-container-highest p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-h-[64px] active:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface-variant bg-surface-container-lowest px-2 py-1 border border-surface-container-highest">
+                  T004
+                </span>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-bold uppercase text-on-surface leading-snug">
+                    Grading
+                  </h4>
+<div class="flex items-center gap-3 font-label-sm text-label-sm text-on-surface-variant uppercase mt-0.5">
+<span>Est 75 min</span>
+<span>•</span>
+<span class="text-primary-container">Precision Laser</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end">
+<button aria-label="Open T004" class="w-12 h-12 bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface hover:bg-surface-container-highest active:bg-primary-container active:text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- T005 Card -->
+<div class="bg-surface-container border-l-4 border-l-secondary-container border-y border-r border-surface-container-highest p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 min-h-[64px] active:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface-variant bg-surface-container-lowest px-2 py-1 border border-surface-container-highest">
+                  T005
+                </span>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-bold uppercase text-on-surface leading-snug">
+                    Demolition
+                  </h4>
+<div class="flex items-center gap-3 font-label-sm text-label-sm text-on-surface-variant uppercase mt-0.5">
+<span>Est 90 min</span>
+<span>•</span>
+<span class="text-secondary">Heavy Hydraulic</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end">
+<button aria-label="Open T005" class="w-12 h-12 bg-surface-container-high border border-outline-variant flex items-center justify-center text-on-surface hover:bg-surface-container-highest active:bg-primary-container active:text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Telemetry footer on queue card -->
+<div class="pt-3 mt-3 border-t border-surface-container-highest flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>SHIFT COMPLETION EST: 16:30</span>
+<span class="text-outline uppercase">ALL PERMITS LOGGED</span>
+</div>
+</section>
+</div>
+<!-- QUICK SAFETY / EMERGENCY COMM OVERLAY FOOTER BAR -->
+<div class="bg-surface-container-highest border-2 border-outline-variant p-3 flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="radio">radio</span>
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">SITE CHANNEL 4: LIVE</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">CAB AMBIENT: 22°C</span>
+<span class="font-label-sm text-label-sm text-tertiary-container uppercase font-bold">HYD OIL: NOMINAL (68°C)</span>
+</div>
+</div>
+</main>
+<!-- BOTTOM NAVIGATION BAR (Shared Component Anchor) -->
+<!-- Contextual Intent: Current page is "TASKS". Tab 1 (TASKS) receives style_active_navigation. Others receive style_inactive_navigation. -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch min-h-[64px] bg-surface-container-low dark:bg-surface-container-low border-t-2 border-surface-container-highest dark:border-surface-container-highest flat no shadows">
+<!-- Tab 0: HOME (Inactive) -->
+<button class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75">
+<span class="material-symbols-outlined text-2xl" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">HOME</span>
+</button>
+<!-- Tab 1: TASKS (Active Match for Today's Tasks Screen) -->
+<button class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container active:bg-primary active:text-on-primary duration-75">
+<span class="material-symbols-outlined text-2xl" data-icon="assignment" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">TASKS</span>
+</button>
+<!-- Tab 2: SAFETY (Inactive) -->
+<button class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75">
+<span class="material-symbols-outlined text-2xl" data-icon="shield">shield</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">SAFETY</span>
+</button>
+<!-- Tab 3: PROFILE (Inactive) -->
+<button class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">PROFILE</span>
+</button>
+</nav>
+</body></html>

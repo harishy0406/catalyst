@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "Catalyst",
+    "slug": "cat-operator-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "bundleIdentifier": "com.catalyst.operator",
+      "supportsTablet": true,
+      "icon": "./assets/icon.png"
+    },
+    "android": {
+      "package": "com.catalyst.operator",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#121316",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "icon": "./assets/icon.png"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "Catalyst — Smart Operator Assistant",
+      "shortName": "Catalyst",
+      "themeColor": "#121316",
+      "backgroundColor": "#121316"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 240,
+          "resizeMode": "contain",
+          "backgroundColor": "#121316"
+        }
+      ],
+      "expo-image"
+    ],
+    "scheme": "catoperator",
+    "backgroundColor": "#121316",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5f53bdf1-7411-46b1-8730-f1afcd91cb96"
+      }
+    },
+    "owner": "anshv"
+  }
+}

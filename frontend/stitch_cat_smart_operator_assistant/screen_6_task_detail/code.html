@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EXC001 • Task Execution Screen</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .hazard-stripe {
+      background: repeating-linear-gradient(
+        -45deg,
+        #fdb813,
+        #fdb813 12px,
+        #121316 12px,
+        #121316 24px
+      );
+    }
+    .hazard-stripe-bar {
+      background: repeating-linear-gradient(
+        -45deg,
+        #fdb813,
+        #fdb813 8px,
+        #000000 8px,
+        #000000 16px
+      );
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col pb-28 select-none">
+<!-- TopAppBar Anchor from Shared Components -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container border-b-2 border-surface-container-highest docked full-width top-0 z-40">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-high border border-surface-container-highest">
+<span class="material-symbols-outlined text-primary-container text-[24px]" data-icon="construction">construction</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary-container tracking-wider uppercase">EXC001 • SHIFT ACTIVE</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">CAB DISPLAY UNIT • SYS_VER 4.12</span>
+</div>
+</div>
+<!-- Alert / Trailing Action -->
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-surface-container-lowest border border-outline-variant">
+<span class="inline-block w-2.5 h-2.5 bg-tertiary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface uppercase tracking-wider">TELEMETRY SECURE</span>
+</div>
+<button class="w-12 h-12 flex items-center justify-center bg-surface-container-high border border-outline-variant hover:bg-surface-container-highest active:border-outline-variant duration-75">
+<span class="material-symbols-outlined text-primary-container text-[26px]" data-icon="warning">warning</span>
+</button>
+</div>
+</header>
+<!-- Hazard Sub-Stripe Rail -->
+<div class="w-full h-1 hazard-stripe-bar"></div>
+<!-- Main Viewport Canvas -->
+<main class="flex-1 w-full max-w-7xl mx-auto p-3 md:p-5 flex flex-col gap-4">
+<!-- Task Identification Header & Status Strip -->
+<div class="bg-surface-container border-2 border-surface-container-highest p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-start gap-4">
+<div class="w-14 h-14 bg-surface-container-lowest border-2 border-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary-container text-[36px]" data-icon="assignment">assignment</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm px-2 py-0.5 bg-primary-container text-on-primary-container font-bold uppercase">READY TO COMMENCE</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container-highest text-on-surface uppercase">ZONE B-4</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface uppercase tracking-tight mt-1 leading-none">Earth Excavation</h1>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mt-1">Task ID: T001 • Machine: EXC001</p>
+</div>
+</div>
+<!-- Quick Status Annunciator Cluster -->
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 shrink-0">
+<div class="bg-surface-container-lowest border border-surface-container-highest px-3 py-2 flex flex-col justify-center min-w-[100px]">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">SYSTEM PWR</span>
+<span class="font-label-lg text-label-lg text-tertiary font-bold flex items-center gap-1">
+<span class="inline-block w-2 h-2 rounded-full bg-tertiary"></span> NOMINAL
+          </span>
+</div>
+<div class="bg-surface-container-lowest border border-surface-container-highest px-3 py-2 flex flex-col justify-center min-w-[100px]">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">HYDRAULICS</span>
+<span class="font-label-lg text-label-lg text-primary-container font-bold flex items-center gap-1">
+<span class="inline-block w-2 h-2 rounded-full bg-primary-container"></span> 240 BAR
+          </span>
+</div>
+<div class="col-span-2 sm:col-span-1 bg-surface-container-lowest border border-surface-container-highest px-3 py-2 flex flex-col justify-center min-w-[100px]">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">CAB LOCK</span>
+<span class="font-label-lg text-label-lg text-on-surface font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="lock">lock</span> ENGAGED
+          </span>
+</div>
+</div>
+</div>
+<!-- Telemetry & Metrics Industrial Grid -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-2.5">
+<!-- Metric 1: Estimated Time -->
+<div class="bg-surface-container border border-surface-container-highest p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-1 mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Estimated Time</span>
+<span class="material-symbols-outlined text-[18px] text-outline" data-icon="timer">timer</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold leading-none">60</span>
+<span class="font-label-md text-label-md text-primary-container font-bold">MIN</span>
+</div>
+</div>
+<!-- Metric 2: Predicted Time -->
+<div class="bg-surface-container border border-surface-container-highest p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-1 mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Predicted Time</span>
+<span class="material-symbols-outlined text-[18px] text-tertiary" data-icon="analytics">analytics</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-tertiary font-bold leading-none">58</span>
+<span class="font-label-md text-label-md text-primary-container font-bold">MIN</span>
+</div>
+</div>
+<!-- Metric 3: Weather -->
+<div class="bg-surface-container border border-surface-container-highest p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-1 mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Weather</span>
+<span class="material-symbols-outlined text-[18px] text-primary-container" data-icon="wb_sunny">wb_sunny</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold leading-none">24°C</span>
+<span class="font-label-md text-label-md text-on-surface-variant font-bold">SUNNY</span>
+</div>
+</div>
+<!-- Metric 4: Operator Skill -->
+<div class="bg-surface-container border border-surface-container-highest p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-1 mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Operator Skill</span>
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="badge">badge</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold uppercase leading-none">EXPERT</span>
+<span class="font-label-md text-label-md text-tertiary font-bold">LVL 4</span>
+</div>
+</div>
+<!-- Metric 5: Machine Age -->
+<div class="col-span-2 md:col-span-1 bg-surface-container border border-surface-container-highest p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-1 mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Machine Age</span>
+<span class="material-symbols-outlined text-[18px] text-outline" data-icon="schedule">schedule</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold leading-none">2</span>
+<span class="font-label-md text-label-md text-on-surface-variant font-bold">YEARS</span>
+</div>
+</div>
+</div>
+<!-- Work Execution Bento / Split (Safety Checklist + Task Instructions) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<!-- PRE-TASK SAFETY CHECKLIST (Left 7 Cols on Tablet/Desktop) -->
+<div class="lg:col-span-7 bg-surface-container border-2 border-surface-container-highest flex flex-col justify-between">
+<div>
+<!-- Panel Header -->
+<div class="bg-surface-container-high px-4 py-2.5 border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]" data-icon="shield">shield</span>
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface tracking-wider">PRE-TASK SAFETY CHECKLIST</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container-lowest text-tertiary border border-surface-container-highest uppercase font-bold">3 OF 3 VERIFIED</span>
+</div>
+<!-- Large Tactile Glove-Friendly Checkboxes (Min touch-target 64px) -->
+<div class="p-3 md:p-4 space-y-2.5">
+<!-- Item 1 -->
+<label class="flex items-center justify-between p-3.5 bg-surface-container-low border-2 border-surface-container-highest hover:border-outline cursor-pointer active:bg-surface-container-high transition-colors min-h-[64px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[28px]" data-icon="airline_seat_recline_extra">airline_seat_recline_extra</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm uppercase text-on-surface leading-tight">Seatbelt fastened</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Primary operator restraint tension verified</div>
+</div>
+</div>
+<div class="w-10 h-10 bg-tertiary-container text-on-tertiary-container flex items-center justify-center border-2 border-on-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-[30px] font-bold" data-icon="check">check</span>
+</div>
+</label>
+<!-- Item 2 -->
+<label class="flex items-center justify-between p-3.5 bg-surface-container-low border-2 border-surface-container-highest hover:border-outline cursor-pointer active:bg-surface-container-high transition-colors min-h-[64px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[28px]" data-icon="build">build</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm uppercase text-on-surface leading-tight">Machine inspection complete</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Fluids, track tension, and arm linkages cleared</div>
+</div>
+</div>
+<div class="w-10 h-10 bg-tertiary-container text-on-tertiary-container flex items-center justify-center border-2 border-on-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-[30px] font-bold" data-icon="check">check</span>
+</div>
+</label>
+<!-- Item 3 -->
+<label class="flex items-center justify-between p-3.5 bg-surface-container-low border-2 border-surface-container-highest hover:border-outline cursor-pointer active:bg-surface-container-high transition-colors min-h-[64px]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[28px]" data-icon="warning">warning</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm uppercase text-on-surface leading-tight">Work zone clear</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">15m proximity perimeter radar check acknowledged</div>
+</div>
+</div>
+<div class="w-10 h-10 bg-tertiary-container text-on-tertiary-container flex items-center justify-center border-2 border-on-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-[30px] font-bold" data-icon="check">check</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Compliance Note Strip -->
+<div class="p-3 bg-surface-container-lowest border-t border-surface-container-highest flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">OSHA / ISO-12100 TELEMETRIC LOCK CLEARED</span>
+<span class="material-symbols-outlined text-tertiary text-[20px]" data-icon="verified_user">verified_user</span>
+</div>
+</div>
+<!-- TASK INSTRUCTIONS CARD (Right 5 Cols on Tablet/Desktop) -->
+<div class="lg:col-span-5 bg-surface-container border-2 border-surface-container-highest flex flex-col">
+<div class="bg-surface-container-high px-4 py-2.5 border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]" data-icon="description">description</span>
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface tracking-wider">TASK INSTRUCTIONS</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary-container font-bold">SPEC #882</span>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<div class="space-y-4">
+<div class="p-4 bg-surface-container-lowest border-l-4 border-primary-container border-y border-r border-surface-container-highest">
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider block mb-1">OPERATOR DIRECTIVE</span>
+<p class="font-body-lg text-body-lg text-on-surface font-semibold leading-snug">
+                Excavate the marked work zone and load material according to the site plan.
+              </p>
+</div>
+<!-- Site Boundary Schematic / Vector Badge -->
+<div class="grid grid-cols-2 gap-2 text-on-surface-variant font-label-md text-label-md uppercase">
+<div class="p-2.5 bg-surface-container-low border border-surface-container-highest">
+<span class="text-on-surface-variant text-[12px] block">TARGET DEPTH</span>
+<span class="font-headline-md text-headline-md text-on-surface leading-tight">3.50 M</span>
+</div>
+<div class="p-2.5 bg-surface-container-low border border-surface-container-highest">
+<span class="text-on-surface-variant text-[12px] block">PAYLOAD TRUCK</span>
+<span class="font-headline-md text-headline-md text-primary-container leading-tight">CAT 745 #04</span>
+</div>
+</div>
+</div>
+<div class="mt-4 p-2.5 bg-surface-container-highest/40 border border-outline-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]" data-icon="info">info</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Ensure spoil pile stands minimum 2.0m back from trench edge.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Execution Controls (Massive Glove-Usable Buttons - Minimum 64px Height) -->
+<div class="bg-surface-container border-2 border-surface-container-highest p-4">
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">PRIMARY HYDRAULIC DISPATCH &amp; EXECUTION</span>
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider">ALL INTERLOCKS GREEN</span>
+</div>
+<!-- Massive Action Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+<!-- Main START Action (Active/Primary execution trigger) -->
+<button class="md:col-span-4 min-h-[64px] h-16 bg-primary-container hover:bg-[#e0a20f] active:bg-[#c9900c] text-on-primary-container font-headline-md text-headline-md font-bold uppercase tracking-wider flex items-center justify-center gap-3 border-2 border-on-primary-container transition-all">
+<span class="material-symbols-outlined text-[32px]" data-icon="play_arrow">play_arrow</span>
+<span>START TASK</span>
+</button>
+<!-- Side-by-Side In-Shift Execution Controls -->
+<!-- PAUSE TASK: Amber/Charcoal -->
+<button class="md:col-span-4 min-h-[64px] h-16 bg-[#22262B] hover:bg-[#2e333a] active:bg-[#1a1d21] text-primary-container border-2 border-primary-container font-headline-md text-headline-md font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-all">
+<span class="material-symbols-outlined text-primary-container text-[28px]" data-icon="pause">pause</span>
+<span>PAUSE TASK</span>
+</button>
+<!-- COMPLETE TASK: CAT Safety Yellow / Black (min-h-[64px]) -->
+<button class="md:col-span-4 min-h-[64px] h-16 bg-primary-container hover:bg-[#e5a610] active:bg-[#c9900c] text-[#121316] border-2 border-[#121316] font-headline-md text-headline-md font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-all shadow-md">
+<span class="material-symbols-outlined text-[#121316] text-[32px] font-bold" data-icon="check_circle">check_circle</span>
+<span>COMPLETE TASK</span>
+</button>
+</div>
+</div>
+<!-- Bottom Telemetry Status Bar (CAN-Bus / Telematics Hardware Layer) -->
+<div class="bg-surface-container-lowest border border-surface-container-highest px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-on-surface">
+<div class="flex items-center gap-6">
+<!-- Telematics Link 100% -->
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px]" data-icon="cell_tower">cell_tower</span>
+<span class="font-label-md text-label-md text-on-surface uppercase">Telematics Link:</span>
+<span class="font-label-lg text-label-lg text-tertiary font-bold">100% (4G-LTE)</span>
+</div>
+<!-- CAN-Bus Active -->
+<div class="flex items-center gap-2">
+<span class="inline-block w-2.5 h-2.5 bg-tertiary rounded-full animate-ping"></span>
+<span class="font-label-md text-label-md text-on-surface uppercase">CAN-Bus:</span>
+<span class="font-label-lg text-label-lg text-tertiary font-bold">ACTIVE (J1939)</span>
+</div>
+</div>
+<!-- Secondary Hardware Readings -->
+<div class="flex items-center gap-4 text-on-surface-variant font-label-sm text-label-sm uppercase">
+<span>LAT: 41.8781° N</span>
+<span>LON: 87.6298° W</span>
+<span class="text-primary-container font-bold">SAT: 14 LOCKED</span>
+</div>
+</div>
+</main>
+<!-- BottomNavBar from Shared Components (Semantic destination count: 4, Active on 'TASKS') -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch min-h-[64px] bg-surface-container-low border-t-2 border-surface-container-highest">
+<!-- Tab 1: HOME (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">HOME</span>
+</a>
+<!-- Tab 2: TASKS (Active - Strict mapping for Task Execution Screen) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container active:bg-primary active:text-on-primary duration-75 flex-1" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="assignment">assignment</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">TASKS</span>
+</a>
+<!-- Tab 3: SAFETY (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="shield">shield</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">SAFETY</span>
+</a>
+<!-- Tab 4: PROFILE (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="person">person</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">PROFILE</span>
+</a>
+</nav>
+</body></html>
