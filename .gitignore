@@ -13,6 +13,8 @@
 !frontend/**
 !ml/
 !ml/**
+!assest/
+!assest/**
 
 # Python and environment noise
 __pycache__/
