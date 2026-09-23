@@ -1,0 +1,12 @@
+# Build context is the repo root (see Dockerfile). Allow-list only what the image needs,
+# so frontend/, datasets, notebooks, .git etc. are never sent to the builder.
+*
+!backend/requirements.txt
+!backend/app/
+!ml/models/*.pkl
+
+# Secrets are passed at runtime (--env-file / host env vars), never baked into the image
+**/.env
+**/.env.*
+**/__pycache__/
+**/*.py[cod]
