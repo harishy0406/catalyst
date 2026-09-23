@@ -28,7 +28,8 @@ npx expo start       # scan the QR code with Expo Go (Android) or the Camera app
 | Navigation | Expo Router (file-based, `src/app/`) with a Stack at the root and Tabs for the main shell |
 | Fonts | `@expo-google-fonts/barlow-condensed` (headings, labels, metrics) and `@expo-google-fonts/inter` (body text) |
 | Icons | `@expo/vector-icons/MaterialIcons`, with Material Symbols names mapped automatically (see `Icon.tsx`) |
-| Images | `expo-image`. The Stitch reference photos are downloaded into `assets/images/` |
+| Images | `expo-image`. The Stitch reference photos and the Catalyst logo are in `assets/images/` |
+| Branding | Catalyst wordmark (`assest/logo-b.png` → `assets/images/logo-catalyst.png`), used for the app icon, adaptive icon, splash, favicon and `Logo` component |
 | State | One React context (`src/state/AppState.tsx`) holding mock data from `src/data/mock.ts` |
 
 No extra native modules are used, so everything runs in **Expo Go** without a development build.
@@ -40,7 +41,8 @@ No extra native modules are used, so everything runs in **Expo Go** without a de
 ```
 cat-operator-app/
 ├── app.json                  # dark UI, scheme "catoperator", typed routes
-├── assets/images/            # rear-cam + training photos from Stitch
+├── assets/                   # icon / adaptive icon / splash / favicon (Catalyst logo)
+│   └── images/               # logo-catalyst.png + rear-cam + training photos
 └── src/
     ├── app/                  # ROUTES ONLY
     │   ├── _layout.tsx       # fonts, splash, SafeArea, AppState provider, root Stack
@@ -97,6 +99,7 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 | `Badge`, `Pip` | Annunciator labels and LED status lights |
 | `ProgressBar` | Continuous or segmented |
 | `HazardStripe` | Yellow/black 45° stripe |
+| `Logo` | Catalyst wordmark, sized by height |
 | `TabBar` | Bottom nav (Home / Tasks / Safety / Profile) where the active cell fills solid gold |
 
 ---
@@ -137,11 +140,24 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 - [ ] Persist the session and PIN auth (`expo-secure-store`)
 - [ ] Landscape / in-dash tablet layout (12-column spec in DESIGN.md)
 - [ ] Haptics on critical actions (`expo-haptics`)
-- [ ] Custom app icon and splash in CAT livery
+- [x] Custom app icon and splash (Catalyst logo)
 
 ---
 
 ## Changelog
+
+### 2026-09-23 — Catalyst logo and app manifest
+- Picked `assest/logo-b.png` (the 2048px white wordmark with the gold CAT triangle) as the source because the app UI is dark. Keyed its black background into transparency → `assets/images/logo-catalyst.png`.
+- Generated the icon set from it (all 1024², dark `#121316` background):
+  - `icon.png`: wordmark on a dark tile with a gold hazard bar (iOS and generic icon)
+  - `android-icon-foreground.png`: transparent, kept inside the 66% adaptive safe zone. `android-icon-background.png` is solid dark and `android-icon-monochrome.png` is a white silhouette for Android 13 themed icons.
+  - `splash-icon.png`: trimmed wordmark. `favicon.png`: 48px.
+- `app.json`:
+  - Display name changed to **Catalyst**; `ios.icon` and `android.icon` set.
+  - `expo-splash-screen` plugin now shows the logo (240px, dark background).
+  - Web manifest gets `name`, `shortName`, `themeColor` and `backgroundColor`.
+- New `Logo` component. `AppHeader` has a `logo` prop that shows the wordmark in place of the wrench icon and title. The Login screen uses it in the header and in a large brand block above the sign-in card.
+- Icon and splash changes only appear in native builds (`eas build` / `expo run:*`). **Expo Go always shows its own icon and splash.** The in-app logo shows everywhere.
 
 ### 2026-09-23 — Initial build of all 10 screens
 - Scaffolded `cat-operator-app` with `create-expo-app` (blank-typescript, SDK 57) and added Expo Router, fonts, vector icons and expo-image.

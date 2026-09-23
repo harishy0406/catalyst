@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { Button, Cell, HazardStripe, Icon, Pip, Screen, Txt } from '@/components';
+import { Button, Cell, HazardStripe, Icon, Logo, Pip, Screen, Txt } from '@/components';
 import { machine, OPERATORS, site } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { border, colors, space } from '@/theme/tokens';
@@ -35,7 +35,14 @@ export default function Login() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
-      <Screen header={{ title: 'CAT Smart Operator Assistant', subtitle: 'Operator Cabin Terminal' }}>
+      <Screen header={{ logo: true, subtitle: 'Smart Operator Assistant • Cab Terminal' }}>
+        {/* Brand block */}
+        <View style={{ alignItems: 'center', gap: space.sm, paddingVertical: space.md }}>
+          <Logo height={56} />
+          <Txt v="labelMd" color={colors.onSurfaceVariant}>
+            Smart Operator Assistant
+          </Txt>
+        </View>
         <View style={{ backgroundColor: colors.surfaceContainer, borderWidth: 2, borderColor: colors.surfaceHighest }}>
           <HazardStripe height={8} />
           <View style={{ padding: space.md + 4, gap: space.lg - 4 }}>

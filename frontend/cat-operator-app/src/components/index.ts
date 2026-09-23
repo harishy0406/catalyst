@@ -2,6 +2,7 @@ export * from './AppHeader';
 export * from './Badge';
 export * from './Button';
 export * from './HazardStripe';
+export * from './Logo';
 export * from './Icon';
 export * from './NavRow';
 export * from './Panel';

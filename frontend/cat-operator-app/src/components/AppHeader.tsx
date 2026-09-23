@@ -7,6 +7,7 @@ import { colors, space } from '@/theme/tokens';
 import { IconButton } from './Button';
 import { HazardStripe } from './HazardStripe';
 import { Icon } from './Icon';
+import { Logo } from './Logo';
 import { Txt } from './Txt';
 
 /**
@@ -18,6 +19,7 @@ export function AppHeader({
   subtitle,
   alert = false,
   hazard = false,
+  logo = false,
 }: {
   title?: string;
   subtitle?: string;
@@ -25,6 +27,8 @@ export function AppHeader({
   alert?: boolean;
   /** Hazard striping under the bar. */
   hazard?: boolean;
+  /** Show the Catalyst wordmark instead of the wrench glyph + title (pre-login screens). */
+  logo?: boolean;
 }) {
   const insets = useSafeAreaInsets();
   return (
@@ -42,17 +46,30 @@ export function AppHeader({
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md - 4, flex: 1 }}>
-          <Icon name="construction" size={26} color={colors.primaryContainer} />
-          <View style={{ flex: 1 }}>
-            <Txt v="headlineSm" color={colors.primaryContainer} numberOfLines={2}>
-              {title}
-            </Txt>
-            {subtitle && (
-              <Txt v="labelXs" color={colors.onSurfaceVariant} numberOfLines={1}>
-                {subtitle}
-              </Txt>
-            )}
-          </View>
+          {logo ? (
+            <View style={{ gap: 2 }}>
+              <Logo height={26} />
+              {subtitle && (
+                <Txt v="labelXs" color={colors.onSurfaceVariant} numberOfLines={1}>
+                  {subtitle}
+                </Txt>
+              )}
+            </View>
+          ) : (
+            <>
+              <Icon name="construction" size={26} color={colors.primaryContainer} />
+              <View style={{ flex: 1 }}>
+                <Txt v="headlineSm" color={colors.primaryContainer} numberOfLines={2}>
+                  {title}
+                </Txt>
+                {subtitle && (
+                  <Txt v="labelXs" color={colors.onSurfaceVariant} numberOfLines={1}>
+                    {subtitle}
+                  </Txt>
+                )}
+              </View>
+            </>
+          )}
         </View>
         <IconButton
           icon="warning"
