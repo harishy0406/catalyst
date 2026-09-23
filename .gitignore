@@ -1,0 +1,71 @@
+# Ignore everything by default
+*
+
+# Keep the repo itself and the specific project files we want
+!.gitignore
+!requirements.txt
+!ml/
+
+!ml/datasets/
+!ml/datasets/**
+!ml/task_time/
+!ml/task_time/**
+
+# Python and environment noise
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# Environment files
+.env
+.env.*
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Data / model artifacts
+*.pkl
+*.joblib
+*.h5
+*.hdf5
+*.model
+*.bin
+**/catboost_info/
+**/tmp/
+
+# Logs and caches
+*.log
+*.out
+*.tmp
+.cache/
+
+# Build output
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+
+# Local frontend / backend runtime files
+node_modules/
+backend/.venv/
+frontend/.venv/
