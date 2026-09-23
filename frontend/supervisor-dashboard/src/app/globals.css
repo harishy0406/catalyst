@@ -101,13 +101,45 @@ h3 { font-size: 15px; font-weight: 700; letter-spacing: 0.06em; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
 .kpi { padding: 14px 16px; background: var(--surface-low); border: 1px solid var(--surface-highest); border-left: 4px solid var(--outline-variant); border-radius: var(--radius); }
+.kpis.row { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.kpis.row .kpi { padding: 12px 14px; min-width: 0; }
+.kpis.row .kpi .label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; }
+.kpis.row .kpi .value { font-size: 34px; }
 .kpi .value { font-family: var(--font-heading); font-weight: 800; font-size: 40px; line-height: 1.05; margin-top: 4px; }
-.kpi .sub { font-size: 12px; color: var(--muted); }
+.kpi .sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kpi.danger { border-left-color: var(--danger); } .kpi.danger .value { color: var(--danger); }
 .kpi.warning { border-left-color: var(--warning); } .kpi.warning .value { color: var(--warning); }
 .kpi.safe { border-left-color: var(--safe); }
 .kpi.primary { border-left-color: var(--gold); } .kpi.primary .value { color: var(--gold); }
 a.kpi:hover { background: var(--surface-container); }
+
+/* ---------- charts ---------- */
+.chart { display: grid; gap: 14px; }
+.chart-sub { margin: 22px 0 12px; font-size: 13px; color: var(--muted); }
+.chart-empty { color: var(--muted); font-size: 13px; padding: 12px 0; text-align: center; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--on-surface-variant); }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-legend i { width: 10px; height: 10px; border-radius: 2px; }
+.chart-legend b { color: var(--on-surface); font-weight: 600; }
+.parts { display: flex; gap: 2px; height: 28px; }
+.parts > span { border-radius: 4px; min-width: 4px; }
+.rows { display: grid; gap: 12px; }
+.row { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 12px; align-items: center; }
+.row-label { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-label a:hover { color: var(--gold); }
+.row-bars { display: grid; gap: 3px; }
+.track { display: flex; align-items: center; gap: 2px; height: 12px; }
+.track.stacked { height: 16px; }
+.track > span { height: 100%; border-radius: 0 4px 4px 0; min-width: 3px; }
+.track > em { font-style: normal; font-size: 11px; color: var(--on-surface-variant); margin-left: 6px; font-variant-numeric: tabular-nums; }
+/* Hover tooltip for chart marks. */
+.tip { position: relative; cursor: default; }
+.tip:hover > span, span.tip:hover { box-shadow: 0 0 0 1px var(--on-surface); }
+.tip:hover::after {
+  content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 10; white-space: nowrap; pointer-events: none;
+  padding: 5px 8px; border-radius: var(--radius); background: var(--surface-highest); border: 1px solid var(--outline-variant);
+  color: var(--on-surface); font-size: 12px; font-style: normal;
+}
 
 /* ---------- badges ---------- */
 .badge {
@@ -221,6 +253,12 @@ details > summary::-webkit-details-marker { display: none; }
 
 .disclaimer { font-size: 11px; color: var(--muted); padding: 0 28px 24px; }
 
+@media (max-width: 1400px) {
+  .kpis.row .kpi .value { font-size: 28px; }
+}
+@media (max-width: 1200px) {
+  .kpis.row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 @media (max-width: 1100px) {
   .grid-3 { grid-template-columns: 1fr 1fr; }
 }
@@ -230,6 +268,8 @@ details > summary::-webkit-details-marker { display: none; }
   .nav { flex-direction: row; overflow-x: auto; }
   .me { display: none; }
   .grid-2, .grid-3, .form-grid { grid-template-columns: 1fr; }
+  .kpis.row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .row { grid-template-columns: 100px minmax(0, 1fr); }
   .form-grid .span-2 { grid-column: auto; }
   .topbar, .content { padding-left: 16px; padding-right: 16px; }
   .incident-form { grid-template-columns: 1fr; }

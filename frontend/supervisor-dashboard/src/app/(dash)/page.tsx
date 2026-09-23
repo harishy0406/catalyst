@@ -1,30 +1,68 @@
 import Link from 'next/link';
 import { acknowledgeAlert } from '@/app/actions';
 import { Badge } from '@/components/Badge';
+import { GroupedRows, PartsBar, StackedRows, type Series } from '@/components/Charts';
 import { PageHeader } from '@/components/PageHeader';
 import { SubmitButton } from '@/components/SubmitButton';
 import { humanize, incidentStatusTone, severityTone } from '@/lib/domain';
 import { minutes, minutesSince, timeAgo } from '@/lib/format';
-import { getAlerts, getIncidents, getMachines, getOperators, getOverview, getTasks } from '@/lib/queries';
+import {
+  getAccuracyByType,
+  getAlerts,
+  getAlertsByOperator,
+  getIncidents,
+  getMachines,
+  getOperators,
+  getOverview,
+  getTaskStatusCounts,
+  getTasks,
+} from '@/lib/queries';
 import { requireSupervisor } from '@/lib/session';
+
+// Status colours follow the badge tones in domain.ts (taskStatusTone / severityTone).
+const TASK_SERIES: Series[] = [
+  { key: 'in_progress', label: 'In progress', color: 'var(--gold)' },
+  { key: 'paused', label: 'Paused', color: 'var(--warning)' },
+  { key: 'ready', label: 'Ready', color: 'var(--info)' },
+  { key: 'pending', label: 'Pending', color: 'var(--outline)' },
+  { key: 'completed', label: 'Completed', color: 'var(--safe)' },
+];
+const WORKLOAD_SERIES: Series[] = [
+  { key: 'active', label: 'Active', color: 'var(--gold)' },
+  { key: 'queued', label: 'Queued', color: 'var(--outline)' },
+  { key: 'completed', label: 'Completed', color: 'var(--safe)' },
+];
+const ACCURACY_SERIES: Series[] = [
+  { key: 'estimated', label: 'Estimated (avg)', color: 'var(--info)' },
+  { key: 'actual', label: 'Actual (avg)', color: 'var(--gold)' },
+];
+const ALERT_SERIES: Series[] = [
+  { key: 'critical', label: 'Critical', color: 'var(--danger)' },
+  { key: 'warning', label: 'Warning', color: 'var(--warning)' },
+  { key: 'info', label: 'Info', color: 'var(--info)' },
+];
 
 export default async function OverviewPage() {
   await requireSupervisor();
-  const [ov, operators, incidents, alerts, machines, active] = await Promise.all([
+  const [ov, operators, incidents, alerts, machines, active, taskCounts, accuracy, alertsByOp] = await Promise.all([
     getOverview(),
     getOperators(),
     getIncidents({ status: 'active', limit: 5 }),
     getAlerts({ unacked: true, limit: 5 }),
     getMachines(),
     getTasks({ status: 'active' }),
+    getTaskStatusCounts(),
+    getAccuracyByType(),
+    getAlertsByOperator(),
   ]);
+  const taskValues = Object.fromEntries(taskCounts.map((c) => [c.status, c.count]));
   const estByTask = new Map(active.map((t) => [t.id, t.estimatedMinutes]));
 
   return (
     <>
       <PageHeader title="Shift Overview" sub="Live view of your crew, fleet and safety events" />
       <div className="content">
-        <section className="kpis">
+        <section className="kpis row">
           <Link href="/tasks?status=active" className="kpi primary">
             <div className="label">Active tasks</div>
             <div className="value">{ov.activeTasks}</div>
@@ -60,6 +98,65 @@ export default async function OverviewPage() {
             <div className="value">{ov.mae ?? '—'}m</div>
             <div className="sub">
               MAE · RMSE {ov.rmse ?? '—'}m · n={ov.historyCount}
+            </div>
+          </div>
+        </section>
+
+        <section className="grid-3">
+          <div className="panel">
+            <div className="panel-head">
+              <h2>Task pipeline</h2>
+              <span className="muted small">{ov.totalTasks} tasks</span>
+            </div>
+            <div className="panel-body">
+              <PartsBar series={TASK_SERIES} values={taskValues} unit="tasks" />
+              <h3 className="chart-sub">Workload by operator</h3>
+              <StackedRows
+                series={WORKLOAD_SERIES}
+                rows={operators.map((o) => ({
+                  label: o.name,
+                  href: `/operators/${o.id}`,
+                  values: { active: o.activeTaskId ? 1 : 0, queued: o.queuedTasks, completed: o.completedTasks },
+                }))}
+                empty="No tasks assigned yet."
+              />
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="panel-head">
+              <h2>Estimate vs actual</h2>
+              <span className="muted small">avg minutes</span>
+            </div>
+            <div className="panel-body">
+              <GroupedRows
+                series={ACCURACY_SERIES}
+                rows={accuracy.map((a) => ({
+                  label: humanize(a.taskType),
+                  note: `n=${a.n}`,
+                  values: { estimated: a.estimated, actual: a.actual },
+                }))}
+                format={(v) => `${Math.round(v)}m`}
+                empty="No completed tasks recorded yet."
+              />
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="panel-head">
+              <h2>Alerts by operator</h2>
+              <span className="muted small">last 7 days</span>
+            </div>
+            <div className="panel-body">
+              <StackedRows
+                series={ALERT_SERIES}
+                rows={alertsByOp.map((o) => ({
+                  label: o.name,
+                  href: `/operators/${o.operatorId}`,
+                  values: { critical: o.critical, warning: o.warning, info: o.info },
+                }))}
+                empty="No safety alerts in the last 7 days."
+              />
             </div>
           </div>
         </section>

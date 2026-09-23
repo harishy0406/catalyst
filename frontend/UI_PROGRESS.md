@@ -128,6 +128,7 @@ cat-operator-app/
     │       └── profile.tsx   # Screen 10
     ├── components/           # design-system primitives (below)
     ├── data/mock.ts          # all mock telemetry, tasks, events and modules
+    ├── data/machines.ts      # fleet catalog, anomaly-model payloads and test scenarios
     ├── state/AppState.tsx    # session, task status, alert, incidents
     └── theme/tokens.ts       # colours, type scale, spacing, touch sizes
 ```
@@ -183,7 +184,7 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 | 6 | Task Detail | `/task/[id]` | ✅ Built | Toggleable pre-task checklist gates **Start**; Start / Pause / Complete update the shared task state |
 | 7 | Incident Report | `/incident` | ✅ Built | One-touch type grid, severity (HIGH has hazard stripe), macros, press-and-hold voice button, snapshot attach, submit → new `INC-xxxx` |
 | 8 | Training Hub | `/training` | ✅ Built | Progress, 3 module cards with photos, Start/In-progress toggle, shift bulletin |
-| 9 | Machine Status | `/machine` | ✅ Built | Recalibrate (loading), Acknowledge, advisories (arm auto-shutoff / dismiss), manual notes |
+| 9 | Machine Status | `/machine` | ✅ Built | Fleet selector (3 machine images), AI anomaly detection with class probabilities, test scenarios, live telemetry, advisories (dismiss), manual notes |
 | 10 | Operator Profile | `/profile` | ✅ Built | Identity and stats, menu rows → Training / Safety / Incident, **Log out** → Login |
 
 **Which tab is highlighted on sub-screens** (matches the mocks): Machine → HOME; Task Detail → TASKS; Alert, Incident and Training → SAFETY.
@@ -204,6 +205,7 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 
 - [x] Replace `data/mock.ts` with API calls to `backend/` (auth, tasks, ML prediction, alerts, incidents, training, machine insights)
 - [ ] Backend endpoint for machine details (model, engine hours, fuel %); these still come from `data/mock.ts`
+- [ ] Backend: fix the anomaly defaults and feature names in `app/schemas/ml.py` and `anomaly_service.py`. The server-side ML checks in `/insights` and `POST /telemetry` currently flag every excavator reading. After that, un-hide the backend AI advisory.
 - [ ] Real voice capture (`expo-audio`) and camera snapshot (`expo-camera`) on Incident Report
 - [ ] Persist the JWT across app restarts (`expo-secure-store`). Right now it lives in memory only
 - [ ] Landscape / in-dash tablet layout (12-column spec in DESIGN.md)
@@ -213,6 +215,20 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 ---
 
 ## Changelog
+
+### 2026-09-24 — ML outputs and Machine page rebuild
+- **Task duration (CatBoost)**: tasks now use `POST /tasks/{id}/estimate` instead of the older `/ml/predict`. Tasks show first, and the estimates fill in when they arrive.
+  - Task Detail shows the predicted minutes, colored by risk, plus an **AI Duration Forecast** card with minutes over or under plan, % deviation, the risk badge (On Schedule / Delayed / Accelerated) and the model's confidence label.
+  - The task list shows an `AI: N min` chip and an "AI N min" line on queue rows.
+- **Machine page** (`/machine`), rebuilt:
+  - **Fleet selector** with the three machine images from `assest/` (copied to `assets/images/machines/`). The operator's own machine is marked with a green dot.
+  - **Hero** with a large machine image, model, ID, a "Your machine" or "Fleet unit" badge, the health score and an AI status badge.
+  - **AI Anomaly Detection** calls the per-type route `POST /ml/anomaly/{excavator|bulldozer|loader}` with the latest `GET /telemetry/{id}` reading. It shows Normal or the anomaly class, confidence, the model's message, the recommended action and the top 4 class probabilities. It re-polls every 10 s while the page is open.
+  - **Diagnostic Test Scenarios**: one chip per anomaly class the model can detect (7 excavator, 3 loader, 5 dozer). A chip scores a simulated sensor profile and writes nothing to the backend. **Live** goes back to the real feed.
+  - **Live Telemetry**: RPM, engine temp, hydraulics, fuel rate and speed. Out-of-range values are shown in red.
+  - Advisories come from `/insights`. The backend's own "AI Predictive Fleet Diagnostics" entry is hidden because the AI panel replaces it (see the backend note below).
+  - Key shift metrics show for the operator's own machine only. The hardcoded Quick Inspection panel and the Recalibrate / Acknowledge buttons were removed.
+- **Why the app sends a full telemetry payload**: the backend's default feature values are outside the training range. For example, the excavator boom, arm and bucket rates default to 24/22/20, while the "Normal" median is about 0.7. With those defaults the model returns "Aggressive Boom Movement 99.8%" for every input. `src/data/machines.ts` sends the median readings of the Normal class with the live values on top. With that, all 18 scenario checks returned the expected class against the running backend.
 
 ### 2026-09-23 — Frontend wired to the FastAPI backend
 - New `src/api/client.ts` wraps `fetch` with a Bearer token, auto-detects the base URL and has typed endpoints that match `backend/app/schemas`.

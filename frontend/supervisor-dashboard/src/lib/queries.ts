@@ -292,3 +292,36 @@ export async function getOperatorHistory(operatorId: string): Promise<HistoryRow
     [operatorId],
   );
 }
+
+// ---------- overview charts ----------
+
+export async function getTaskStatusCounts(): Promise<{ status: string; count: number }[]> {
+  return query(`SELECT status, COUNT(*)::int AS count FROM tasks GROUP BY status`);
+}
+
+export type AccuracyByType = { taskType: string; n: number; estimated: number; actual: number; mae: number };
+
+export async function getAccuracyByType(): Promise<AccuracyByType[]> {
+  return query<AccuracyByType>(`
+    SELECT task_type AS "taskType", COUNT(*)::int AS n,
+           ROUND(AVG(estimated_minutes)::numeric, 1)::float AS estimated,
+           ROUND(AVG(actual_minutes)::numeric, 1)::float AS actual,
+           ROUND(AVG(ABS(error_minutes))::numeric, 1)::float AS mae
+    FROM task_history GROUP BY task_type ORDER BY n DESC, task_type`);
+}
+
+export type AlertsByOperator = { operatorId: string; name: string; critical: number; warning: number; info: number };
+
+/** Safety alerts over the last 7 days, split by severity, one row per operator (operators with none included). */
+export async function getAlertsByOperator(): Promise<AlertsByOperator[]> {
+  return query<AlertsByOperator>(`
+    SELECT u.id AS "operatorId", u.name,
+           COUNT(a.id) FILTER (WHERE a.severity = 'critical')::int AS critical,
+           COUNT(a.id) FILTER (WHERE a.severity = 'warning')::int AS warning,
+           COUNT(a.id) FILTER (WHERE a.severity NOT IN ('critical','warning'))::int AS info
+    FROM users u
+    LEFT JOIN alerts a ON a.operator_id = u.id AND a.created_at >= NOW() - INTERVAL '7 days'
+    WHERE u.role = 'operator'
+    GROUP BY u.id, u.name
+    ORDER BY COUNT(a.id) DESC, u.name`);
+}
