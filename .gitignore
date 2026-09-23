@@ -5,6 +5,7 @@
 !.gitignore
 !requirements.txt
 !README.md
+!render.yaml
 !assest/
 !assest/**
 !docs/
