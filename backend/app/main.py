@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.config import settings
 from app.database import init_db, check_db_connection
-from app.ml.estimator import estimator_instance
+from app.inference.estimator import estimator_instance
 from app.seed import seed_database
 from app.routers import (
     auth,

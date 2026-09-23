@@ -4,13 +4,18 @@
 # Keep the repo itself and the specific project files we want
 !.gitignore
 !requirements.txt
+!README.md
+!assest/
+!assest/**
+!docs/
+!docs/**
+!frontend/
+!frontend/**
+!backend/
+!backend/**
 !ml/
-!ml/anomaly/
-!ml/anomaly/**
-!ml/datasets/
-!ml/datasets/**
-!ml/task_time/
-!ml/task_time/**
+!ml/**
+!ml/models/*.pkl
 
 # Python and environment noise
 __pycache__/

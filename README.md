@@ -58,11 +58,11 @@ Heavy construction jobsites operate under intense pressure, tight delivery sched
 | --- | --- | --- |
 | **Backend Framework** | **FastAPI** (Python 3.11) | Asynchronous, type-safe REST API with OpenAPI documentation |
 | **Database & Pooling** | **Supabase PostgreSQL 15** + `psycopg2` | High-performance pooled relational database with SSL encryption |
-| **Machine Learning** | **Scikit-Learn**, **NumPy**, **Pandas** | Task duration estimation (Random Forest), statistical anomaly detection |
+| **Machine Learning** | **CatBoost**, **Scikit-Learn**, **Pandas**, **Joblib** | Task duration estimation (CatBoost R²=0.92), multi-machine fleet anomaly detection (Random Forest) |
 | **Mobile / Cabin App** | **React Native**, **Expo**, **TypeScript** | Touch-optimized, high-contrast in-cabin operator interface |
 | **Authentication** | **JWT (HMAC-SHA256)** + **OAuth2 Bearer** | Role-based access control for Operators, Safety Officers, and Supervisors |
 | **Data Validation** | **Pydantic v2** | Strict schema validation for sensor streams, tasks, and analytics |
-| **Testing Suite** | **Starlette TestClient** / **pytest** | 11-phase end-to-end integration and benchmark verification test suite |
+| **Testing Suite** | **Starlette TestClient** / **pytest** | 12-phase end-to-end integration and benchmark verification test suite |
 
 ---
 
@@ -265,12 +265,18 @@ Both benchmark figures are verified directly in `backend/test_api.py` and reflec
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/machines/{id}/insights` | Predictive health score, active anomalies, repair actions |
+| `GET` | `/machines/{id}/insights` | Predictive health score, active anomalies, AI fleet diagnostics |
 | `GET` | `/analytics/supervisor` | Fleet availability, task completion rates, MAE/RMSE |
-| `POST` | `/ml/predict` | Predicts task duration via ML/formula |
-| `POST` | `/ml/train` | Re-trains Random Forest model on accumulated history |
+| `POST` | `/tasks/{id}/estimate` | Contextual task duration prediction using assigned machine & operator |
+| `POST` | `/ml/task-time/predict` | Estimates task completion time using CatBoost Regressor ($R^2=0.92$) |
+| `POST` | `/ml/anomaly/predict` | Multi-machine anomaly detection (Excavator / Bulldozer / Loader) |
+| `POST` | `/ml/anomaly/excavator` | Dedicated Excavator boom, swing, & hydraulic diagnostics |
+| `POST` | `/ml/anomaly/bulldozer` | Dedicated Bulldozer blade load & track slip diagnostics |
+| `POST` | `/ml/anomaly/loader` | Dedicated Wheel Loader bucket load & transmission heat diagnostics |
+| `GET` | `/ml/status` | Returns runtime health of all loaded models & frameworks |
+| `POST` | `/ml/predict` | Legacy duration prediction |
+| `POST` | `/ml/train` | Re-trains model on accumulated task history |
 | `GET` | `/ml/metrics` | Returns current MAE, RMSE, sample count & status |
-| `GET` | `/ml/status` | Returns ML engine metadata and algorithm status |
 
 ---
 

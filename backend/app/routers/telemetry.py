@@ -6,6 +6,10 @@ from datetime import datetime
 from app.database import execute_query
 from app.dependencies import get_current_user
 from app.schemas.telemetry import TelemetryIngestRequest, TelemetryResponse
+from app.inference.services.anomaly_service import anomaly_service
+import logging
+
+logger = logging.getLogger("catalyst.telemetry")
 
 router = APIRouter(prefix="/telemetry", tags=["telemetry"])
 
@@ -87,7 +91,7 @@ def ingest_telemetry(req: TelemetryIngestRequest):
                 "createdAt": datetime.utcnow().isoformat()
             })
 
-    # Anomaly checks (e.g. engine running with 0 speed and high fuel = excessive idle)
+    # Heuristic anomaly check: engine running with 0 speed and high RPM
     if (req.speed is not None and req.speed == 0) and (req.engineRpm is not None and req.engineRpm > 800):
         anomalies_detected.append({
             "type": "excessive_idling",
@@ -95,6 +99,63 @@ def ingest_telemetry(req: TelemetryIngestRequest):
             "description": f"Machine {req.machineId} idling at {req.engineRpm} RPM with zero ground speed",
             "detectedAt": datetime.utcnow().isoformat()
         })
+
+    # Machine Learning Anomaly Detection (Random Forest multi-class model)
+    try:
+        mtype = "excavator"
+        m_rows = execute_query("SELECT model FROM machines WHERE id = %s", (req.machineId,))
+        if m_rows and m_rows[0].get("model"):
+            mtype = str(m_rows[0]["model"]).lower()
+
+        ml_pred = anomaly_service.predict({
+            "machine_type": mtype,
+            "context": {
+                "machine_id": req.machineId,
+                "operator_id": req.operatorId,
+                "timestamp": datetime.utcnow().isoformat()
+            },
+            "telemetry": {
+                "engine_rpm": req.engineRpm or 1750,
+                "engine_temp": req.engineTemp or 88,
+                "hydraulic_pressure": req.hydraulicPressure or 260,
+                "fuel_rate": req.fuelRate or 16.5,
+                "speed": req.speed or 0.0,
+                "machine_speed_kmh": req.speed or 0.0,
+                "vehicle_speed_kmh": req.speed or 0.0,
+            }
+        })
+
+        if ml_pred.get("isAnomaly"):
+            sev = "critical" if any(w in ml_pred.get("prediction", "") for w in ["Overheating", "Stress"]) else "warning"
+            anomalies_detected.append({
+                "type": ml_pred.get("prediction", "anomaly"),
+                "severity": sev,
+                "description": ml_pred.get("message", "AI detected unusual behavior"),
+                "recommendedAction": ml_pred.get("recommendedAction"),
+                "confidence": ml_pred.get("confidence"),
+                "detectedAt": datetime.utcnow().isoformat()
+            })
+
+            alert_id = f"ALT-ML-{uuid.uuid4().hex[:6].upper()}"
+            alert_msg = f"[AI Alert] {ml_pred.get('message')} - Action: {ml_pred.get('recommendedAction')}"
+            try:
+                execute_query(
+                    """INSERT INTO alerts (id, machine_id, operator_id, severity, message, created_at)
+                       VALUES (%s, %s, %s, %s, %s, NOW())""",
+                    (alert_id, req.machineId, req.operatorId, sev, alert_msg)
+                )
+                alerts_triggered.append({
+                    "id": alert_id,
+                    "machineId": req.machineId,
+                    "severity": sev,
+                    "message": alert_msg,
+                    "ruleId": "ML-ANOMALY-ENGINE",
+                    "createdAt": datetime.utcnow().isoformat()
+                })
+            except Exception as db_err:
+                logger.warning(f"[Telemetry] Could not insert ML alert: {db_err}")
+    except Exception as ml_err:
+        logger.error(f"[Telemetry] ML Anomaly evaluation error: {ml_err}")
 
     return TelemetryResponse(
         success=True,

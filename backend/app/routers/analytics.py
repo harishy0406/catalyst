@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 
 from app.database import execute_query
 from app.dependencies import get_current_user
-from app.ml.estimator import estimator_instance
+from app.inference.estimator import estimator_instance
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 

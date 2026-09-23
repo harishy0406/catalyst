@@ -12,6 +12,8 @@ from app.schemas.tasks import (
     TaskCompleteResponse,
     TaskStatusRequest,
 )
+from app.schemas.ml import TaskTimePredictResponse
+from app.inference.services.task_time_service import task_time_service
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -149,3 +151,47 @@ def update_task_status(
     execute_query("UPDATE tasks SET status = %s WHERE id = %s", (req.status, task_id))
     updated = execute_query("SELECT * FROM tasks WHERE id = %s", (task_id,))
     return {"success": True, "task": format_task_row(updated[0])}
+
+
+@router.post("/{task_id}/estimate", response_model=TaskTimePredictResponse)
+def estimate_task_duration(
+    task_id: str,
+    override: Optional[Dict[str, Any]] = None,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """
+    Predict real-time task duration for this specific task using CatBoost ML Regressor.
+    Extracts machine age, machine type, operator skill level, and planned duration
+    directly from database entities, applying optional situational modifiers.
+    """
+    rows = execute_query("SELECT * FROM tasks WHERE id = %s", (task_id,))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    task = rows[0]
+    param_override = override or {}
+
+    machine_age = 2.0
+    machine_type = "Excavator"
+    if task.get("machine_id"):
+        m_rows = execute_query("SELECT * FROM machines WHERE id = %s", (task["machine_id"],))
+        if m_rows:
+            machine_type = m_rows[0].get("model", "Excavator")
+
+    operator_skill = "Intermediate"
+    if task.get("assigned_to"):
+        u_rows = execute_query("SELECT * FROM users WHERE id = %s", (task["assigned_to"],))
+        if u_rows:
+            operator_skill = u_rows[0].get("skill_level", "Intermediate")
+
+    payload = {
+        "taskType": task.get("type") or task.get("title", "Trenching"),
+        "machineType": machine_type,
+        "estimatedMinutes": float(task.get("estimated_minutes") or 60.0),
+        "operatorSkill": operator_skill,
+        "machineAgeYears": machine_age,
+        **param_override
+    }
+
+    res = task_time_service.predict(payload)
+    return TaskTimePredictResponse(**res)

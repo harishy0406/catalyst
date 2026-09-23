@@ -5,6 +5,10 @@ from datetime import datetime
 from app.database import execute_query
 from app.dependencies import get_current_user
 from app.schemas.anomaly import MachineInsightsResponse
+from app.inference.services.anomaly_service import anomaly_service
+import logging
+
+logger = logging.getLogger("catalyst.anomaly")
 
 router = APIRouter(prefix="/machines", tags=["machines"])
 
@@ -71,6 +75,49 @@ def get_machine_insights(machine_id: str, current_user: Dict[str, Any] = Depends
                 "reason": "Intermittent circuit backpressure spike observed."
             })
             base_health -= 8
+
+        # AI Predictive Fleet Anomaly Evaluation (Random Forest multi-class model)
+        try:
+            mtype = str(m.get("model") or "excavator").lower()
+            ml_pred = anomaly_service.predict({
+                "machine_type": mtype,
+                "context": {
+                    "machine_id": machine_id,
+                    "operator_id": m.get("assigned_operator_id"),
+                    "task_type": "excavation" if "exc" in mtype else "dozing" if "doz" in mtype else "loading",
+                    "timestamp": t["recorded_at"].isoformat() if t.get("recorded_at") else datetime.utcnow().isoformat()
+                },
+                "telemetry": {
+                    "engine_rpm": float(t["engine_rpm"]) if t.get("engine_rpm") is not None else 1750,
+                    "engine_temp": float(t["engine_temp"]) if t.get("engine_temp") is not None else 88,
+                    "hydraulic_pressure": float(t["hydraulic_pressure"]) if t.get("hydraulic_pressure") is not None else 260,
+                    "fuel_rate": float(t["fuel_rate"]) if t.get("fuel_rate") is not None else 16.5,
+                    "speed": float(t["speed"]) if t.get("speed") is not None else 0.0,
+                    "machine_speed_kmh": float(t["speed"]) if t.get("speed") is not None else 0.0,
+                    "vehicle_speed_kmh": float(t["speed"]) if t.get("speed") is not None else 0.0,
+                },
+                "machine_context": {
+                    "machine_hours": float(m.get("hours_operated") or 2500),
+                    "maintenance_due_days": 18
+                }
+            })
+
+            if ml_pred.get("isAnomaly"):
+                anomalies.append({
+                    "component": "AI Predictive Fleet Diagnostics",
+                    "severity": "critical" if any(w in ml_pred["prediction"] for w in ["Overheating", "Stress"]) else "warning",
+                    "metric": ml_pred["prediction"],
+                    "value": f"{ml_pred['confidencePercent']}% confidence",
+                    "description": ml_pred["message"]
+                })
+                recommendations.append({
+                    "action": ml_pred["recommendedAction"],
+                    "priority": "high" if any(w in ml_pred["prediction"] for w in ["Overheating", "Stress"]) else "medium",
+                    "reason": f"AI model flagged {ml_pred['prediction']} with {ml_pred['confidencePercent']}% confidence."
+                })
+                base_health -= 15
+        except Exception as e:
+            logger.error(f"[Insights] ML Anomaly evaluation error: {e}")
 
     # Check unresolved alerts
     active_alerts = execute_query(
