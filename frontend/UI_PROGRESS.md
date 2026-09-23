@@ -18,6 +18,50 @@ npx expo start       # scan the QR code with Expo Go (Android) or the Camera app
 - Press `w` in the terminal to open it in a browser. Save any file and the app on your phone hot-reloads.
 - Before you commit, run `npm run typecheck` and `npx expo lint`.
 
+## Build an APK (local, no Expo account needed)
+
+`/mnt/data` is NTFS, and Gradle/CMake break on it (symlinks, exec bits). So build from a copy of the project on the Linux (ext4) home drive:
+
+```bash
+# 1. sync the source (skip heavy/generated folders)
+rsync -a --delete --exclude node_modules --exclude android --exclude ios --exclude .expo \
+  /mnt/data/Internship/CAT/cat-hack/frontend/cat-operator-app/ ~/builds/cat-operator-app/
+cd ~/builds/cat-operator-app && npm install
+
+# 2. generate the native Android project from app.json
+CI=1 npx expo prebuild --platform android --clean --no-install
+echo "sdk.dir=$HOME/Android/Sdk" > android/local.properties
+# optional: arm64 only (faster) + cap Gradle RAM
+sed -i 's/^reactNativeArchitectures=.*/reactNativeArchitectures=arm64-v8a/; s/^org.gradle.jvmargs=.*/org.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=768m/' android/gradle.properties
+
+# 3. build
+cd android && ./gradlew assembleRelease
+# → android/app/build/outputs/apk/release/app-release.apk
+```
+
+- Package ID: `com.catalyst.operator` (`app.json → android.package`). Bump `android.versionCode` for each new APK you share.
+- The release APK is signed with the **debug keystore** (Expo template default). It's fine for sideloading and testing, but **not for the Play Store**. For the Play Store, create a real keystore or use `eas build -p android`.
+### Or: EAS cloud build (no local SDK needed)
+
+The project is linked to Expo: **@anshv/cat-operator-app** (`extra.eas.projectId` in app.json). `eas.json` has these profiles:
+
+| Profile | Output | Use |
+|---|---|---|
+| `preview` | **APK**, internal distribution | Share or sideload on phones |
+| `production` | AAB | Play Store |
+| `development` | Dev client | Only needed once you add native modules that Expo Go lacks |
+
+```bash
+cd frontend/cat-operator-app
+EAS_NO_VCS=1 npx eas-cli@latest build -p android --profile preview
+```
+
+- `EAS_NO_VCS=1` uploads the folder as-is, uncommitted changes included, and skips files listed in `.easignore`. Once everything is committed you can drop it.
+- The Android keystore is **managed by Expo** (created on the first build). Keep using EAS so every build is signed with the same key; otherwise phones can't update the app in place.
+- The EAS server runs `npm ci`, so `package-lock.json` must be in sync with `package.json`. Always add packages with `npx expo install`.
+- `eas.json → build.base.node` is pinned to **24.12.0**, the same Node as the dev laptop. EAS defaults to Node 22 (npm 10), and its `npm ci` rejected our npm 11 lockfile (`Missing: @emnapi/core … from lock file`). If you upgrade local Node, update this pin too.
+- Build status and the APK download link are at expo.dev → Projects → cat-operator-app → Builds.
+
 ---
 
 ## Stack
