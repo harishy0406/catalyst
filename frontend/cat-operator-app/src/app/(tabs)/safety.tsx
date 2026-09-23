@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Alert, View } from 'react-native';
 
 import { Badge, Button, Cell, Icon, NavRow, Panel, Pip, Row, Screen, Spec, Txt } from '@/components';
-import { machine } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { colors, space } from '@/theme/tokens';
 
@@ -36,7 +35,7 @@ const SYSTEMS = [
 
 /** Screen 4 — Safety Center (stitch: screen_4_safety_center). */
 export default function Safety() {
-  const { safetyEvents, alertActive } = useApp();
+  const { safetyEvents, alertActive, activeAlert, machine } = useApp();
   const [showAll, setShowAll] = useState(false);
   const events = showAll ? safetyEvents : safetyEvents.slice(0, 3);
 
@@ -103,7 +102,7 @@ export default function Safety() {
         <View style={{ padding: space.md, gap: space.md - 4, backgroundColor: colors.surfaceLowest }}>
           <View style={{ flexDirection: 'row', gap: space.sm, alignItems: 'flex-start' }}>
             <Txt v="labelMd" color={alertActive ? colors.secondary : colors.tertiaryContainer} style={{ flex: 1 }}>
-              {alertActive ? 'Proximity breach — rear swing radius' : 'All machine safety & telematics systems normal'}
+              {alertActive ? (activeAlert?.message ?? 'Operator action required') : 'All machine safety & telematics systems normal'}
             </Txt>
             <Badge label="Heavy Duty Mode" />
           </View>

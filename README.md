@@ -323,6 +323,19 @@ Interactive documentation is immediately accessible at:
 - **Swagger UI**: [http://localhost:3000/docs](http://localhost:3000/docs)
 - **ReDoc**: [http://localhost:3000/redoc](http://localhost:3000/redoc)
 
+### 5. Supervisor Dashboard (Next.js)
+
+A standalone web app for supervisors and safety officers. They can assign tasks to operators, watch the crew live, and review incident reports and safety alerts. It connects directly to the same Supabase database and does not call the backend API.
+
+```bash
+cd frontend/supervisor-dashboard
+npm install
+cp .env.example .env.local   # set DATABASE_URL (same as backend/.env) and SESSION_SECRET
+npm run dev                  # http://localhost:3100 — log in as SUP-101 / 1001
+```
+
+See [`frontend/supervisor-dashboard/README.md`](frontend/supervisor-dashboard/README.md).
+
 ---
 
 ## 🧪 Verification & Automated Testing

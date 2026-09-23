@@ -18,6 +18,29 @@ npx expo start       # scan the QR code with Expo Go (Android) or the Camera app
 - Press `w` in the terminal to open it in a browser. Save any file and the app on your phone hot-reloads.
 - Before you commit, run `npm run typecheck` and `npx expo lint`.
 
+## Connect to the backend
+
+The app talks to the FastAPI backend in [`backend/`](../backend/) on port **3000**.
+
+```bash
+# terminal 1 — backend (first time: python3 -m venv ~/.venvs/cat-backend && ~/.venvs/cat-backend/bin/pip install -r requirements.txt)
+cd backend
+~/.venvs/cat-backend/bin/uvicorn app.main:app --host 0.0.0.0 --port 3000 --reload
+
+# terminal 2 — app
+cd frontend/cat-operator-app && npx expo start
+```
+
+- **Base URL** (`src/api/client.ts`): `EXPO_PUBLIC_API_URL` if it is set. Otherwise the app uses the Metro host IP on port 3000 (Expo Go on the same Wi-Fi), or `localhost:3000` on web. The login screen shows the URL it is using and whether the API is reachable.
+- **Demo logins** (from `backend/app/seed.py`): `OP-4412` / PIN `4412` (expert, CAT-320-01), `OP-8821` / `8821`, `SUP-101` / `1001`. Tap ⇄ to switch operator. Switching clears the PIN.
+- **To trigger a live alert**, post telemetry above a rule threshold. The app polls alerts every 10 s:
+  ```bash
+  curl -X POST localhost:3000/telemetry -H 'content-type: application/json' \
+    -d '{"machineId":"CAT-320-01","operatorId":"OP-4412","engineTemp":110,"hydraulicPressure":345,"speed":0,"engineRpm":1800}'
+  ```
+- **For APK builds**, set `EXPO_PUBLIC_API_URL=http://<laptop-LAN-IP>:3000` before building. Release builds block plain HTTP by default, so the backend needs HTTPS, or `usesCleartextTraffic` has to be enabled through `expo-build-properties`.
+- `POST /seed` resets the whole Supabase DB to the demo data. Everyone shares that DB, so only run it on purpose.
+
 ## Build an APK (local, no Expo account needed)
 
 `/mnt/data` is NTFS, and Gradle/CMake break on it (symlinks, exec bits). So build from a copy of the project on the Linux (ext4) home drive:
@@ -74,7 +97,7 @@ EAS_NO_VCS=1 npx eas-cli@latest build -p android --profile preview
 | Icons | `@expo/vector-icons/MaterialIcons`, with Material Symbols names mapped automatically (see `Icon.tsx`) |
 | Images | `expo-image`. The Stitch reference photos and the Catalyst logo are in `assets/images/` |
 | Branding | Catalyst wordmark (`assest/logo-b.png` → `assets/images/logo-catalyst.png`), used for the app icon, adaptive icon, splash, favicon and `Logo` component |
-| State | One React context (`src/state/AppState.tsx`) holding mock data from `src/data/mock.ts` |
+| State | One React context (`src/state/AppState.tsx`) that loads from the FastAPI backend through `src/api/client.ts`. `src/data/mock.ts` only fills fields the API doesn't expose yet |
 
 No extra native modules are used, so everything runs in **Expo Go** without a development build.
 
@@ -179,9 +202,10 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 
 ## Next steps / TODO
 
-- [ ] Replace `data/mock.ts` with API calls to `backend/` (telemetry, tasks, incidents)
+- [x] Replace `data/mock.ts` with API calls to `backend/` (auth, tasks, ML prediction, alerts, incidents, training, machine insights)
+- [ ] Backend endpoint for machine details (model, engine hours, fuel %); these still come from `data/mock.ts`
 - [ ] Real voice capture (`expo-audio`) and camera snapshot (`expo-camera`) on Incident Report
-- [ ] Persist the session and PIN auth (`expo-secure-store`)
+- [ ] Persist the JWT across app restarts (`expo-secure-store`). Right now it lives in memory only
 - [ ] Landscape / in-dash tablet layout (12-column spec in DESIGN.md)
 - [ ] Haptics on critical actions (`expo-haptics`)
 - [x] Custom app icon and splash (Catalyst logo)
@@ -189,6 +213,18 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 ---
 
 ## Changelog
+
+### 2026-09-23 — Frontend wired to the FastAPI backend
+- New `src/api/client.ts` wraps `fetch` with a Bearer token, auto-detects the base URL and has typed endpoints that match `backend/app/schemas`.
+- `AppState` now loads its data from the API:
+  - **Login**: `POST /auth/login` with the real operator ID and PIN. Errors show inline, and a live `/health` indicator sits in the telematics box.
+  - **Tasks**: `/tasks/today`, sorted so active work comes first. Start, pause and complete go to `/tasks/{id}/start|status|complete`, and complete reports the actual minutes. "Predicted Time" comes from `POST /ml/predict` (Random Forest).
+  - **Safety**: `/safety/alerts` is polled every 10 s. Any unacknowledged alert turns on the alert state, and Acknowledge acks each one. Safety events are the alert history, and the Alert and Safety screens show the real alert message.
+  - **Incidents**: `GET/POST /incidents`.
+  - **Training**: `/training/content` plus `/training/recommendations`. Progress is completed / total. The button goes Start, then Mark Complete (`POST /training/{id}/complete`).
+  - **Machine**: `/machines/{id}/insights` supplies the health score badge, anomalies and recommendations as advisories, and the live hydraulic pressure.
+- The operator name, skill level and active machine come from the logged-in user instead of the mock.
+- The tabs layout sends you to `/login` when no one is signed in.
 
 ### 2026-09-23 — Catalyst logo and app manifest
 - Picked `assest/logo-b.png` (the 2048px white wordmark with the gold CAT triangle) as the source because the app UI is dark. Keyed its black background into transparency → `assets/images/logo-catalyst.png`.

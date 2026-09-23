@@ -2,16 +2,16 @@ import { router } from 'expo-router';
 import { View } from 'react-native';
 
 import { Badge, Button, Cell, Icon, Metric, NavRow, Panel, Pip, ProgressBar, Row, Screen, Txt } from '@/components';
-import { machine, operator, site } from '@/data/mock';
+import { site } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { colors, space } from '@/theme/tokens';
 
 /** Screen 2 — Home / Shift Overview (stitch: screen_2_home_shift_overview). */
 export default function Home() {
-  const { tasks, alertActive } = useApp();
+  const { tasks, alertActive, machine, operator } = useApp();
   const current = tasks.find((t) => t.status === 'in_progress' || t.status === 'paused' || t.status === 'ready') ?? tasks[0];
   const next = tasks.find((t) => t.status === 'queued');
-  const completed = tasks.filter((t) => t.status === 'completed').length + 2; // 2 already done before app session
+  const completed = tasks.filter((t) => t.status === 'completed').length;
   const pct = current.elapsedMin / current.estMin;
 
   return (

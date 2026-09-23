@@ -1,6 +1,8 @@
+import { Redirect } from 'expo-router';
 import { Tabs } from 'expo-router/tabs';
 
 import { TabBar } from '@/components';
+import { useApp } from '@/state/AppState';
 import { colors } from '@/theme/tokens';
 
 /**
@@ -8,6 +10,9 @@ import { colors } from '@/theme/tokens';
  * with `href: null` so the bottom bar stays visible, matching every Stitch mock.
  */
 export default function TabsLayout() {
+  const { signedIn } = useApp();
+  if (!signedIn) return <Redirect href="/login" />;
+
   return (
     <Tabs
       tabBar={(props) => <TabBar {...props} />}

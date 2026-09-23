@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Badge, Button, Cell, Icon, Metric, Panel, Row, Screen, Txt } from '@/components';
-import { machine, operator } from '@/data/mock';
+import { TaskStatus } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { border, colors, space } from '@/theme/tokens';
 
@@ -24,11 +24,29 @@ const STATUS_LABEL = {
 /** Screen 6 — Task Detail (stitch: screen_6_task_detail). */
 export default function TaskDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { tasks, setTaskStatus, alertActive } = useApp();
+  const { tasks, setTaskStatus, alertActive, machine, operator } = useApp();
   const task = tasks.find((t) => t.id === id) ?? tasks[0];
   const [checked, setChecked] = useState([true, true, true]);
+  const [busy, setBusy] = useState(false);
   const allClear = checked.every(Boolean);
+
+  if (!task) {
+    return (
+      <Screen header={{ subtitle: 'Cab Display Unit • SYS_VER 4.12', hazard: true, alert: alertActive }}>
+        <Panel>
+          <Txt v="headlineMd">No task loaded</Txt>
+          <Button label="Back to Tasks" icon="assignment" onPress={() => router.navigate('/tasks')} />
+        </Panel>
+      </Screen>
+    );
+  }
+
   const running = task.status === 'in_progress';
+  const act = async (status: TaskStatus) => {
+    setBusy(true);
+    await setTaskStatus(task.id, status);
+    setBusy(false);
+  };
 
   return (
     <Screen header={{ subtitle: 'Cab Display Unit • SYS_VER 4.12', hazard: true, alert: alertActive }}>
@@ -99,7 +117,7 @@ export default function TaskDetail() {
           <Metric
             label="Operator Skill"
             icon="badge"
-            value="Expert"
+            value={operator.skillLevel.charAt(0).toUpperCase() + operator.skillLevel.slice(1)}
             unit={`LVL ${operator.level}`}
             unitColor={colors.tertiaryContainer}
             size="md"
@@ -227,24 +245,25 @@ export default function TaskDetail() {
           label={running ? 'Task Running' : task.status === 'paused' ? 'Resume Task' : 'Start Task'}
           icon="play_arrow"
           size="lg"
-          disabled={!allClear || running || task.status === 'completed'}
-          onPress={() => setTaskStatus(task.id, 'in_progress')}
+          loading={busy}
+          disabled={busy || !allClear || running || task.status === 'completed'}
+          onPress={() => act('in_progress')}
         />
         <Button
           label="Pause Task"
           icon="pause"
           variant="outline"
           size="lg"
-          disabled={!running}
-          onPress={() => setTaskStatus(task.id, 'paused')}
+          disabled={busy || !running}
+          onPress={() => act('paused')}
         />
         <Button
           label={task.status === 'completed' ? 'Completed' : 'Complete Task'}
           icon="check_circle"
           size="lg"
-          disabled={task.status === 'completed' || task.status === 'queued'}
-          onPress={() => {
-            setTaskStatus(task.id, 'completed');
+          disabled={busy || task.status === 'completed' || task.status === 'queued'}
+          onPress={async () => {
+            await act('completed');
             router.navigate('/tasks');
           }}
         />

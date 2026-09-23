@@ -4,13 +4,12 @@ import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 
 import { Badge, Button, Cell, HazardStripe, Icon, Panel, Pip, Screen, Txt } from '@/components';
-import { machine } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { border, colors, space } from '@/theme/tokens';
 
 /** Screen 3 — Active Safety Alert (stitch: screen_3_active_safety_alert). */
 export default function ActiveAlert() {
-  const { alertActive, acknowledgeAlert } = useApp();
+  const { alertActive, acknowledgeAlert, activeAlert, machine } = useApp();
   const strobe = useStrobe(alertActive);
 
   const bg = strobe.interpolate({ inputRange: [0, 1], outputRange: [colors.secondaryContainer, colors.surfaceContainer] });
@@ -55,6 +54,16 @@ export default function ActiveAlert() {
           </Txt>
         </View>
       </Animated.View>
+
+      {/* Live alert from the backend safety-rule engine */}
+      {activeAlert && (
+        <Cell debossed style={{ gap: 4, borderLeftWidth: 4, borderLeftColor: colors.danger }}>
+          <Txt v="labelXs" color={colors.secondary}>
+            {activeAlert.severity} • {activeAlert.ruleId ?? 'Safety rule'} • {activeAlert.machineId}
+          </Txt>
+          <Txt v="headlineSm">{activeAlert.message}</Txt>
+        </Cell>
+      )}
 
       {/* Person detected */}
       <Panel borderColor={colors.secondary} borderWidth={2}>

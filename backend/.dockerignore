@@ -1,0 +1,16 @@
+# Secrets are passed at runtime (--env-file / host env vars), never baked into the image
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+*.log
+test_api.py
+README.md
+Dockerfile
+.dockerignore

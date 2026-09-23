@@ -2,14 +2,13 @@ import { router } from 'expo-router';
 import { View } from 'react-native';
 
 import { Badge, Button, Cell, Icon, NavRow, Panel, Pip, ProgressBar, Screen, Txt } from '@/components';
-import { machine, operator } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { colors, space } from '@/theme/tokens';
 
 /** Screen 10 — Operator Profile (stitch: screen_10_operator_profile). */
 export default function Profile() {
-  const { operatorId, signOut, safetyEvents, alertActive } = useApp();
-  const { done, total } = operator.training;
+  const { operatorId, signOut, safetyEvents, alertActive, machine, operator, training } = useApp();
+  const { done, total } = training;
 
   return (
     <Screen header={{ subtitle: operator.cab, alert: alertActive }}>
@@ -122,10 +121,10 @@ export default function Profile() {
               </Txt>
             </Txt>
             <Txt v="labelSm" color={colors.primaryContainer}>
-              {Math.round((done / total) * 100)}% Comp
+              {total ? Math.round((done / total) * 100) : 0}% Comp
             </Txt>
           </View>
-          <ProgressBar value={done / total} segments={total} height={8} />
+          <ProgressBar value={total ? done / total : 0} segments={Math.max(total, 1)} height={8} />
           <Txt v="labelXs" color={colors.onSurfaceVariant}>
             {done} / {total} completed
           </Txt>
@@ -136,13 +135,13 @@ export default function Profile() {
           </Txt>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Txt v="metric" color={colors.primaryContainer} style={{ fontSize: 44, lineHeight: 48 }}>
-              {operator.safetyEventsThisWeek}
+              {safetyEvents.length}
             </Txt>
             <Badge label="Resolved" tone="outlineSafe" />
           </View>
           <View style={{ padding: 6, borderLeftWidth: 3, borderLeftColor: colors.tertiaryContainer, backgroundColor: colors.surfaceHigh }}>
             <Txt v="labelXs" style={{ textTransform: 'none' }}>
-              {operator.safetyEventsThisWeek} this week (All Cleared & Resolved)
+              {safetyEvents.length} logged ({safetyEvents.filter((e) => !e.resolved).length} unacknowledged)
             </Txt>
           </View>
         </Cell>

@@ -17,6 +17,16 @@
 !ml/**
 !ml/models/*.pkl
 
+# Backend container files
+!backend/
+!backend/Dockerfile
+!backend/.dockerignore
+
+# Supervisor dashboard (Next.js); its own .gitignore drops node_modules/.next/.env.local
+!frontend/
+!frontend/supervisor-dashboard/
+!frontend/supervisor-dashboard/**
+
 # Python and environment noise
 __pycache__/
 *.py[cod]

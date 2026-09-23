@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Button, Cell, HazardStripe, Icon, Logo, Pip, Screen, Txt } from '@/components';
+import { api, API_URL } from '@/api/client';
 import { machine, OPERATORS, site } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { border, colors, space } from '@/theme/tokens';
@@ -11,24 +12,32 @@ import { border, colors, space } from '@/theme/tokens';
 export default function Login() {
   const { signIn } = useApp();
   const [opIndex, setOpIndex] = useState(0);
-  const [pin, setPin] = useState('2490'); // prefilled mock PIN, as in the mock
+  const [pin, setPin] = useState('4412'); // prefilled demo PIN for OP-4412
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const backend = useBackendStatus();
   const now = useClock();
 
   const tap = (d: string) => setPin((p) => (p.length < 4 ? p + d : p));
   const del = () => setPin((p) => p.slice(0, -1));
   const clear = () => setPin('');
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     setLoading(true);
-    setToast(true);
-    signIn(OPERATORS[opIndex]);
-    setTimeout(() => {
+    setError(null);
+    try {
+      await signIn(OPERATORS[opIndex], pin);
+      setToast(true);
+      setTimeout(() => {
+        setToast(false);
+        router.replace('/home');
+      }, 800);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
       setLoading(false);
-      setToast(false);
-      router.replace('/home');
-    }, 1200);
+    }
   };
 
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'CLR', '0', 'DEL'];
@@ -107,7 +116,11 @@ export default function Login() {
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Switch operator"
-                  onPress={() => setOpIndex((i) => (i + 1) % OPERATORS.length)}
+                  onPress={() => {
+                    setOpIndex((i) => (i + 1) % OPERATORS.length);
+                    setPin('');
+                    setError(null);
+                  }}
                   style={({ pressed }) => ({
                     width: 64,
                     alignItems: 'center',
@@ -178,6 +191,15 @@ export default function Login() {
               </View>
             </View>
 
+            {error && (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, padding: space.sm + 2, borderWidth: 2, borderColor: colors.error }}>
+                <Icon name="error" size={20} color={colors.error} />
+                <Txt v="labelSm" color={colors.error} style={{ flex: 1, textTransform: 'none' }}>
+                  {error}
+                </Txt>
+              </View>
+            )}
+
             <Button
               label={loading ? 'Connecting...' : 'Sign In'}
               iconRight="login"
@@ -199,14 +221,14 @@ export default function Login() {
               <SpecLine icon="schedule" label="Active Shift" value={site.loginShift} />
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm + 2 }}>
                 <View style={{ width: 20, alignItems: 'center' }}>
-                  <Pip pulse />
+                  <Pip pulse={backend === 'online'} color={backend === 'offline' ? colors.error : undefined} />
                 </View>
-                <View>
+                <View style={{ flex: 1 }}>
                   <Txt v="labelXs" color={colors.onSurfaceVariant}>
-                    Telemetrics Link
+                    Backend Link • {API_URL}
                   </Txt>
-                  <Txt v="labelMd" color={colors.tertiaryContainer}>
-                    GPS & Telematics: Connected
+                  <Txt v="labelMd" color={backend === 'offline' ? colors.error : colors.tertiaryContainer}>
+                    {backend === 'online' ? 'Catalyst API: Connected' : backend === 'offline' ? 'Catalyst API: Unreachable' : 'Checking...'}
                   </Txt>
                 </View>
               </View>
@@ -342,6 +364,25 @@ function BezelItem({ icon, text }: { icon: string; text: string }) {
       </Txt>
     </View>
   );
+}
+
+function useBackendStatus() {
+  const [status, setStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+  useEffect(() => {
+    let alive = true;
+    const check = () =>
+      api
+        .health()
+        .then(() => alive && setStatus('online'))
+        .catch(() => alive && setStatus('offline'));
+    check();
+    const id = setInterval(check, 5000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, []);
+  return status;
 }
 
 function useClock() {

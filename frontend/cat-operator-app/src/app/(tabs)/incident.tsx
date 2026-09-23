@@ -1,9 +1,8 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 
 import { Badge, Button, Cell, HazardStripe, Icon, Panel, Screen, Txt } from '@/components';
-import { machine, operator } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { colors, space } from '@/theme/tokens';
 
@@ -25,7 +24,7 @@ const MACROS = ['Worker in blindspot', 'Hydraulic leak', 'Obstruction on haul ro
 
 /** Screen 7 — Incident Report (stitch: screen_7_incident_report). */
 export default function IncidentReport() {
-  const { incidents, submitIncident, alertActive } = useApp();
+  const { incidents, submitIncident, alertActive, machine, operator } = useApp();
   const [type, setType] = useState(0);
   const [severity, setSeverity] = useState<(typeof SEVERITIES)[number]['key']>('HIGH');
   const [desc, setDesc] = useState('Worker in blindspot');
@@ -34,13 +33,16 @@ export default function IncidentReport() {
   const [submitting, setSubmitting] = useState(false);
   const last = incidents[0];
 
-  const submit = () => {
+  const submit = async () => {
     setSubmitting(true);
-    setTimeout(() => {
-      submitIncident({ type: TYPES[type].label, severity, description: desc || '(no description)' });
-      setSubmitting(false);
+    try {
+      await submitIncident({ type: TYPES[type].label, severity, description: desc || '(no description)' });
       setSnapshot(false);
-    }, 900);
+    } catch (e) {
+      Alert.alert('Report not sent', e instanceof Error ? e.message : String(e));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (

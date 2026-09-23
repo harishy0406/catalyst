@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import { Badge, Button, Cell, Icon, Metric, Panel, Pip, ProgressBar, Row, Screen, Txt } from '@/components';
-import { machine } from '@/data/mock';
+import { ApiInsights } from '@/api/client';
+import { machine as mockMachine } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { colors, space } from '@/theme/tokens';
 
@@ -15,7 +16,8 @@ type Advisory = {
   foot?: string;
 };
 
-const ADVISORIES: Advisory[] = [
+/** Shown until the backend returns machine insights. */
+const FALLBACK_ADVISORIES: Advisory[] = [
   {
     id: 'idle',
     tone: 'warn',
@@ -36,20 +38,41 @@ const ADVISORIES: Advisory[] = [
     tone: 'ok',
     title: 'Production Target',
     when: '10:45 AM',
-    body: `${machine.loadCycles} load cycles completed today — on track with shift quota.`,
-    foot: `Shift goal: ${machine.cycleGoal} cycles • Estimated shift completion: 15:30`,
+    body: `${mockMachine.loadCycles} load cycles completed today — on track with shift quota.`,
+    foot: `Shift goal: ${mockMachine.cycleGoal} cycles • Estimated shift completion: 15:30`,
   },
 ];
 
+/** Backend anomalies (GET /machines/{id}/insights) become warnings; recommendations follow. */
+function toAdvisories(ins: ApiInsights): Advisory[] {
+  return [
+    ...ins.anomalies.map((a, i) => ({
+      id: `anomaly-${i}`,
+      tone: 'warn' as const,
+      title: `${a.component} • ${a.metric}`,
+      when: a.severity.toUpperCase(),
+      body: a.description,
+      foot: `Reading: ${a.value}`,
+    })),
+    ...ins.recommendations.map((r, i) => ({
+      id: `rec-${i}`,
+      tone: r.priority === 'low' ? ('ok' as const) : ('warn' as const),
+      title: r.action,
+      when: `${r.priority.toUpperCase()} priority`,
+      body: r.reason,
+    })),
+  ];
+}
+
 /** Screen 9 — Machine Status (stitch: screen_9_machine_status). */
 export default function MachineStatus() {
-  const { alertActive } = useApp();
+  const { alertActive, machine } = useApp();
   const [acked, setAcked] = useState(false);
   const [calibrating, setCalibrating] = useState(false);
   const [autoShutoff, setAutoShutoff] = useState(false);
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
-  const advisories = ADVISORIES.filter((a) => !dismissed.includes(a.id));
+  const advisories = (machine.insights ? toAdvisories(machine.insights) : FALLBACK_ADVISORIES).filter((a) => !dismissed.includes(a.id));
 
   const recalibrate = () => {
     setCalibrating(true);
@@ -64,8 +87,11 @@ export default function MachineStatus() {
         <Txt v="labelSm" color={colors.onSurfaceVariant}>
           {machine.id} • {machine.model}
         </Txt>
-        <Row style={{ marginTop: 4 }}>
+        <Row style={{ marginTop: 4, flexWrap: 'wrap' }}>
           <Badge label={`Cab ID: ${machine.cabId}`} />
+          {machine.healthScore !== null && (
+            <Badge label={`Health: ${machine.healthScore}%`} tone={machine.healthScore >= 85 ? 'outlineSafe' : 'outlineDanger'} />
+          )}
           <Badge label="Diagnostic Mode" tone="outlinePrimary" />
         </Row>
       </View>
@@ -235,13 +261,15 @@ export default function MachineStatus() {
                 )}
                 {warn && (
                   <Row style={{ marginTop: 6 }}>
-                    <Button
-                      label={autoShutoff ? 'Auto-shutoff armed' : 'Arm auto-shutoff'}
-                      variant={autoShutoff ? 'safe' : 'secondary'}
-                      size="sm"
-                      style={{ flex: 1.4 }}
-                      onPress={() => setAutoShutoff(true)}
-                    />
+                    {a.id === 'idle' && (
+                      <Button
+                        label={autoShutoff ? 'Auto-shutoff armed' : 'Arm auto-shutoff'}
+                        variant={autoShutoff ? 'safe' : 'secondary'}
+                        size="sm"
+                        style={{ flex: 1.4 }}
+                        onPress={() => setAutoShutoff(true)}
+                      />
+                    )}
                     <Button
                       label="Dismiss"
                       variant="secondary"

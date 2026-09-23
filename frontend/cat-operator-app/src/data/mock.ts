@@ -1,12 +1,11 @@
 /**
- * Mock data lifted from the Stitch screens. Replace with backend/telematics
- * calls once the API exists (see frontend/UI_PROGRESS.md → "Next steps").
+ * Mock data lifted from the Stitch screens. Live data now comes from the backend
+ * (src/state/AppState.tsx); these values fill fields the API doesn't expose yet.
  */
-import { ImageSourcePropType } from 'react-native';
-
 import { colors } from '@/theme/tokens';
 
-export const OPERATORS = ['OP1001', 'OP1002', 'OP2045'] as const;
+/** Seeded accounts in backend/app/seed.py (PIN = digits of the ID, e.g. OP-4412 → 4412). */
+export const OPERATORS = ['OP-4412', 'OP-8821', 'SUP-101'] as const;
 
 export const operator = {
   id: 'OP1001',
@@ -66,6 +65,8 @@ export type Task = {
   accent: string;
   status: TaskStatus;
   elapsedMin: number;
+  /** ISO timestamp from the backend, used to report actual duration on completion. */
+  startedAt?: string | null;
 };
 
 export const initialTasks: Task[] = [
@@ -152,45 +153,4 @@ export const initialSafetyEvents: SafetyEvent[] = [
   { time: '10:42 AM', title: 'Proximity Warning (Zone B)', detail: 'Cleared by operator', resolved: true },
   { time: '10:00 AM', title: 'Seatbelt Unfastened (Engine Idling)', detail: 'Auto-cleared on latch', resolved: true },
   { time: '09:35 AM', title: 'Proximity Warning (5.2m)', detail: 'Cleared by operator', resolved: true },
-];
-
-export const trainingModules: {
-  id: string;
-  area: string;
-  title: string;
-  description: string;
-  minutes: number;
-  tag: { label: string; icon: string; tone: 'primary' | 'danger' | 'safe' };
-  image: ImageSourcePropType;
-}[] = [
-  {
-    id: 'TR-201',
-    area: 'Cab Safety',
-    title: 'Seatbelt & Operator Safety',
-    description:
-      'Restraint pre-check protocols, rollover protection structure (ROPS) compliance, and emergency egress procedures.',
-    minutes: 12,
-    tag: { label: '★ Recommended', icon: 'star', tone: 'primary' },
-    image: require('../../assets/images/training-seatbelt.jpg'),
-  },
-  {
-    id: 'TR-208',
-    area: 'Hazard Detect',
-    title: 'Proximity Hazard Awareness',
-    description:
-      'Blind spot scanning zones, sonar and camera sensor calibration, and ground personnel safety buffer management.',
-    minutes: 15,
-    tag: { label: 'Safety Critical', icon: 'warning', tone: 'danger' },
-    image: require('../../assets/images/training-proximity.jpg'),
-  },
-  {
-    id: 'TR-315',
-    area: 'Field Operations',
-    title: 'Safe Excavation Practices',
-    description:
-      'Trench shoring integrity, benching calculations, underground utility clearance standards, and spoil pile placement.',
-    minutes: 18,
-    tag: { label: 'SOP Update', icon: 'update', tone: 'safe' },
-    image: require('../../assets/images/training-excavation.jpg'),
-  },
 ];

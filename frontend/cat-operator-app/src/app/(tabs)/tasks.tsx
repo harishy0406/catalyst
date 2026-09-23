@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 import { Badge, Button, Cell, Icon, Panel, Pip, ProgressBar, Row, Screen, Txt } from '@/components';
-import { machine, Task } from '@/data/mock';
+import { Task } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { border, colors, space } from '@/theme/tokens';
 
@@ -10,7 +10,7 @@ const openTask = (id: string) => router.push({ pathname: '/task/[id]', params: {
 
 /** Screen 5 — Today's Tasks (stitch: screen_5_tasks). */
 export default function Tasks() {
-  const { tasks, setTaskStatus, alertActive } = useApp();
+  const { tasks, setTaskStatus, alertActive, machine } = useApp();
   const active = tasks.filter((t) => t.status !== 'completed');
   const [current, next, ...queue] = active;
 
@@ -47,7 +47,13 @@ export default function Tasks() {
         <Panel borderColor={colors.primaryContainer} borderWidth={3}>
           <Row style={{ flexWrap: 'wrap' }}>
             <Badge
-              label={current.status === 'paused' ? 'Current • Paused' : 'Current • In Progress'}
+              label={
+                current.status === 'paused'
+                  ? 'Current • Paused'
+                  : current.status === 'in_progress'
+                    ? 'Current • In Progress'
+                    : 'Current • Ready'
+              }
               tone="primary"
             />
             <Badge label={`Code: ${current.id}`} />
@@ -79,7 +85,7 @@ export default function Tasks() {
             <ProgressBar value={current.elapsedMin / current.estMin} height={16} />
           </Cell>
           <Button
-            label={current.status === 'paused' ? 'Resume Task' : 'Continue Task'}
+            label={current.status === 'paused' ? 'Resume Task' : current.status === 'in_progress' ? 'Continue Task' : 'Open Task'}
             iconRight="arrow_forward"
             size="lg"
             onPress={() => {
@@ -94,7 +100,7 @@ export default function Tasks() {
               variant="secondary"
               size="sm"
               style={{ flex: 1 }}
-              disabled={current.status === 'paused'}
+              disabled={current.status !== 'in_progress'}
               onPress={() => setTaskStatus(current.id, 'paused')}
             />
             <Button

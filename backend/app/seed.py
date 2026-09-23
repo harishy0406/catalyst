@@ -8,10 +8,10 @@ def seed_database():
 
     print("Seeding Users...")
     users = [
-        ("OP-4412", "Marcus Vance", "operator", "4412", "expert", "CAT-320-01"),
-        ("OP-8821", "Elena Rostova", "operator", "8821", "intermediate", "CAT-950-02"),
-        ("SUP-101", "David Chen", "supervisor", "1001", "expert", None),
-        ("SAFE-201", "Sarah Jenkins", "safety_officer", "2001", "expert", None),
+        ("OP-4412", "Arjun Mehta", "operator", "4412", "expert", "CAT-320-01"),
+        ("OP-8821", "Priya Sharma", "operator", "8821", "intermediate", "CAT-950-02"),
+        ("SUP-101", "Vikram Singh", "supervisor", "1001", "expert", None),
+        ("SAFE-201", "Ananya Iyer", "safety_officer", "2001", "expert", None),
     ]
     for u in users:
         execute_query(

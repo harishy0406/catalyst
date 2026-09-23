@@ -3,15 +3,14 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import { Badge, Button, Cell, Icon, Panel, ProgressBar, Screen, Txt } from '@/components';
-import { operator, trainingModules } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { colors, space } from '@/theme/tokens';
 
 /** Screen 8 — Training Hub (stitch: screen_8_training_hub). */
 export default function Training() {
-  const { alertActive } = useApp();
+  const { alertActive, trainingModules, training, completeTraining } = useApp();
   const [started, setStarted] = useState<string | null>(null);
-  const { done, total } = operator.training;
+  const { done, total } = training;
 
   return (
     <Screen header={{ subtitle: 'Cab Unit 04', alert: alertActive }}>
@@ -66,13 +65,13 @@ export default function Training() {
               {done} / {total} Modules{'\n'}Completed
             </Txt>
             <Txt v="metric" color={colors.primaryContainer}>
-              {Math.round((done / total) * 100)}
+              {total ? Math.round((done / total) * 100) : 0}
               <Txt v="headlineMd" color={colors.primaryContainer}>
                 %
               </Txt>
             </Txt>
           </View>
-          <ProgressBar value={done / total} height={12} />
+          <ProgressBar value={total ? done / total : 0} height={12} />
           <View style={{ flexDirection: 'row', gap: space.sm }}>
             {['Tier 1: Core Systems (Done)', 'Tier 2: Hazard Operations (Active)', 'Tier 3: Advanced Trenching'].map((t, i) => (
               <Txt key={t} v="labelXs" color={i === 1 ? colors.primaryContainer : colors.onSurfaceVariant} style={{ flex: 1 }}>
@@ -96,6 +95,11 @@ export default function Training() {
 
       {trainingModules.map((m) => {
         const isStarted = started === m.id;
+        const onPress = async () => {
+          if (!isStarted) return setStarted(m.id);
+          await completeTraining(m.id);
+          setStarted(null);
+        };
         return (
           <Panel key={m.id} padded={false}>
             <View>
@@ -116,11 +120,12 @@ export default function Training() {
                 {m.description}
               </Txt>
               <Button
-                label={isStarted ? 'Module In Progress' : 'Start Module'}
-                icon={isStarted ? 'pause' : 'play_arrow'}
-                variant={isStarted ? 'safe' : 'primary'}
+                label={m.completed ? 'Completed' : isStarted ? 'Mark Complete' : 'Start Module'}
+                icon={m.completed ? 'check_circle' : isStarted ? 'check' : 'play_arrow'}
+                variant={isStarted || m.completed ? 'safe' : 'primary'}
+                disabled={m.completed}
                 style={{ marginTop: space.sm }}
-                onPress={() => setStarted(isStarted ? null : m.id)}
+                onPress={onPress}
               />
             </View>
           </Panel>
