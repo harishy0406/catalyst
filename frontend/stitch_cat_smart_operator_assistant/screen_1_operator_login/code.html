@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CAT Smart Operator Assistant - Operator Login</title>
+<!-- Google Fonts: Barlow Condensed & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Technical touch screen patterns and hazard accents */
+    .hazard-stripe {
+      background: repeating-linear-gradient(
+        -45deg,
+        #fdb813,
+        #fdb813 12px,
+        #121316 12px,
+        #121316 24px
+      );
+    }
+    .debossed-panel {
+      box-shadow: inset 2px 2px 0px #0a0b0d, inset -1px -1px 0px #363d45;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-primary-container selection:text-on-primary-container">
+<!-- TOP APP BAR (Shared Components JSON Anchor Implementation) -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container border-b-2 border-surface-container-highest z-30">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-primary-container text-[24px]">construction</span>
+<div class="flex items-center space-x-2">
+<span class="font-headline-sm text-headline-sm font-bold text-primary-container tracking-wider uppercase">
+          CAT Smart Operator Assistant
+        </span>
+<span class="hidden sm:inline-block px-2 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm uppercase border border-outline-variant">
+          OPERATOR CABIN TERMINAL
+        </span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<!-- Status Badge inside Header -->
+<div class="flex items-center space-x-2 px-3 py-1 bg-surface-container-lowest border border-outline-variant">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface uppercase tracking-wider hidden md:inline">SYSTEM ONLINE</span>
+</div>
+<!-- Warning Trailing Icon from JSON -->
+<button class="w-10 h-10 flex items-center justify-center bg-surface-container-high border border-outline-variant text-primary-container hover:bg-surface-container-highest active:bg-surface-container-lowest transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</button>
+</div>
+</header>
+<!-- MAIN VIEWPORT CONTAINER (Strict In-Cab High Contrast Cockpit) -->
+<main class="flex-1 w-full max-w-7xl mx-auto p-4 md:p-6 flex flex-col justify-center items-center">
+<!-- Central Login Module Frame -->
+<div class="w-full max-w-2xl bg-surface-container border-2 border-surface-container-highest flex flex-col shadow-none">
+<!-- Module Accent Header Strip with subtle hazard accent -->
+<div class="h-2 w-full hazard-stripe"></div>
+<div class="p-6 md:p-8 flex flex-col space-y-6">
+<!-- Screen Title Section -->
+<div class="border-b border-surface-container-highest pb-4 flex justify-between items-end">
+<div>
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider block mb-1">
+              AUTH PROTOCOL • CAB TERMINAL #01
+            </span>
+<h1 class="font-headline-xl text-headline-xl text-on-surface uppercase tracking-wide">
+              Operator Login
+            </h1>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">TERMINAL TIME</span>
+<div class="font-label-lg text-label-lg text-primary-container font-mono" id="liveClock">06:42:18</div>
+</div>
+</div>
+<!-- FORM CONTROLS: Massive Gloved-Touch Targets -->
+<div class="space-y-5">
+<!-- Field 1: Operator ID -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant uppercase mb-2">
+              OPERATOR ID / BADGE NUMBER
+            </label>
+<div class="flex items-stretch border-2 border-outline-variant bg-surface-container-lowest debossed-panel focus-within:border-primary-container transition-colors">
+<div class="w-14 min-h-[64px] bg-surface-container-high flex items-center justify-center border-r border-outline-variant text-on-surface-variant">
+<span class="material-symbols-outlined text-[28px]">badge</span>
+</div>
+<input class="flex-1 min-h-[64px] bg-transparent text-on-surface font-headline-md text-headline-md px-4 tracking-wider uppercase focus:outline-none border-none cursor-pointer" id="operatorIdInput" readonly="" title="Tap to select pre-filled Operator" type="text" value="OP1001"/>
+<button class="px-5 min-h-[64px] bg-surface-container-high hover:bg-surface-bright active:bg-surface-container text-on-surface font-label-md text-label-md uppercase border-l border-outline-variant flex items-center space-x-1" onclick="quickSelectOperator()" type="button">
+<span class="material-symbols-outlined text-[20px]">swap_horiz</span>
+<span class="hidden sm:inline">SWITCH</span>
+</button>
+</div>
+</div>
+<!-- Field 2: PIN Input Readout / Digit Slots -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase">
+                SECURITY PIN (4-DIGIT ENTRY)
+              </label>
+<button class="font-label-sm text-label-sm text-error uppercase hover:underline flex items-center space-x-1" onclick="clearPin()" type="button">
+<span class="material-symbols-outlined text-[16px]">backspace</span>
+<span>CLEAR PIN</span>
+</button>
+</div>
+<!-- PIN Display Boxes -->
+<div class="grid grid-cols-4 gap-3 mb-4">
+<div class="h-16 bg-surface-container-lowest border-2 border-outline-variant debossed-panel flex items-center justify-center text-primary-container font-headline-xl text-headline-xl" id="pinBox0">
+                •
+              </div>
+<div class="h-16 bg-surface-container-lowest border-2 border-outline-variant debossed-panel flex items-center justify-center text-primary-container font-headline-xl text-headline-xl" id="pinBox1">
+                •
+              </div>
+<div class="h-16 bg-surface-container-lowest border-2 border-outline-variant debossed-panel flex items-center justify-center text-primary-container font-headline-xl text-headline-xl" id="pinBox2">
+                •
+              </div>
+<div class="h-16 bg-surface-container-lowest border-2 border-outline-variant debossed-panel flex items-center justify-center text-primary-container font-headline-xl text-headline-xl" id="pinBox3">
+                •
+              </div>
+</div>
+<!-- High-Tactile Numeric Keypad Overlay (Optimized for Heavy Gloves 64px Touch Height) -->
+<div class="bg-surface-container-low p-3 border border-surface-container-highest">
+<div class="grid grid-cols-3 gap-2">
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('1')" type="button">
+                  1
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('2')" type="button">
+                  2
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('3')" type="button">
+                  3
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('4')" type="button">
+                  4
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('5')" type="button">
+                  5
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('6')" type="button">
+                  6
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('7')" type="button">
+                  7
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('8')" type="button">
+                  8
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('9')" type="button">
+                  9
+                </button>
+<button class="min-h-[58px] bg-surface-container border-2 border-outline-variant hover:bg-surface-container-highest active:bg-error active:text-on-error text-on-surface-variant font-label-md text-label-md uppercase transition-all flex items-center justify-center" onclick="clearPin()" type="button">
+                  CLR
+                </button>
+<button class="min-h-[58px] bg-surface-container-high border-2 border-outline-variant hover:bg-surface-bright active:bg-primary-container active:text-on-primary-container active:border-on-primary text-on-surface font-headline-md text-headline-md transition-all" onclick="tapKey('0')" type="button">
+                  0
+                </button>
+<button class="min-h-[58px] bg-surface-container border-2 border-outline-variant hover:bg-surface-container-highest active:bg-surface-bright text-on-surface-variant font-label-md text-label-md uppercase transition-all flex items-center justify-center" onclick="deleteLastDigit()" type="button">
+<span class="material-symbols-outlined text-[24px]">backspace</span>
+</button>
+</div>
+</div>
+</div>
+<!-- PRIMARY ACTION BUTTON: Massive CAT Yellow Target -->
+<div class="pt-2">
+<button class="w-full min-h-[64px] bg-primary-container text-on-primary-container font-headline-md text-headline-md font-bold uppercase tracking-wider border-2 border-on-primary shadow-none hover:bg-primary-fixed active:bg-primary-fixed-dim transition-all flex items-center justify-center space-x-3" id="signInBtn" onclick="handleSignIn()" type="button">
+<span>SIGN IN</span>
+<span class="material-symbols-outlined text-[28px]">login</span>
+</button>
+</div>
+</div>
+<!-- INDUSTRIAL TELEMETRY STATUS BADGE BOX -->
+<div class="bg-surface-container-lowest border-2 border-surface-container-highest p-4 debossed-panel">
+<div class="text-[11px] font-label-sm text-outline uppercase tracking-wider mb-2 flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">router</span>
+<span>TELEMATICS &amp; UNIT SPECIFICATIONS</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 border-t border-surface-container-highest">
+<!-- Item 1: Machine Spec -->
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">precision_manufacturing</span>
+<div class="leading-tight">
+<span class="text-[10px] font-label-sm text-on-surface-variant uppercase block">MACHINE</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">EXC001 (Hydraulic Excavator)</span>
+</div>
+</div>
+<!-- Item 2: Shift Window -->
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">schedule</span>
+<div class="leading-tight">
+<span class="text-[10px] font-label-sm text-on-surface-variant uppercase block">ACTIVE SHIFT</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">Morning (06:00 - 14:00)</span>
+</div>
+</div>
+<!-- Item 3: GPS & Telematics Connection -->
+<div class="flex items-center space-x-2">
+<span class="w-3 h-3 rounded-full bg-tertiary-container flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-dim"></span>
+</span>
+<div class="leading-tight">
+<span class="text-[10px] font-label-sm text-on-surface-variant uppercase block">TELEMETRICS LINK</span>
+<span class="font-label-md text-label-md text-tertiary-container font-bold uppercase">GPS &amp; Telematics: Connected</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Bezel Hardware Rivet Simulation -->
+<div class="bg-surface-container-high px-4 py-2 flex justify-between items-center border-t border-surface-container-highest text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase">FIRMWARE: CAT-OS V4.18.2</span>
+<div class="flex items-center space-x-3 text-[12px] font-label-sm uppercase">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-[14px]">cell_tower</span>
+<span>4G LTE 100%</span>
+</span>
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-[14px]">battery_charging_full</span>
+<span>28.4V CAB BUS</span>
+</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Interactive Terminal Feedback Banner (Hidden by default, triggered on sign in) -->
+<div class="fixed top-16 left-1/2 -translate-x-1/2 bg-surface-container-high border-2 border-primary-container px-6 py-3 shadow-2xl hidden items-center space-x-3 z-50" id="toastNotification">
+<span class="material-symbols-outlined text-primary-container text-[24px]">verified</span>
+<div>
+<div class="font-label-md text-label-md text-on-surface font-bold uppercase">OPERATOR AUTHENTICATED</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Loading operator profile and pre-shift checklist...</div>
+</div>
+</div>
+<!-- Utilitarian In-Cab Footer Bar -->
+<footer class="w-full bg-surface-container-lowest border-t border-surface-container-highest px-4 py-2 flex justify-between items-center text-outline">
+<span class="font-label-sm text-label-sm uppercase">CAT HEAVY HYDRAULICS • CABIN MOUNTED DISPLAY</span>
+<span class="font-label-sm text-label-sm uppercase">ASTM-RATED GLOVE TOUCH ACTIVE</span>
+</footer>
+<!-- Simple In-Cab Logic for Keypad and Operators -->
+<script>
+    let currentPin = "2490"; // prefilled pin mock
+    const operators = ["OP1001", "OP1002", "OP2045"];
+    let opIndex = 0;
+
+    function updatePinDisplay() {
+      for (let i = 0; i < 4; i++) {
+        const box = document.getElementById(`pinBox${i}`);
+        if (i < currentPin.length) {
+          box.textContent = "•";
+          box.classList.add("border-primary-container", "text-primary-container");
+          box.classList.remove("border-outline-variant", "text-on-surface-variant");
+        } else {
+          box.textContent = "";
+          box.classList.remove("border-primary-container", "text-primary-container");
+          box.classList.add("border-outline-variant", "text-on-surface-variant");
+        }
+      }
+    }
+
+    function tapKey(digit) {
+      if (currentPin.length < 4) {
+        currentPin += digit;
+        updatePinDisplay();
+      }
+    }
+
+    function deleteLastDigit() {
+      if (currentPin.length > 0) {
+        currentPin = currentPin.slice(0, -1);
+        updatePinDisplay();
+      }
+    }
+
+    function clearPin() {
+      currentPin = "";
+      updatePinDisplay();
+    }
+
+    function quickSelectOperator() {
+      opIndex = (opIndex + 1) % operators.length;
+      document.getElementById("operatorIdInput").value = operators[opIndex];
+    }
+
+    function handleSignIn() {
+      const toast = document.getElementById("toastNotification");
+      toast.classList.remove("hidden");
+      toast.classList.add("flex");
+      
+      const btn = document.getElementById("signInBtn");
+      btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-[28px]">autorenew</span><span>CONNECTING...</span>`;
+      btn.classList.add("opacity-90");
+
+      setTimeout(() => {
+        btn.innerHTML = `<span>SIGN IN</span><span class="material-symbols-outlined text-[28px]">login</span>`;
+        btn.classList.remove("opacity-90");
+        setTimeout(() => {
+          toast.classList.add("hidden");
+          toast.classList.remove("flex");
+        }, 2500);
+      }, 1500);
+    }
+
+    // Live terminal clock updater
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      const clockEl = document.getElementById("liveClock");
+      if (clockEl) {
+        clockEl.textContent = `${h}:${m}:${s}`;
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+    updatePinDisplay();
+  </script>
+</body></html>

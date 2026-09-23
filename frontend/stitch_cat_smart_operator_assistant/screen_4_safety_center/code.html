@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Screen 4 — Safety Center • EXC001</title>
+<!-- Google Fonts: Inter & Barlow Condensed -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md select-none overflow-x-hidden antialiased pb-24">
+<!-- TOP APP BAR (Shared Component Anchor) -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container dark:bg-surface-container border-b-2 border-surface-container-highest dark:border-surface-container-highest sticky top-0 z-40">
+<div class="flex items-center gap-3">
+<button aria-label="Machinery Status" class="flex items-center justify-center w-12 h-12 bg-surface-container-high text-primary-container active:bg-surface-container-highest border border-surface-container-highest">
+<span class="material-symbols-outlined text-2xl" data-icon="construction">construction</span>
+</button>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm uppercase tracking-wider font-bold text-primary-container dark:text-primary-container">EXC001 • SHIFT ACTIVE</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">TELEMATICS LINK NOMINAL</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex items-center px-3 py-1.5 bg-surface-container-lowest border border-surface-container-highest">
+<span class="w-2.5 h-2.5 bg-tertiary mr-2 animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-tertiary tracking-widest uppercase">CAB CABIN VERIFIED</span>
+</div>
+<button aria-label="Machine Warning State" class="flex items-center justify-center w-12 h-12 bg-surface-container-high text-on-surface-variant active:bg-surface-container-highest border border-surface-container-highest">
+<span class="material-symbols-outlined text-2xl" data-icon="warning">warning</span>
+</button>
+</div>
+</header>
+<!-- SUB-HEADER TITLE BAR -->
+<div class="w-full bg-surface-container-low px-4 py-3 border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-xl" data-icon="shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+<h1 class="font-headline-md text-headline-md font-bold uppercase text-on-surface tracking-wider">Safety Center <span class="text-on-surface-variant font-normal">• EXC001</span></h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">SHIFT ID:</span>
+<span class="font-label-md text-label-md text-primary font-bold bg-surface-container-lowest px-2 py-0.5 border border-surface-container-highest">SF-8849</span>
+</div>
+</div>
+<!-- MAIN OPERATOR VIEWPORT -->
+<main class="w-full max-w-7xl mx-auto px-4 py-4 flex-1 flex flex-col gap-4">
+<!-- OVERALL STATUS HERO CARD -->
+<section class="bg-surface-container border-2 border-tertiary-container relative overflow-hidden flex flex-col md:flex-row items-stretch">
+<!-- High visibility primary indicator strip -->
+<div class="w-full md:w-56 bg-tertiary-container flex md:flex-col items-center justify-center p-4 gap-3 text-on-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-6xl md:text-7xl font-bold" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<div class="text-left md:text-center">
+<div class="font-headline-xl text-headline-xl font-extrabold tracking-tight leading-none">SAFE</div>
+<div class="font-label-sm text-label-sm font-bold tracking-widest opacity-90 uppercase">SYSTEMS ONLINE</div>
+</div>
+</div>
+<!-- Hero Telemetry Breakdown -->
+<div class="p-4 md:p-6 flex-1 flex flex-col justify-between bg-surface-container-lowest">
+<div>
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-2 mb-3">
+<span class="font-label-md text-label-md text-tertiary uppercase tracking-wider font-bold">ALL MACHINE SAFETY &amp; TELEMATICS SYSTEMS NORMAL</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5">HEAVY DUTY MODE</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-3">
+            Cabin environment pressurized, rollover structural integrity verified, interlock circuitry synchronized with secondary hydraulic governor. Zero active hazard lockouts.
+          </p>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-surface-container-highest">
+<div class="bg-surface-container p-2 border border-surface-container-highest">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase">HYD PRESSURE</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">345 <span class="text-primary-container text-sm">BAR</span></span>
+</div>
+<div class="bg-surface-container p-2 border border-surface-container-highest">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase">TILT PITCH</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">0.8° <span class="text-primary-container text-sm">NOMINAL</span></span>
+</div>
+<div class="bg-surface-container p-2 border border-surface-container-highest">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase">RADAR RANGE</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">360° <span class="text-primary-container text-sm">ACTIVE</span></span>
+</div>
+<div class="bg-surface-container p-2 border border-surface-container-highest">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase">SPEED LOCK</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">4.2 <span class="text-primary-container text-sm">KM/H</span></span>
+</div>
+</div>
+</div>
+</section>
+<!-- THREE LARGE TOUCH-FRIENDLY STATUS INSPECTION CARDS -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<!-- CARD 1: SEATBELT -->
+<div class="bg-surface-container border-2 border-surface-container-highest flex flex-col justify-between min-h-[170px] relative active:bg-surface-container-high transition-colors">
+<!-- Top Title Bar -->
+<div class="bg-surface-container-high px-4 py-2 flex items-center justify-between border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-xl" data-icon="airline_seat_recline_extra">airline_seat_recline_extra</span>
+<span class="font-label-md text-label-md text-on-surface-variant tracking-wider uppercase font-bold">1. SEATBELT</span>
+</div>
+<span class="w-3 h-3 bg-tertiary-container rounded-none"></span>
+</div>
+<!-- Content -->
+<div class="p-4 flex-1 flex flex-col justify-center">
+<div class="flex items-center gap-2 text-tertiary mb-1">
+<span class="font-headline-lg text-headline-lg font-bold">✓ Fastened</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+            Interlock active, green indicator. High-retention tensioner engaged.
+          </div>
+</div>
+<!-- Footer status -->
+<div class="px-4 py-2 bg-surface-container-lowest border-t border-surface-container-highest flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">CIRCUITRY OK</span>
+<span class="font-label-sm text-label-sm text-tertiary uppercase font-bold">ENGAGED</span>
+</div>
+</div>
+<!-- CARD 2: PROXIMITY -->
+<div class="bg-surface-container border-2 border-surface-container-highest flex flex-col justify-between min-h-[170px] relative active:bg-surface-container-high transition-colors">
+<!-- Top Title Bar -->
+<div class="bg-surface-container-high px-4 py-2 flex items-center justify-between border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-xl" data-icon="sensors">sensors</span>
+<span class="font-label-md text-label-md text-on-surface-variant tracking-wider uppercase font-bold">2. PROXIMITY</span>
+</div>
+<span class="w-3 h-3 bg-tertiary-container rounded-none"></span>
+</div>
+<!-- Content -->
+<div class="p-4 flex-1 flex flex-col justify-center">
+<div class="flex items-center gap-2 text-tertiary mb-1">
+<span class="font-headline-lg text-headline-lg font-bold">✓ No hazards detected</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+            360° radar perimeter clear. LiDAR sensors scanning blindspots continuously.
+          </div>
+</div>
+<!-- Footer status -->
+<div class="px-4 py-2 bg-surface-container-lowest border-t border-surface-container-highest flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">PERIMETER SAFE</span>
+<span class="font-label-sm text-label-sm text-tertiary uppercase font-bold">RADAR SYNC</span>
+</div>
+</div>
+<!-- CARD 3: MACHINE -->
+<div class="bg-surface-container border-2 border-surface-container-highest flex flex-col justify-between min-h-[170px] relative active:bg-surface-container-high transition-colors">
+<!-- Top Title Bar -->
+<div class="bg-surface-container-high px-4 py-2 flex items-center justify-between border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-xl" data-icon="precision_manufacturing">precision_manufacturing</span>
+<span class="font-label-md text-label-md text-on-surface-variant tracking-wider uppercase font-bold">3. MACHINE</span>
+</div>
+<span class="w-3 h-3 bg-tertiary-container rounded-none"></span>
+</div>
+<!-- Content -->
+<div class="p-4 flex-1 flex flex-col justify-center">
+<div class="flex items-center gap-2 text-tertiary mb-1">
+<span class="font-headline-lg text-headline-lg font-bold">✓ Operational</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+            Hydraulics, brakes, roll-over protection OK. Zero critical fault codes.
+          </div>
+</div>
+<!-- Footer status -->
+<div class="px-4 py-2 bg-surface-container-lowest border-t border-surface-container-highest flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">ROPS / FOPS LEVEL 2</span>
+<span class="font-label-sm text-label-sm text-tertiary uppercase font-bold">READY</span>
+</div>
+</div>
+</section>
+<!-- SECTION: RECENT SAFETY EVENTS (Log of shift events) -->
+<section class="bg-surface-container border border-surface-container-highest flex flex-col mt-2">
+<!-- Section Header -->
+<div class="bg-surface-container-high px-4 py-2.5 border-b border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="history">history</span>
+<h2 class="font-label-lg text-label-lg font-bold uppercase tracking-wider text-on-surface">RECENT SAFETY EVENTS</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold">LOG RECORD: SHIFT #1</span>
+</div>
+<!-- Event Rows (Glove-friendly, min 60px height, vibration trackable) -->
+<div class="divide-y divide-surface-container-highest">
+<!-- Row 1 -->
+<div class="min-h-[64px] bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container-highest flex items-center px-4 transition-colors relative">
+<!-- Severity Stripe -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary-container"></div>
+<div class="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-1 pl-2">
+<div class="flex items-center gap-3">
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold shrink-0">10:42 AM</span>
+<div class="h-4 w-px bg-surface-container-highest hidden sm:block"></div>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Proximity Warning (Zone B)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cleared by operator</span>
+<span class="bg-tertiary-container/20 text-tertiary border border-tertiary-container px-2.5 py-1 font-label-sm text-label-sm font-bold uppercase">
+                Resolved
+              </span>
+</div>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="min-h-[64px] bg-surface-container hover:bg-surface-container-high active:bg-surface-container-highest flex items-center px-4 transition-colors relative">
+<!-- Severity Stripe -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary-container"></div>
+<div class="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-1 pl-2">
+<div class="flex items-center gap-3">
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold shrink-0">10:00 AM</span>
+<div class="h-4 w-px bg-surface-container-highest hidden sm:block"></div>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Seatbelt Unfastened (Engine Idling)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Auto-cleared on latch</span>
+<span class="bg-tertiary-container/20 text-tertiary border border-tertiary-container px-2.5 py-1 font-label-sm text-label-sm font-bold uppercase">
+                Resolved
+              </span>
+</div>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="min-h-[64px] bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container-highest flex items-center px-4 transition-colors relative">
+<!-- Severity Stripe -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary-container"></div>
+<div class="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-1 pl-2">
+<div class="flex items-center gap-3">
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold shrink-0">09:35 AM</span>
+<div class="h-4 w-px bg-surface-container-highest hidden sm:block"></div>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Proximity Warning (5.2m)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cleared by operator</span>
+<span class="bg-tertiary-container/20 text-tertiary border border-tertiary-container px-2.5 py-1 font-label-sm text-label-sm font-bold uppercase">
+                Resolved
+              </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Button Container -->
+<div class="p-3 bg-surface-container-high border-t border-surface-container-highest">
+<button aria-label="View All Shift Events" class="w-full min-h-[56px] h-14 bg-surface-container-highest text-on-surface border-2 border-outline-variant font-label-lg text-label-lg font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:bg-surface-container-lowest active:border-primary-container transition-all">
+<span class="material-symbols-outlined text-primary-container" data-icon="list_alt">list_alt</span>
+          VIEW ALL SHIFT EVENTS
+        </button>
+</div>
+</section>
+<!-- QUICK ACTIONS & DIAGNOSTIC BAR (Glove touch optimized) -->
+<section class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-1">
+<button class="min-h-[56px] bg-surface-container border border-surface-container-highest p-3 flex items-center justify-center gap-2 active:bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-primary-container" data-icon="videocam">videocam</span>
+<span class="font-label-md text-label-md uppercase font-bold">RADAR CAM FEED</span>
+</button>
+<button class="min-h-[56px] bg-surface-container border border-surface-container-highest p-3 flex items-center justify-center gap-2 active:bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-primary-container" data-icon="restart_alt">restart_alt</span>
+<span class="font-label-md text-label-md uppercase font-bold">SENSOR RE-ZERO</span>
+</button>
+<button class="min-h-[56px] bg-surface-container border border-surface-container-highest p-3 flex items-center justify-center gap-2 active:bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-primary-container" data-icon="volume_up">volume_up</span>
+<span class="font-label-md text-label-md uppercase font-bold">TEST CAB SIREN</span>
+</button>
+<button class="min-h-[56px] bg-secondary-container text-on-secondary-container border border-error p-3 flex items-center justify-center gap-2 active:opacity-90">
+<span class="material-symbols-outlined text-white" data-icon="e911_emergency">e911_emergency</span>
+<span class="font-label-md text-label-md uppercase font-bold text-white">EMERGENCY ASSIST</span>
+</button>
+</section>
+</main>
+<!-- BOTTOM NAVIGATION BAR (Shared Component Anchor) -->
+<!-- Contextual active state autonomously locked to 'SAFETY' as mandated -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch min-h-[64px] bg-surface-container-low dark:bg-surface-container-low border-t-2 border-surface-container-highest dark:border-surface-container-highest shadow-none">
+<!-- HOME Item -->
+<a class="flex-1 flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#home">
+<span class="material-symbols-outlined text-2xl" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">HOME</span>
+</a>
+<!-- TASKS Item -->
+<a class="flex-1 flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#tasks">
+<span class="material-symbols-outlined text-2xl" data-icon="assignment">assignment</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">TASKS</span>
+</a>
+<!-- SAFETY Item (ACTIVE TAB: Exact match for Safety Center screen) -->
+<a aria-current="page" class="flex-1 flex flex-col items-center justify-center min-h-[64px] min-w-[64px] bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container active:bg-primary active:text-on-primary duration-75" href="#safety">
+<span class="material-symbols-outlined text-2xl" data-icon="shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">SAFETY</span>
+</a>
+<!-- PROFILE Item -->
+<a class="flex-1 flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#profile">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">PROFILE</span>
+</a>
+</nav>
+</body></html>

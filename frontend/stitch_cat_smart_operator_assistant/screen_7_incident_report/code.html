@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Rapid Incident Report • EXC001</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100..900&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .hazard-stripe-bar {
+      background: repeating-linear-gradient(
+        -45deg,
+        #fdb813,
+        #fdb813 10px,
+        #121316 10px,
+        #121316 20px
+      );
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md select-none overflow-x-hidden antialiased">
+<!-- TOP APP BAR (Shared Component Anchor) -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container border-b-2 border-surface-container-highest fixed top-0 left-0 z-40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container text-2xl" data-icon="construction">construction</span>
+<span class="font-headline-sm text-headline-sm uppercase tracking-wider font-bold text-primary-container">EXC001 • SHIFT ACTIVE</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex items-center px-2.5 py-1 bg-surface-container-lowest border border-outline-variant text-on-surface-variant font-label-sm text-label-sm">
+<span class="inline-block w-2 h-2 rounded-full bg-tertiary-container mr-2 animate-pulse"></span>
+        DISPATCH LINK ONLINE
+      </div>
+<button aria-label="Machine Warning Alert" class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary hover:bg-on-secondary-fixed-variant active:scale-95 duration-75">
+<span class="material-symbols-outlined text-2xl" data-icon="warning">warning</span>
+</button>
+</div>
+</header>
+<!-- MAIN OPERATOR VIEWPORT -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 pt-20 pb-28 flex flex-col gap-4">
+<!-- SUBHEADER / CONTEXT PANEL -->
+<div class="bg-surface-container border border-surface-container-highest p-3 sm:p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-none">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-xl" data-icon="shield">shield</span>
+<h1 class="font-headline-md text-headline-md sm:font-headline-lg sm:text-headline-lg uppercase text-on-surface tracking-wide">Report an Incident</h1>
+</div>
+<p class="font-label-md text-label-md uppercase text-on-surface-variant tracking-wider mt-0.5">
+          Operator: Raj Kumar • EXC001 • Pit 4-B North Highwall
+        </p>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-lowest border border-outline-variant px-3 py-2 self-start md:self-auto">
+<span class="material-symbols-outlined text-primary-container animate-pulse" data-icon="timer">timer</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider text-primary-container">15-SEC RAPID TRIAGE</span>
+</div>
+</div>
+<!-- MAIN INTERACTION BENTO GRID -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<!-- COLUMN LEFT & CENTER: INCIDENT TYPE & SEVERITY (8 COLS) -->
+<div class="lg:col-span-8 flex flex-col gap-4">
+<!-- SECTION: SELECT INCIDENT TYPE -->
+<section class="bg-surface-container border border-surface-container-highest p-3.5 sm:p-4">
+<div class="flex items-center justify-between mb-3 border-b border-surface-container-highest pb-2">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="category">category</span>
+              SELECT INCIDENT TYPE (ONE-TOUCH)
+            </span>
+<span class="font-label-sm text-label-sm uppercase text-outline">Touch to toggle</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3" id="incidentTypeGrid">
+<!-- Type 1: Proximity Hazard (Default Active / Selected) -->
+<button class="incident-btn flex flex-col items-center justify-center min-h-[72px] sm:min-h-[80px] p-2.5 bg-surface-container-high border-2 border-primary-container shadow-none text-left relative group active:bg-surface-container-highest" data-selected="true" type="button">
+<div class="absolute top-1.5 right-1.5 w-3 h-3 bg-primary-container"></div>
+<span class="material-symbols-outlined text-3xl sm:text-4xl text-primary-container mb-1" data-icon="warning">warning</span>
+<span class="font-label-lg text-label-lg uppercase text-on-surface text-center font-bold tracking-wide">Proximity Hazard</span>
+<span class="font-label-sm text-label-sm uppercase text-primary-container mt-0.5">ZONE BREACH</span>
+</button>
+<!-- Type 2: Seatbelt Issue -->
+<button class="incident-btn flex flex-col items-center justify-center min-h-[72px] sm:min-h-[80px] p-2.5 bg-surface-container-high border-2 border-surface-container-highest hover:border-outline text-left relative group active:bg-surface-container-highest" data-selected="false" type="button">
+<div class="absolute top-1.5 right-1.5 w-3 h-3 border border-surface-container-highest"></div>
+<span class="material-symbols-outlined text-3xl sm:text-4xl text-on-surface-variant mb-1 group-hover:text-primary-container" data-icon="airline_seat_recline_extra">airline_seat_recline_extra</span>
+<span class="font-label-lg text-label-lg uppercase text-on-surface text-center font-bold tracking-wide">Seatbelt Issue</span>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant mt-0.5">CAB INTERLOCK</span>
+</button>
+<!-- Type 3: Machine Issue -->
+<button class="incident-btn flex flex-col items-center justify-center min-h-[72px] sm:min-h-[80px] p-2.5 bg-surface-container-high border-2 border-surface-container-highest hover:border-outline text-left relative group active:bg-surface-container-highest" data-selected="false" type="button">
+<div class="absolute top-1.5 right-1.5 w-3 h-3 border border-surface-container-highest"></div>
+<span class="material-symbols-outlined text-3xl sm:text-4xl text-on-surface-variant mb-1 group-hover:text-primary-container" data-icon="precision_manufacturing">precision_manufacturing</span>
+<span class="font-label-lg text-label-lg uppercase text-on-surface text-center font-bold tracking-wide">Machine Issue</span>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant mt-0.5">HYD / POWERTRAIN</span>
+</button>
+<!-- Type 4: Unsafe Condition -->
+<button class="incident-btn flex flex-col items-center justify-center min-h-[72px] sm:min-h-[80px] p-2.5 bg-surface-container-high border-2 border-surface-container-highest hover:border-outline text-left relative group active:bg-surface-container-highest" data-selected="false" type="button">
+<div class="absolute top-1.5 right-1.5 w-3 h-3 border border-surface-container-highest"></div>
+<span class="material-symbols-outlined text-3xl sm:text-4xl text-on-surface-variant mb-1 group-hover:text-primary-container" data-icon="dangerous">dangerous</span>
+<span class="font-label-lg text-label-lg uppercase text-on-surface text-center font-bold tracking-wide">Unsafe Condition</span>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant mt-0.5">BERM / GRADE FAIL</span>
+</button>
+<!-- Type 5: Other -->
+<button class="incident-btn sm:col-span-2 flex flex-col items-center justify-center min-h-[72px] sm:min-h-[80px] p-2.5 bg-surface-container-high border-2 border-surface-container-highest hover:border-outline text-left relative group active:bg-surface-container-highest" data-selected="false" type="button">
+<div class="absolute top-1.5 right-1.5 w-3 h-3 border border-surface-container-highest"></div>
+<span class="material-symbols-outlined text-3xl sm:text-4xl text-on-surface-variant mb-1 group-hover:text-primary-container" data-icon="help_outline">help_outline</span>
+<span class="font-label-lg text-label-lg uppercase text-on-surface text-center font-bold tracking-wide">Other Hazard</span>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant mt-0.5">MISC / UNLISTED</span>
+</button>
+</div>
+</section>
+<!-- SECTION: SEVERITY LEVEL -->
+<section class="bg-surface-container border border-surface-container-highest p-3.5 sm:p-4">
+<div class="flex items-center justify-between mb-3 border-b border-surface-container-highest pb-2">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="report">report</span>
+              SEVERITY LEVEL (SAFETY CLASSIFICATION)
+            </span>
+<span class="font-label-sm text-label-sm uppercase text-secondary font-bold">STATUS: CRITICAL</span>
+</div>
+<div class="grid grid-cols-3 gap-2.5 sm:gap-3" id="severitySelector">
+<!-- LOW -->
+<button class="severity-btn min-h-[64px] p-2 flex flex-col items-center justify-center bg-surface-container-high border-2 border-surface-container-highest text-on-surface-variant hover:border-tertiary-container active:bg-surface-container-highest transition-colors" type="button">
+<span class="font-headline-sm text-headline-sm uppercase tracking-wider font-bold">LOW</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">LOG ONLY</span>
+</button>
+<!-- MEDIUM -->
+<button class="severity-btn min-h-[64px] p-2 flex flex-col items-center justify-center bg-surface-container-high border-2 border-surface-container-highest text-on-surface-variant hover:border-primary-container active:bg-surface-container-highest transition-colors" type="button">
+<span class="font-headline-sm text-headline-sm uppercase tracking-wider font-bold">MEDIUM</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">FOREMAN ALERT</span>
+</button>
+<!-- HIGH (Critical - Highlighted) -->
+<button class="severity-btn min-h-[64px] p-2 flex flex-col items-center justify-center bg-secondary-container border-2 border-secondary text-on-secondary relative shadow-none active:scale-[0.99] transition-transform" type="button">
+<div class="hazard-stripe-bar absolute top-0 left-0 right-0 h-1.5"></div>
+<span class="font-headline-sm text-headline-sm uppercase tracking-wider font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-xl" data-icon="emergency" data-weight="fill" style="font-variation-settings: 'FILL' 1;">emergency</span>
+                HIGH (CRITICAL)
+              </span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-secondary font-bold">SITE HALT REQUIRED</span>
+</button>
+</div>
+</section>
+</div>
+<!-- COLUMN RIGHT: QUICK VOICE/PHRASES & CAMERA FEED (4 COLS) -->
+<div class="lg:col-span-4 flex flex-col gap-4">
+<!-- QUICK DESCRIPTION / MACRO PHRASES -->
+<section class="bg-surface-container border border-surface-container-highest p-3.5 sm:p-4 flex flex-col flex-1">
+<div class="flex items-center justify-between mb-3 border-b border-surface-container-highest pb-2">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="mic">mic</span>
+              QUICK DESCRIPTION
+            </span>
+<span class="font-label-sm text-label-sm uppercase text-primary-container font-bold">PTT READY</span>
+</div>
+<!-- Active Speech Simulation Box -->
+<div class="bg-surface-container-lowest border-2 border-surface-container-highest p-3 mb-3 flex items-center justify-between min-h-[56px]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container animate-pulse" data-icon="graphic_eq">graphic_eq</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold uppercase tracking-wider" id="selectedPhraseDisplay">
+                "Worker in blindspot"
+              </span>
+</div>
+<button class="px-2 py-1 bg-surface-container-high border border-outline-variant font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface active:bg-surface-container" type="button">
+              CLEAR
+            </button>
+</div>
+<!-- Quick Tap Phrase Buttons -->
+<div class="flex flex-col gap-2 mb-3">
+<span class="font-label-sm text-label-sm uppercase text-outline">PRESET IN-CAB MACROS:</span>
+<button class="phrase-pill w-full min-h-[52px] px-3 py-2 bg-surface-container-high border-2 border-primary-container text-left flex items-center justify-between active:bg-surface-container-highest" type="button">
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface">Worker in blindspot</span>
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="phrase-pill w-full min-h-[52px] px-3 py-2 bg-surface-container-high border border-surface-container-highest text-left flex items-center justify-between hover:border-outline active:bg-surface-container-highest" type="button">
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface-variant">Hydraulic leak</span>
+<span class="material-symbols-outlined text-outline" data-icon="add_circle">add_circle</span>
+</button>
+<button class="phrase-pill w-full min-h-[52px] px-3 py-2 bg-surface-container-high border border-surface-container-highest text-left flex items-center justify-between hover:border-outline active:bg-surface-container-highest" type="button">
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface-variant">Obstruction on haul road</span>
+<span class="material-symbols-outlined text-outline" data-icon="add_circle">add_circle</span>
+</button>
+</div>
+<!-- Push to talk button -->
+<button class="w-full min-h-[56px] bg-surface-container-high border-2 border-outline-variant hover:border-primary-container text-on-surface flex items-center justify-center gap-3 active:bg-surface-container-highest transition-colors mt-auto" type="button">
+<span class="material-symbols-outlined text-2xl text-primary-container" data-icon="mic">mic</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider font-bold">HOLD TO RECORD VOICE LOG</span>
+</button>
+</section>
+<!-- OPTIONAL PHOTO / PERIMETER CAM CARD -->
+<section class="bg-surface-container border border-surface-container-highest p-3.5 sm:p-4">
+<div class="flex items-center justify-between mb-2 border-b border-surface-container-highest pb-2">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="photo_camera">photo_camera</span>
+              PERIMETER CAM EVIDENCE
+            </span>
+<span class="font-label-sm text-label-sm uppercase text-tertiary-container font-bold">CAM-04 SYNCED</span>
+</div>
+<div class="relative w-full h-36 bg-surface-container-lowest border-2 border-surface-container-highest overflow-hidden flex flex-col justify-between p-2">
+<!-- Simulated Live Perimeter Feed Background -->
+<div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity" data-alt="High contrast black and white industrial security camera view from heavy excavator showing worker hazard zone on gravel pit construction site with technical HUD reticle overlay." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC5nBdNwAgfKNbkf59iMIB2iy6KGukCyuIwVjWExPfQ-bbT1EDTOSujkxWRKVy8NUrIJUQmsSfkFrGGWiJTAZyNByBJxE9o3NN6BGwcWQ-99eHRiLjYVc9fq1gV48-Vvk_SdRb-MOUDxRHke7RJ6h-Jsf5ckasEBKzGXI4G7Y_AQMEvOa44DypQXc2swJFDetxJjaDT7C-orspFAg9y8WVM44DJk_muAXwbRSkJb94eXHtnYFX6aI6JOg')"></div>
+<div class="relative z-10 flex justify-between items-start">
+<span class="bg-secondary-container text-on-secondary font-label-sm text-label-sm px-1.5 py-0.5 uppercase tracking-wider">LIVE CAM SNAPSHOT</span>
+<span class="bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface px-1.5 py-0.5 border border-outline-variant">09:42:15 UTC</span>
+</div>
+<button class="relative z-10 w-full min-h-[48px] bg-surface-container/90 border border-primary-container hover:bg-primary-container hover:text-on-primary-container text-on-surface flex items-center justify-center gap-2 transition-colors active:scale-95" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="camera">camera</span>
+<span class="font-label-md text-label-md uppercase font-bold tracking-wider">ATTACH CAB/PERIMETER CAM SNAPSHOT</span>
+</button>
+</div>
+</section>
+</div>
+</div>
+<!-- PRIMARY ACTION EXECUTION ZONE -->
+<div class="mt-2 flex flex-col gap-3">
+<!-- Massive Primary CAT Safety Yellow Action Button -->
+<button class="w-full min-h-[64px] sm:min-h-[72px] bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container border-2 border-on-primary-container flex items-center justify-center gap-3 active:bg-on-primary-container active:text-primary-container transition-all active:translate-y-0.5" id="submitBtn" type="button">
+<span class="material-symbols-outlined text-3xl font-bold" data-icon="send">send</span>
+<span class="font-headline-sm text-headline-sm sm:font-headline-md sm:text-headline-md font-bold uppercase tracking-wider">
+          SUBMIT INCIDENT REPORT
+        </span>
+</button>
+<!-- Confirmation Feedback Callout Banner -->
+<div class="bg-surface-container-low border-l-4 border-tertiary-container border-y border-r border-surface-container-highest p-3 flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center bg-surface-container border border-tertiary-container text-tertiary-container">
+<span class="material-symbols-outlined text-xl" data-icon="task_alt">task_alt</span>
+</div>
+<div>
+<div class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-bold">
+              Last Reported: INC-1024 • Logged to Site Safety dispatch at 09:41
+            </div>
+<div class="font-body-sm text-body-sm text-outline">
+              Telemetry tag: GPS (Lat 53.421, Long -113.512) • Auto-synchronized with Safety Central
+            </div>
+</div>
+</div>
+<div class="hidden sm:flex items-center gap-1 text-tertiary font-label-sm text-label-sm uppercase tracking-wider bg-surface-container px-2 py-1 border border-outline-variant">
+<span class="inline-block w-2 h-2 rounded-full bg-tertiary-container"></span>
+          ACKNOWLEDGED BY DISPATCH
+        </div>
+</div>
+</div>
+</main>
+<!-- BOTTOM NAVIGATION BAR (Shared Component Anchor) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch min-h-[64px] bg-surface-container-low border-t-2 border-surface-container-highest">
+<!-- Destination 1: HOME -->
+<a aria-label="HOME" class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">HOME</span>
+</a>
+<!-- Destination 2: TASKS -->
+<a aria-label="TASKS" class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="assignment">assignment</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">TASKS</span>
+</a>
+<!-- Destination 3: SAFETY (ACTIVE TAB - Exactly maps to Incident Safety triage) -->
+<a aria-label="SAFETY" class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container active:bg-primary duration-75" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="shield" data-weight="fill" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">SAFETY</span>
+</a>
+<!-- Destination 4: PROFILE -->
+<a aria-label="PROFILE" class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">PROFILE</span>
+</a>
+</nav>
+<!-- INTERACTIVE LOGIC (Micro-interactions for In-Cab Simplicity) -->
+<script>
+    // Incident Type Selector
+    const incidentButtons = document.querySelectorAll('.incident-btn');
+    incidentButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        incidentButtons.forEach(b => {
+          b.classList.remove('border-primary-container');
+          b.classList.add('border-surface-container-highest');
+          const indicator = b.querySelector('div');
+          if (indicator) {
+            indicator.classList.remove('bg-primary-container');
+            indicator.classList.add('border', 'border-surface-container-highest');
+          }
+        });
+        btn.classList.remove('border-surface-container-highest');
+        btn.classList.add('border-primary-container');
+        const activeInd = btn.querySelector('div');
+        if (activeInd) {
+          activeInd.classList.remove('border', 'border-surface-container-highest');
+          activeInd.classList.add('bg-primary-container');
+        }
+      });
+    });
+
+    // Preset Phrase Pill selection
+    const phrasePills = document.querySelectorAll('.phrase-pill');
+    const phraseDisplay = document.getElementById('selectedPhraseDisplay');
+    phrasePills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        phrasePills.forEach(p => {
+          p.classList.remove('border-primary-container');
+          p.classList.add('border-surface-container-highest');
+          const textSpan = p.querySelector('span:first-child');
+          if (textSpan) textSpan.classList.replace('text-on-surface', 'text-on-surface-variant');
+          const iconSpan = p.querySelector('.material-symbols-outlined');
+          if (iconSpan) {
+            iconSpan.textContent = 'add_circle';
+            iconSpan.className = 'material-symbols-outlined text-outline';
+          }
+        });
+        pill.classList.remove('border-surface-container-highest');
+        pill.classList.add('border-primary-container');
+        const activeText = pill.querySelector('span:first-child');
+        if (activeText) {
+          activeText.classList.replace('text-on-surface-variant', 'text-on-surface');
+          phraseDisplay.textContent = `"${activeText.textContent.trim()}"`;
+        }
+        const activeIcon = pill.querySelector('.material-symbols-outlined');
+        if (activeIcon) {
+          activeIcon.textContent = 'check_circle';
+          activeIcon.className = 'material-symbols-outlined text-primary-container';
+        }
+      });
+    });
+
+    // Submission Toast Feedback
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.addEventListener('click', () => {
+      submitBtn.classList.add('opacity-80', 'scale-[0.99]');
+      const originalHtml = submitBtn.innerHTML;
+      submitBtn.innerHTML = `
+        <span class="material-symbols-outlined text-3xl animate-spin" data-icon="progress_activity">progress_activity</span>
+        <span class="font-headline-sm text-headline-sm uppercase tracking-wider">TRANSMITTING TO SAFETY CENTRAL...</span>
+      `;
+      setTimeout(() => {
+        submitBtn.classList.remove('opacity-80', 'scale-[0.99]');
+        submitBtn.innerHTML = `
+          <span class="material-symbols-outlined text-3xl text-on-tertiary-container" data-icon="check">check</span>
+          <span class="font-headline-sm text-headline-sm uppercase tracking-wider">INC-1025 TRANSMITTED SUCCESSFULLY</span>
+        `;
+        setTimeout(() => {
+          submitBtn.innerHTML = originalHtml;
+        }, 3000);
+      }, 900);
+    });
+  </script>
+</body></html>

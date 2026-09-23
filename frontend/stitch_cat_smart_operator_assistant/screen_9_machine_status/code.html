@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Machine Status &amp; Telematics Insights</title>
+<!-- Material Symbols Outlined font -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Barlow Condensed & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface select-none pb-24 overflow-x-hidden antialiased">
+<!-- TopAppBar: Derived from Shared Components JSON & Style Guidance -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container border-b-2 border-surface-container-highest fixed top-0 left-0 right-0 z-40">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-high border border-outline-variant">
+<span class="material-symbols-outlined text-primary-container text-2xl" data-icon="construction">construction</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm uppercase tracking-wider font-bold text-primary-container">EXC001 • SHIFT ACTIVE</h1>
+<p class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">CAT 349 Hydraulic Excavator</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-surface-container-lowest border border-outline-variant">
+<span class="inline-block w-2.5 h-2.5 bg-tertiary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface uppercase">Telemetry Sync: 100%</span>
+</div>
+<button class="w-12 h-12 flex items-center justify-center bg-surface-container-high border border-outline-variant active:bg-surface-container-highest active:border-outline-variant duration-75 text-primary-container">
+<span class="material-symbols-outlined text-2xl" data-icon="warning">warning</span>
+</button>
+</div>
+</header>
+<!-- Main Cockpit Viewport (Single layer operational console for rugged in-cab use) -->
+<main class="mt-16 px-3 sm:px-6 pt-4 max-w-7xl mx-auto space-y-4">
+<!-- SUB-HEADER STRIP -->
+<div class="flex flex-wrap items-center justify-between gap-2 border-b border-surface-container-highest pb-2">
+<div>
+<h2 class="font-headline-md text-headline-md font-bold uppercase tracking-wider text-on-surface">Machine Status</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">EXC001 • CAT 349 HYDRAULIC EXCAVATOR</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm px-2 py-1 bg-surface-container-highest text-on-surface border border-outline-variant uppercase">CAB ID: CAB-NORTH-04</span>
+<span class="font-label-sm text-label-sm px-2 py-1 bg-surface-container-highest text-primary-container border border-outline-variant uppercase">DIAGNOSTIC MODE</span>
+</div>
+</div>
+<!-- OVERALL STATUS HERO POD -->
+<section class="bg-surface-container border-2 border-outline-variant p-4">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<!-- Status Indicator Pill & Main Readout -->
+<div class="flex items-start sm:items-center gap-4">
+<div class="flex items-center justify-center px-4 py-3 bg-surface-container-lowest border-2 border-tertiary-container">
+<span class="text-tertiary-container font-metric-display text-2xl mr-2 leading-none">●</span>
+<span class="font-headline-sm text-headline-sm uppercase font-bold text-tertiary-container tracking-wider">Operational</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">
+              Powertrain &amp; Hydraulics: <span class="text-primary-container">Normal (345 Bar)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Main relief valve pressure stable • Flow rate: 380 L/min nominal
+            </p>
+</div>
+</div>
+<!-- Quick Emergency Isolator / Self-Test Primary Button (Glove-Target 64px) -->
+<div class="flex items-center gap-3">
+<button class="min-h-[56px] min-w-[56px] px-6 bg-surface-container-high border-2 border-outline-variant font-label-lg text-label-lg uppercase tracking-wider text-on-surface hover:bg-surface-bright active:bg-surface-container-highest duration-75 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-xl" data-icon="refresh">refresh</span>
+<span>Recalibrate</span>
+</button>
+<button class="min-h-[56px] min-w-[56px] px-6 bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold uppercase tracking-wider active:bg-primary duration-75 flex items-center justify-center gap-2 border border-outline-variant shadow-none">
+<span class="material-symbols-outlined text-xl" data-icon="check_circle">check_circle</span>
+<span>Acknowledge</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 2-COLUMN MAIN TELEMETRY / INSIGHTS SPLIT -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<!-- LEFT 7 COLS: 2x2 HIGH-CONTRAST METRICS GRID -->
+<section class="lg:col-span-7 flex flex-col gap-3">
+<div class="flex items-center justify-between bg-surface-container-high px-3 py-2 border-l-4 border-primary-container">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-bold">Key Operational Metrics</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">SAMPLE RATE: 10 HZ</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<!-- Metric 1: Engine Hours -->
+<div class="bg-surface-container border border-surface-container-highest p-4 flex flex-col justify-between min-h-[140px] relative overflow-hidden">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-2 mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Engine Hours</span>
+<span class="material-symbols-outlined text-on-surface-variant text-xl" data-icon="timer">timer</span>
+</div>
+<div class="flex items-baseline justify-between mt-auto">
+<span class="font-metric-display text-metric-display text-on-surface tracking-tight">1,530.2</span>
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold uppercase">H</span>
+</div>
+<div class="mt-2 text-xs font-label-sm text-on-surface-variant flex justify-between">
+<span>SERVICE INTERVAL: 250H</span>
+<span class="text-tertiary-container font-bold">78H REMAINING</span>
+</div>
+</div>
+<!-- Metric 2: Fuel Used / Level -->
+<div class="bg-surface-container border border-surface-container-highest p-4 flex flex-col justify-between min-h-[140px] relative overflow-hidden">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-2 mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Fuel Used</span>
+<span class="material-symbols-outlined text-on-surface-variant text-xl" data-icon="local_gas_station">local_gas_station</span>
+</div>
+<div class="flex items-baseline justify-between mt-auto">
+<span class="font-metric-display text-metric-display text-on-surface tracking-tight">2.0</span>
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold uppercase">L</span>
+</div>
+<div class="mt-2 text-xs font-label-sm text-on-surface-variant flex justify-between items-center">
+<span>CURRENT LEVEL</span>
+<span class="text-primary-container font-bold px-2 py-0.5 bg-surface-container-lowest border border-outline-variant">82% (420 L)</span>
+</div>
+</div>
+<!-- Metric 3: Load Cycles -->
+<div class="bg-surface-container border border-surface-container-highest p-4 flex flex-col justify-between min-h-[140px] relative overflow-hidden">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-2 mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Load Cycles</span>
+<span class="material-symbols-outlined text-on-surface-variant text-xl" data-icon="sync">sync</span>
+</div>
+<div class="flex items-baseline justify-between mt-auto">
+<span class="font-metric-display text-metric-display text-on-surface tracking-tight">12</span>
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold uppercase">CYCLES</span>
+</div>
+<div class="mt-2 text-xs font-label-sm text-on-surface-variant flex justify-between">
+<span>TODAY'S SHIFT COUNT</span>
+<span class="text-tertiary-container font-bold">AVG 2.4 MIN/CYCLE</span>
+</div>
+</div>
+<!-- Metric 4: Idle Time -->
+<div class="bg-surface-container border border-surface-container-highest p-4 flex flex-col justify-between min-h-[140px] relative overflow-hidden">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-2 mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Idle Time</span>
+<span class="material-symbols-outlined text-primary-container text-xl" data-icon="hourglass_empty">hourglass_empty</span>
+</div>
+<div class="flex items-baseline justify-between mt-auto">
+<span class="font-metric-display text-metric-display text-primary-container tracking-tight">30</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold uppercase">MIN</span>
+</div>
+<div class="mt-2 text-xs font-label-sm text-on-surface-variant flex justify-between items-center">
+<span>ACTIVE RATIO: 76%</span>
+<span class="text-primary-container font-bold uppercase">HIGH (+12%)</span>
+</div>
+</div>
+</div>
+<!-- TELEMATICS QUICK INSPECTION POD (Glove-Target Strip) -->
+<div class="bg-surface-container border border-surface-container-highest p-4 mt-1">
+<div class="flex items-center justify-between border-b border-surface-container-highest pb-2 mb-3">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-bold">Telematics Quick Inspection</span>
+<span class="font-label-sm text-label-sm text-tertiary-container font-bold">ALL SENSORS CALIBRATED</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<!-- Inspection Item 1: Oil Temperature -->
+<div class="bg-surface-container-lowest border border-outline-variant p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Oil Temp</span>
+<span class="material-symbols-outlined text-sm text-tertiary-container" data-icon="device_thermostat">device_thermostat</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">68°C</span>
+<span class="font-label-sm text-label-sm text-tertiary-container font-bold uppercase">Optimal</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 mt-2">
+<div class="bg-tertiary-container h-1.5" style="width: 58%;"></div>
+</div>
+</div>
+<!-- Inspection Item 2: Track Tension -->
+<div class="bg-surface-container-lowest border border-outline-variant p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Track Tension</span>
+<span class="material-symbols-outlined text-sm text-tertiary-container" data-icon="width">width</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">52 mm</span>
+<span class="font-label-sm text-label-sm text-tertiary-container font-bold uppercase">Verified</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 mt-2">
+<div class="bg-tertiary-container h-1.5" style="width: 90%;"></div>
+</div>
+</div>
+<!-- Inspection Item 3: Battery Voltage -->
+<div class="bg-surface-container-lowest border border-outline-variant p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Alternator/Batt</span>
+<span class="material-symbols-outlined text-sm text-tertiary-container" data-icon="bolt">bolt</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">28.4V</span>
+<span class="font-label-sm text-label-sm text-tertiary-container font-bold uppercase">Nominal</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 mt-2">
+<div class="bg-tertiary-container h-1.5" style="width: 80%;"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT 5 COLS: MACHINE INSIGHTS & ADVISORIES -->
+<section class="lg:col-span-5 flex flex-col gap-3">
+<div class="flex items-center justify-between bg-surface-container-high px-3 py-2 border-l-4 border-outline-variant">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-bold">Machine Insights &amp; Advisories</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ACTIVE: 3</span>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Notice 1: Amber Alert (Idle Time Warning) -->
+<div class="bg-surface-container border-2 border-primary-container p-4 relative">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 min-w-[40px] flex items-center justify-center bg-primary-container text-on-primary-container">
+<span class="material-symbols-outlined font-bold text-2xl" data-icon="warning">warning</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md text-primary-container font-bold uppercase tracking-wider">Cautionary Telematics Advisory</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">12M AGO</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+                  Idle time is higher than your recent average (+12%). Consider auto-shutoff if staged longer than 5 mins.
+                </p>
+<div class="mt-3 flex items-center gap-2">
+<button class="min-h-[48px] px-4 bg-surface-container-high border border-outline-variant font-label-md text-label-md uppercase text-on-surface active:bg-surface-container-highest duration-75">
+                    Arm Auto-Shutoff
+                  </button>
+<button class="min-h-[48px] px-3 bg-surface-container-lowest border border-outline-variant font-label-md text-label-md uppercase text-on-surface-variant active:bg-surface-container-highest duration-75">
+                    Dismiss
+                  </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Notice 2: Green Confirmation (Fuel Consumption) -->
+<div class="bg-surface-container border-l-4 border-tertiary-container border-y border-r border-surface-container-highest p-4">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 min-w-[40px] flex items-center justify-center bg-surface-container-lowest border border-tertiary-container text-tertiary-container">
+<span class="material-symbols-outlined font-bold text-2xl" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md text-tertiary-container font-bold uppercase tracking-wider">Efficiency Nominal</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">CONTINUOUS</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+                  Fuel consumption is normal (18.4 L/h average under load).
+                </p>
+<div class="mt-2 text-xs font-label-sm text-on-surface-variant">
+                  TARGET RANGE: 16.0 - 21.0 L/H • ECO-MODE ASSIST ENGAGED
+                </div>
+</div>
+</div>
+</div>
+<!-- Notice 3: Green Confirmation (Load Cycles Quota) -->
+<div class="bg-surface-container border-l-4 border-tertiary-container border-y border-r border-surface-container-highest p-4">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 min-w-[40px] flex items-center justify-center bg-surface-container-lowest border border-tertiary-container text-tertiary-container">
+<span class="material-symbols-outlined font-bold text-2xl" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md text-tertiary-container font-bold uppercase tracking-wider">Production Target</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">10:45 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+                  12 load cycles completed today — on track with shift quota.
+                </p>
+<div class="mt-2 text-xs font-label-sm text-on-surface-variant">
+                  SHIFT GOAL: 28 CYCLES • ESTIMATED SHIFT COMPLETION: 15:30
+                </div>
+</div>
+</div>
+</div>
+<!-- Operator Quick Action Control Block -->
+<div class="bg-surface-container-low border border-surface-container-highest p-3 flex items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="build">build</span>
+<span class="font-label-md text-label-md uppercase text-on-surface font-bold">Manual Log Entry</span>
+</div>
+<button class="min-h-[56px] px-5 bg-surface-container-highest text-on-surface border border-outline-variant font-label-md text-label-md uppercase font-bold active:bg-surface-bright duration-75">
+              + Add Machine Note
+            </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar: Derived verbatim from Shared Components JSON & Style Guidance -->
+<!-- "HOME" is determined active based on prompt: "Bottom Navigation active on 'Home' or clean action button" -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch min-h-[64px] bg-surface-container-low border-t-2 border-surface-container-highest">
+<!-- Item 0: HOME (ACTIVE) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container flex-1" href="#home">
+<span class="material-symbols-outlined text-2xl" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">HOME</span>
+</a>
+<!-- Item 1: TASKS (INACTIVE) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#tasks">
+<span class="material-symbols-outlined text-2xl" data-icon="assignment">assignment</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">TASKS</span>
+</a>
+<!-- Item 2: SAFETY (INACTIVE) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#safety">
+<span class="material-symbols-outlined text-2xl" data-icon="shield">shield</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">SAFETY</span>
+</a>
+<!-- Item 3: PROFILE (INACTIVE) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#profile">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">PROFILE</span>
+</a>
+</nav>
+</body></html>

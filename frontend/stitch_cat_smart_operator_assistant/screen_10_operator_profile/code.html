@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Screen 10 — Operator Profile</title>
+<!-- Google Fonts: Inter & Barlow Condensed -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .hazard-stripe {
+      background: repeating-linear-gradient(
+        -45deg,
+        #fdb813,
+        #fdb813 12px,
+        #121316 12px,
+        #121316 24px
+      );
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased select-none min-h-screen flex flex-col font-body-md">
+<!-- TopAppBar Component (from Shared Components JSON) -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container dark:bg-surface-container border-b-2 border-surface-container-highest dark:border-surface-container-highest docked full-width top-0 z-40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container text-[26px]">construction</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary-container dark:text-primary-container tracking-wider uppercase">
+        EXC001 • SHIFT ACTIVE
+      </span>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-surface-container-highest border border-outline-variant">
+<span class="w-2.5 h-2.5 bg-tertiary-container"></span>
+<span class="font-label-md text-label-md uppercase text-on-surface">CAB CABIN 04</span>
+</div>
+<button class="flex items-center justify-center p-2 text-primary-container hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-surface-container-highest active:border-outline-variant duration-75" type="button">
+<span class="material-symbols-outlined text-[24px]">warning</span>
+</button>
+</div>
+</header>
+<!-- Main Viewport Canvas (Optimized for Industrial In-Cab Display / Tablet) -->
+<main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-4 md:p-6 pb-28 space-y-4">
+<!-- Subheader Utility Bar -->
+<div class="flex items-center justify-between border-l-4 border-primary-container pl-3 py-1 bg-surface-container-low border-y border-r border-surface-container-highest">
+<div class="flex items-baseline gap-2">
+<h1 class="font-headline-md text-headline-md font-bold uppercase text-on-surface tracking-wide">
+          Operator Profile
+        </h1>
+<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+          • Cab Cabin 04
+        </span>
+</div>
+<div class="flex items-center gap-2 pr-2">
+<span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest bg-surface-container-lowest px-2.5 py-1 border border-outline-variant flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+          AUTH VALIDATED
+        </span>
+</div>
+</div>
+<!-- Bento Grid Structure -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+<!-- Left Column: OPERATOR IDENTITY CARD & CREDENTIALS (7 cols) -->
+<section class="lg:col-span-7 space-y-4">
+<!-- Identity Pod -->
+<div class="bg-surface-container border-2 border-surface-container-highest relative overflow-hidden">
+<!-- Top Status Strip -->
+<div class="h-8 bg-surface-container-high px-4 flex items-center justify-between border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary-container">badge</span>
+<span class="font-label-md text-label-md uppercase text-on-surface-variant tracking-wider">Operator Identity &amp; Cabin Allocation</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider font-bold">SECURE TELEMETRICS</span>
+</div>
+<div class="p-4 sm:p-5 space-y-5">
+<!-- Operator Primary Identity Banner -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-container-highest pb-4">
+<div class="flex items-center gap-4">
+<!-- Large Tactical Avatar Frame -->
+<div class="relative w-20 h-20 bg-surface-container-lowest border-2 border-outline-variant flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-[48px] text-primary-container">person</span>
+<div class="absolute bottom-0 right-0 bg-tertiary text-surface-container-lowest px-1 font-label-sm text-[10px] font-extrabold uppercase">
+                    LVL 4
+                  </div>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">FULL NAME</span>
+<span class="px-2 py-0.5 bg-surface-container-highest text-primary-container font-label-sm text-label-sm">ACTIVE NOW</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl uppercase text-on-surface leading-none font-bold tracking-tight">
+                    Raj Kumar
+                  </h2>
+<div class="mt-1 flex items-center gap-3">
+<span class="font-label-md text-label-md text-primary-container uppercase font-bold tracking-wider">
+                      OP-ID: <span class="text-on-surface font-body-md font-bold">OP1001</span>
+</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-tertiary-container uppercase tracking-widest font-bold">
+                      SHIFT B (CAB 04)
+                    </span>
+</div>
+</div>
+</div>
+<!-- Quick Verification Badge -->
+<div class="sm:text-right bg-surface-container-lowest p-3 border border-surface-container-highest min-w-[150px]">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">INTERLOCK STATUS</div>
+<div class="font-headline-sm text-headline-sm text-tertiary uppercase font-bold flex items-center sm:justify-end gap-1.5 mt-0.5">
+<span class="material-symbols-outlined text-[20px] text-tertiary">verified_user</span>
+                  ACTIVE
+                </div>
+</div>
+</div>
+<!-- Heavy Specification Cells -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<!-- Cell 1: Machine Assignment -->
+<div class="bg-surface-container-lowest p-3 border-l-4 border-primary-container border-y border-r border-surface-container-highest">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Assigned Machine</span>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface uppercase block mt-1">
+                  EXC001
+                </span>
+<span class="font-label-sm text-label-sm text-primary uppercase block tracking-tight">
+                  CAT Hydraulic Excavator
+                </span>
+</div>
+<!-- Cell 2: Skill Level -->
+<div class="bg-surface-container-lowest p-3 border-l-4 border-tertiary border-y border-r border-surface-container-highest">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Skill Level &amp; Credentials</span>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface uppercase block mt-1">
+                  Expert Operator
+                </span>
+<span class="font-label-sm text-label-sm text-tertiary uppercase block tracking-tight">
+                  Level 4 Certified Heavy Arm
+                </span>
+</div>
+</div>
+<!-- Interlock & Safety Score Highlight Strip -->
+<div class="bg-surface-container-high border border-outline-variant p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[24px]">shield</span>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Shift Rating / Safety Score</div>
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface tracking-wide uppercase">
+                    100% Interlock Compliance
+                  </div>
+</div>
+</div>
+<div class="self-start sm:self-center px-3 py-1 bg-surface-container-lowest border border-tertiary text-tertiary font-label-md text-label-md font-bold uppercase tracking-wider">
+                NOMINAL
+              </div>
+</div>
+</div>
+</div>
+<!-- Performance & Safety Telemetry Pod -->
+<div class="bg-surface-container border-2 border-surface-container-highest">
+<div class="h-8 bg-surface-container-high px-4 flex items-center justify-between border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary-container">speed</span>
+<span class="font-label-md text-label-md uppercase text-on-surface-variant tracking-wider">Performance &amp; Safety Stats</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">TELEMETRY SYNCED</span>
+</div>
+<div class="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+<!-- Training Progress Metric -->
+<div class="bg-surface-container-lowest p-3.5 border border-surface-container-highest flex flex-col justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">
+                  Training Progress
+                </span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-metric-display text-headline-xl text-on-surface uppercase font-bold">
+                    3 <span class="text-on-surface-variant text-headline-md font-normal">/ 5</span>
+</span>
+<span class="font-label-sm text-label-sm text-primary-container uppercase font-bold">60% COMP</span>
+</div>
+</div>
+<!-- Heavy Industrial Stepped Bar -->
+<div class="mt-3">
+<div class="w-full bg-surface-container-highest h-3 border border-outline-variant p-0.5 flex gap-1">
+<div class="bg-primary-container h-full flex-1"></div>
+<div class="bg-primary-container h-full flex-1"></div>
+<div class="bg-primary-container h-full flex-1"></div>
+<div class="bg-surface-container-high h-full flex-1"></div>
+<div class="bg-surface-container-high h-full flex-1"></div>
+</div>
+<span class="font-label-sm text-[11px] text-on-surface-variant uppercase block mt-1.5">3 / 5 completed</span>
+</div>
+</div>
+<!-- Safety Events Metric -->
+<div class="bg-surface-container-lowest p-3.5 border border-surface-container-highest flex flex-col justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">
+                  Safety Events
+                </span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-metric-display text-headline-xl text-primary-container uppercase font-bold">
+                    2
+                  </span>
+<span class="font-label-sm text-label-sm text-tertiary uppercase font-bold bg-surface-container px-1.5 py-0.5 border border-tertiary">
+                    RESOLVED
+                  </span>
+</div>
+</div>
+<div class="mt-3 bg-surface-container p-2 border-l-2 border-tertiary">
+<span class="font-label-sm text-[11px] text-on-surface leading-tight block">
+                  2 this week (All Cleared &amp; Resolved)
+                </span>
+</div>
+</div>
+<!-- Total Operating Hours Metric -->
+<div class="bg-surface-container-lowest p-3.5 border border-surface-container-highest flex flex-col justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">
+                  Operating Time
+                </span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-metric-display text-headline-xl text-on-surface uppercase font-bold">
+                    4,280
+                  </span>
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold">HRS</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="flex justify-between items-center text-[11px] font-label-sm text-on-surface-variant uppercase">
+<span>MCH LIFETIME LOG</span>
+<span class="text-tertiary">STABLE</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 mt-1">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: OPERATOR ACTIONS & MENU (5 cols) -->
+<section class="lg:col-span-5 space-y-4">
+<div class="bg-surface-container border-2 border-surface-container-highest">
+<div class="h-8 bg-surface-container-high px-4 flex items-center justify-between border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary-container">tune</span>
+<span class="font-label-md text-label-md uppercase text-on-surface-variant tracking-wider">Operator Actions &amp; System Menu</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">GLOVE READY 64PX</span>
+</div>
+<!-- Chunky Action List (All min-h-[56px] or 64px) -->
+<div class="p-3 sm:p-4 space-y-2.5">
+<!-- Item 1: Training History -->
+<button class="w-full min-h-[64px] bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container-highest border-l-4 border-l-primary-container border-y border-r border-surface-container-highest px-4 py-3 flex items-center justify-between group transition-colors text-left" type="button">
+<div class="flex items-center gap-3.5">
+<div class="w-11 h-11 bg-surface-container-highest flex items-center justify-center border border-outline-variant flex-shrink-0 group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined text-[24px]">menu_book</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm uppercase font-bold text-on-surface tracking-wide">
+                    Training History &amp; Certifications
+                  </div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">
+                    3 Active Licences • Refresher Due 45D
+                  </div>
+</div>
+</div>
+<span class="material-symbols-outlined text-[28px] text-primary-container group-hover:translate-x-1 transition-transform">
+                chevron_right
+              </span>
+</button>
+<!-- Item 2: Safety Event History -->
+<button class="w-full min-h-[64px] bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container-highest border-l-4 border-l-tertiary border-y border-r border-surface-container-highest px-4 py-3 flex items-center justify-between group transition-colors text-left" type="button">
+<div class="flex items-center gap-3.5">
+<div class="w-11 h-11 bg-surface-container-highest flex items-center justify-center border border-outline-variant flex-shrink-0 group-hover:bg-tertiary-container group-hover:text-on-tertiary-container transition-colors">
+<span class="material-symbols-outlined text-[24px]">shield</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm uppercase font-bold text-on-surface tracking-wide">
+                    Safety Event History &amp; Reports
+                  </div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">
+                    2 Events Logged • 0 Active Violations
+                  </div>
+</div>
+</div>
+<span class="material-symbols-outlined text-[28px] text-primary-container group-hover:translate-x-1 transition-transform">
+                chevron_right
+              </span>
+</button>
+<!-- Item 3: Cab Display Settings -->
+<button class="w-full min-h-[64px] bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container-highest border-l-4 border-l-outline border-y border-r border-surface-container-highest px-4 py-3 flex items-center justify-between group transition-colors text-left" type="button">
+<div class="flex items-center gap-3.5">
+<div class="w-11 h-11 bg-surface-container-highest flex items-center justify-center border border-outline-variant flex-shrink-0 group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm uppercase font-bold text-on-surface tracking-wide">
+                    Cab Display Settings
+                  </div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">
+                    Brightness 95% • Glove Mode ACTIVE
+                  </div>
+</div>
+</div>
+<span class="material-symbols-outlined text-[28px] text-primary-container group-hover:translate-x-1 transition-transform">
+                chevron_right
+              </span>
+</button>
+<!-- Item 4: Emergency Dispatch Protocols -->
+<button class="w-full min-h-[64px] bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container-highest border-l-4 border-l-secondary-container border-y border-r border-surface-container-highest px-4 py-3 flex items-center justify-between group transition-colors text-left" type="button">
+<div class="flex items-center gap-3.5">
+<div class="w-11 h-11 bg-surface-container-highest flex items-center justify-center border border-outline-variant flex-shrink-0 group-hover:bg-secondary-container group-hover:text-on-secondary-container transition-colors">
+<span class="material-symbols-outlined text-[24px]">help</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm uppercase font-bold text-on-surface tracking-wide">
+                    In-Cab Help &amp; Emergency Dispatch
+                  </div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">
+                    Direct Cab Link: Channel 09 (Site Safety)
+                  </div>
+</div>
+</div>
+<span class="material-symbols-outlined text-[28px] text-primary-container group-hover:translate-x-1 transition-transform">
+                chevron_right
+              </span>
+</button>
+</div>
+<!-- Bottom Action Container -->
+<div class="p-3 sm:p-4 bg-surface-container-low border-t-2 border-surface-container-highest">
+<!-- Primary Bottom Log Out Button: Solid High Contrast Emergency Style -->
+<button class="w-full min-h-[64px] bg-secondary-container hover:bg-error-container text-on-secondary-fixed active:bg-error active:text-on-error font-headline-md text-headline-md uppercase font-bold tracking-wider flex items-center justify-center gap-3 border-2 border-outline-variant transition-colors shadow-none" type="button">
+<span class="material-symbols-outlined text-[28px]">logout</span>
+              LOG OUT OF CAB TERMINAL
+            </button>
+<div class="mt-2 text-center">
+<span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest">
+                WARNING: LOGOUT ENGAGES HYDRAULIC LOCK INTERLOCK
+              </span>
+</div>
+</div>
+</div>
+<!-- Tactical Diagnostic Footnote -->
+<div class="bg-surface-container-lowest p-3 border border-surface-container-highest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-tertiary"></span>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant">ECU COMMS BUS: NOMINAL</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface uppercase">LATENCY: 14MS</span>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar Component (from Shared Components JSON) -->
+<!-- Strict Semantic Shell: Top level ecosystem, 'PROFILE' tab is active -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch min-h-[64px] bg-surface-container-low dark:bg-surface-container-low border-t-2 border-surface-container-highest dark:border-surface-container-highest docked full-width bottom-0">
+<!-- Tab 1: HOME (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">HOME</span>
+</a>
+<!-- Tab 2: TASKS (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#">
+<span class="material-symbols-outlined text-[24px]">assignment</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">TASKS</span>
+</a>
+<!-- Tab 3: SAFETY (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75 flex-1" href="#">
+<span class="material-symbols-outlined text-[24px]">shield</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">SAFETY</span>
+</a>
+<!-- Tab 4: PROFILE (ACTIVE TAB - Exactly mapped to page intent) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container active:bg-primary active:text-on-primary duration-75 flex-1" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">PROFILE</span>
+</a>
+</nav>
+</body></html>

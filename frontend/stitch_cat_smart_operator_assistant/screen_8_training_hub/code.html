@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Operator Training Hub</title>
+<!-- Material Symbols Outlined Font -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      user-select: none;
+    }
+    .hazard-stripe-top {
+      background: repeating-linear-gradient(
+        -45deg,
+        #fdb813,
+        #fdb813 10px,
+        #121316 10px,
+        #121316 20px
+      );
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md antialiased select-none pb-24 md:pb-28">
+<!-- TOP APP BAR (Shared Component Anchor) -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container dark:bg-surface-container border-b-2 border-surface-container-highest dark:border-surface-container-highest docked full-width top-0 z-40 sticky">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container text-2xl" data-icon="construction">construction</span>
+<h1 class="font-headline-sm text-headline-sm uppercase tracking-wider font-bold text-primary-container dark:text-primary-container">
+        EXC001 • SHIFT ACTIVE
+      </h1>
+</div>
+<div class="flex items-center gap-3">
+<span class="hidden sm:inline-block px-2 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm uppercase">CAB UNIT 04</span>
+<button class="flex items-center justify-center p-2 rounded text-primary-container hover:bg-surface-container-high active:bg-surface-container-highest duration-75" title="Safety System Alert Status">
+<span class="material-symbols-outlined text-primary-container text-2xl" data-icon="warning">warning</span>
+</button>
+</div>
+</header>
+<!-- MAIN VIEWPORT CONTENT CANVAS -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 md:px-6 py-4 flex flex-col gap-6">
+<!-- HUB HEADER -->
+<div class="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-surface-container-highest pb-3 gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="inline-block w-2.5 h-2.5 bg-primary-container"></span>
+<p class="font-label-lg text-label-lg text-primary-container uppercase tracking-wider">CAT Certified Operator Program</p>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-on-surface tracking-wider">
+          Operator Training
+        </h2>
+</div>
+<div class="flex items-center gap-2 font-label-md text-label-md text-on-surface-variant uppercase bg-surface-container px-3 py-1.5 border border-outline-variant">
+<span class="material-symbols-outlined text-tertiary text-lg" data-icon="timer">timer</span>
+<span>BREAK DURATION: 20 MIN REMAINING</span>
+</div>
+</div>
+<!-- YOUR PROGRESS CARD -->
+<section class="bg-surface-container-low border-2 border-surface-container-highest p-4 md:p-5 flex flex-col gap-4 relative overflow-hidden">
+<!-- Top header line with debossed feel -->
+<div class="flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-2xl" data-icon="verified">verified</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">CURRICULUM STATUS</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface uppercase">YOUR PROGRESS</h3>
+</div>
+</div>
+<!-- Certification Badge -->
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container border border-tertiary-container/40">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-label-md text-label-md uppercase text-tertiary tracking-wider font-bold">
+            Active Certification: Hydraulic Excavator Class A
+          </span>
+</div>
+</div>
+<!-- Progress Metric and Bar -->
+<div class="bg-surface-container-lowest p-4 border border-surface-container-highest flex flex-col gap-3">
+<div class="flex items-end justify-between">
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface font-bold tracking-wider">
+            3 / 5 modules completed
+          </span>
+<span class="font-metric-display text-metric-display text-primary-container leading-none">
+            60<span class="text-2xl text-on-surface-variant font-label-lg">%</span>
+</span>
+</div>
+<!-- Heavy Gauge Progress Track -->
+<div class="w-full h-5 bg-surface-container-highest border border-outline-variant p-0.5">
+<div class="h-full bg-primary-container transition-all duration-300" style="width: 60%;"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm uppercase">
+<span>Tier 1: Core Systems (Done)</span>
+<span>Tier 2: Hazard Operations (Active)</span>
+<span>Tier 3: Advanced Trenching</span>
+</div>
+</div>
+</section>
+<!-- SECTION: RECOMMENDED FOR YOU (Large Visual Cards Grid) -->
+<section class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="school">school</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface uppercase tracking-wider">
+            RECOMMENDED FOR YOU
+          </h3>
+</div>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant">Tap to launch touch module</span>
+</div>
+<!-- Bento-style large card cluster -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- CARD 1 -->
+<article class="bg-surface-container border-2 border-surface-container-highest flex flex-col justify-between group hover:border-outline duration-150 relative">
+<!-- Visual Hero Area -->
+<div class="relative h-44 w-full bg-surface-container-lowest overflow-hidden border-b-2 border-surface-container-highest">
+<img class="w-full h-full object-cover opacity-85 group-hover:scale-105 duration-300" data-alt="An industrial heavy equipment operator strapping into a safety harness seatbelt inside a rugged hydraulic excavator cab at a high-contrast construction work site with harsh midday directional lighting and dust particles visible in the cab." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe_8kH3VPjcv8KPzxcvdLvgN-EtZV-jqg8OnfQWxomFf9OK9DUVb9J_EeW6wECD6oVJ7X6uzqD_CyCl6tniZbhv7Yvev2lEzmedPuYR_hT_FGwaSzIXJjrDfl4UskcvjD38FOLdHJsVRlNdYGq84jUsyPwfr30hREhsu4vV7sC7mLZqivgSPMXw9PdUN39T1xMJuoY1VzBUnZfwFc3kA1UleEgfnIPMIbVAyc4uD76AHQIrYJeUroJDA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-surface-container/30 to-transparent"></div>
+<!-- Badge -->
+<div class="absolute top-3 left-3 bg-primary-container text-on-primary-container px-2.5 py-1 font-label-md text-label-md font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>★ RECOMMENDED</span>
+</div>
+<!-- Duration Tag -->
+<div class="absolute bottom-3 right-3 bg-surface-container-lowest/90 border border-outline-variant px-2.5 py-1 font-label-md text-label-md text-primary tracking-wider uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>12 min</span>
+</div>
+</div>
+<!-- Content Body -->
+<div class="p-4 flex-1 flex flex-col justify-between gap-4">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">MODULE TR-201 • CAB SAFETY</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface uppercase font-bold tracking-wide mt-1">
+                Seatbelt &amp; Operator Safety
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+                Restraint pre-check protocols, rollover protection structure (ROPS) compliance, and emergency egress procedures.
+              </p>
+</div>
+<!-- Touch Action Button (min 56px/64px standard) -->
+<button class="w-full min-h-[56px] h-14 bg-primary-container text-on-primary-container hover:bg-primary active:bg-primary-fixed-dim duration-75 flex items-center justify-center gap-2 font-label-lg text-label-lg font-bold uppercase tracking-wider border-2 border-transparent active:border-on-surface">
+<span class="material-symbols-outlined text-xl" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>START MODULE</span>
+</button>
+</div>
+</article>
+<!-- CARD 2 -->
+<article class="bg-surface-container border-2 border-surface-container-highest flex flex-col justify-between group hover:border-outline duration-150 relative">
+<!-- Visual Hero Area -->
+<div class="relative h-44 w-full bg-surface-container-lowest overflow-hidden border-b-2 border-surface-container-highest">
+<img class="w-full h-full object-cover opacity-85 group-hover:scale-105 duration-300" data-alt="A modern industrial heavy earthmover excavator operating adjacent to high-voltage power conduits and trench embankments on a dusty civil works site under high-contrast dramatic sunlight with warning telemetry overlays." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVZEkyUGD4KuoRF318OgMkoEPIEaUyQe1b8UlH28CN1hBqoQbXF7Exs0IRJ_Q0kj2sqd0MgjRTjoq3y5S50zb1troD-6UFm2UmznL4YNXF1DV2rt8QWX1uHMcyevvO72esNH89YgyoBr56zAuUmoIrqdFAq6FeL7wSmcNlft_bZ_y9cTg-9NXANhI2gkufOwtsyeYfYBnuenIhgtIpwpJFKk5EFGBotxSYO99SLr0W2CHjFyP7LEwoww"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-surface-container/30 to-transparent"></div>
+<!-- Badge -->
+<div class="absolute top-3 left-3 bg-secondary-container text-on-secondary-container border border-error px-2.5 py-1 font-label-md text-label-md font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+<span>SAFETY CRITICAL</span>
+</div>
+<!-- Duration Tag -->
+<div class="absolute bottom-3 right-3 bg-surface-container-lowest/90 border border-outline-variant px-2.5 py-1 font-label-md text-label-md text-primary tracking-wider uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>15 min</span>
+</div>
+</div>
+<!-- Content Body -->
+<div class="p-4 flex-1 flex flex-col justify-between gap-4">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase font-bold">MODULE TR-208 • HAZARD DETECT</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface uppercase font-bold tracking-wide mt-1">
+                Proximity Hazard Awareness
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+                Blind spot scanning zones, sonar and camera sensor calibration, and ground personnel safety buffer management.
+              </p>
+</div>
+<!-- Touch Action Button -->
+<button class="w-full min-h-[56px] h-14 bg-primary-container text-on-primary-container hover:bg-primary active:bg-primary-fixed-dim duration-75 flex items-center justify-center gap-2 font-label-lg text-label-lg font-bold uppercase tracking-wider border-2 border-transparent active:border-on-surface">
+<span class="material-symbols-outlined text-xl" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>START MODULE</span>
+</button>
+</div>
+</article>
+<!-- CARD 3 -->
+<article class="bg-surface-container border-2 border-surface-container-highest flex flex-col justify-between group hover:border-outline duration-150 relative">
+<!-- Visual Hero Area -->
+<div class="relative h-44 w-full bg-surface-container-lowest overflow-hidden border-b-2 border-surface-container-highest">
+<img class="w-full h-full object-cover opacity-85 group-hover:scale-105 duration-300" data-alt="Heavy steel excavator bucket digging through deep layered rock and clay strata trench with structural shoring shields in an industrial mining excavation setting under stark industrial utility lights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcYLatZz9kLgbwug2PRmD2WjEgv8c0aP42Tc543njRJwH5mQN1GJqHMO9gI30jZ-zzIfIdenzZhOxNyCOTj21pXiS1JAic8Mp5tvC4sfc65Q50Yz4ygaGp0unl5yZXWBhgopEChlT6ukemoWrBTn06wnQdNtmtmi6OvzmmP82i67qShEPuH_HERXvV9Zy1V7OyjSGqhbnwunqZryECuqBF4-totGSl-S-Mb95HwWOtCl6g2JMRJi7oA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-surface-container/30 to-transparent"></div>
+<!-- Badge -->
+<div class="absolute top-3 left-3 bg-surface-container-highest text-tertiary border border-outline px-2.5 py-1 font-label-md text-label-md font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="update">update</span>
+<span>SOP UPDATE</span>
+</div>
+<!-- Duration Tag -->
+<div class="absolute bottom-3 right-3 bg-surface-container-lowest/90 border border-outline-variant px-2.5 py-1 font-label-md text-label-md text-primary tracking-wider uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>18 min</span>
+</div>
+</div>
+<!-- Content Body -->
+<div class="p-4 flex-1 flex flex-col justify-between gap-4">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">MODULE TR-315 • FIELD OPERATIONS</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface uppercase font-bold tracking-wide mt-1">
+                Safe Excavation Practices
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+                Trench shoring integrity, benching calculations, underground utility clearance standards, and spoil pile placement.
+              </p>
+</div>
+<!-- Touch Action Button -->
+<button class="w-full min-h-[56px] h-14 bg-primary-container text-on-primary-container hover:bg-primary active:bg-primary-fixed-dim duration-75 flex items-center justify-center gap-2 font-label-lg text-label-lg font-bold uppercase tracking-wider border-2 border-transparent active:border-on-surface">
+<span class="material-symbols-outlined text-xl" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>START MODULE</span>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- BOTTOM SHIFT SAFETY TIP (Debossed Callout) -->
+<section class="bg-surface-container-lowest border-2 border-surface-container-highest p-4 flex items-center gap-4 relative">
+<div class="w-1.5 absolute left-0 top-0 bottom-0 bg-primary-container"></div>
+<div class="w-12 h-12 bg-surface-container border border-outline-variant flex-shrink-0 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-3xl" data-icon="campaign">campaign</span>
+</div>
+<div class="flex-1">
+<span class="font-label-sm text-label-sm text-primary-container uppercase font-bold tracking-wider block">SHIFT BULLETIN</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold tracking-wide mt-0.5">
+          Daily Safety Reminder: Ensure 360° visual check before engaging counterweight swing.
+        </p>
+</div>
+</section>
+</main>
+<!-- BOTTOM NAVIGATION BAR (Shared Component Anchor) -->
+<!-- Contextual lock: SAFETY is active for safety micro-training & certification hub -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch min-h-[64px] bg-surface-container-low dark:bg-surface-container-low border-t-2 border-surface-container-highest dark:border-surface-container-highest flat no shadows">
+<!-- HOME -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">HOME</span>
+</a>
+<!-- TASKS -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="assignment">assignment</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">TASKS</span>
+</a>
+<!-- SAFETY (ACTIVE STATE EXECUTION: bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container active:bg-primary active:text-on-primary duration-75" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="shield" data-weight="fill" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">SAFETY</span>
+</a>
+<!-- PROFILE -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] flex-1 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-container-high active:bg-primary active:text-on-primary duration-75" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider mt-0.5">PROFILE</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CRITICAL SAFETY ALERT — EXC001</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Industrial Condensed & Utilitarian Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration Verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#930013",
+            "tertiary-container": "#4bdca1",
+            "on-primary-fixed": "#271900",
+            "secondary-fixed": "#ffdad7",
+            "surface-container-highest": "#343538",
+            "secondary": "#ffb3ad",
+            "surface-variant": "#343538",
+            "surface-dim": "#121316",
+            "secondary-container": "#a40217",
+            "on-error": "#690005",
+            "inverse-on-surface": "#2f3034",
+            "error": "#ffb4ab",
+            "surface": "#121316",
+            "surface-container-high": "#292a2d",
+            "on-background": "#e3e2e6",
+            "outline": "#9d8f79",
+            "on-primary-fixed-variant": "#5e4200",
+            "background": "#121316",
+            "primary-fixed-dim": "#ffbb1e",
+            "surface-container": "#1f1f23",
+            "primary": "#ffdb9f",
+            "surface-tint": "#ffbb1e",
+            "tertiary": "#6cf9bb",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary": "#412d00",
+            "inverse-primary": "#7c5800",
+            "surface-bright": "#38393c",
+            "primary-fixed": "#ffdea7",
+            "on-secondary-container": "#ffaea8",
+            "tertiary-fixed": "#6ffbbe",
+            "error-container": "#93000a",
+            "surface-container-low": "#1b1b1f",
+            "on-secondary": "#68000a",
+            "on-tertiary-container": "#005d3f",
+            "primary-container": "#fdb813",
+            "on-tertiary": "#003824",
+            "secondary-fixed-dim": "#ffb3ad",
+            "tertiary-fixed-dim": "#4edea3",
+            "on-surface-variant": "#d5c4ac",
+            "surface-container-lowest": "#0d0e11",
+            "on-primary-container": "#6b4b00",
+            "inverse-surface": "#e3e2e6",
+            "on-secondary-fixed": "#410004",
+            "on-surface": "#e3e2e6",
+            "on-tertiary-fixed": "#002113",
+            "outline-variant": "#504533",
+            "on-error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-md": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-sm": ["Barlow Condensed"],
+            "headline-lg-mobile": ["Barlow Condensed"],
+            "headline-xl-mobile": ["Barlow Condensed"],
+            "headline-lg": ["Barlow Condensed"],
+            "body-md": ["Inter"],
+            "label-md": ["Barlow Condensed"],
+            "headline-xl": ["Barlow Condensed"],
+            "metric-display": ["Barlow Condensed"],
+            "label-lg": ["Barlow Condensed"],
+            "headline-md": ["Barlow Condensed"],
+            "headline-sm": ["Barlow Condensed"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "32px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["36px", { "lineHeight": "40px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "headline-lg": ["36px", { "lineHeight": "40px", "letterSpacing": "0.03em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "52px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "metric-display": ["56px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["28px", { "lineHeight": "32px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "26px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48;
+    }
+    
+    /* 45-degree Safety Hazard Stripes Pattern */
+    .hazard-stripe-bar {
+      background: repeating-linear-gradient(
+        -45deg,
+        #fdb813,
+        #fdb813 16px,
+        #121316 16px,
+        #121316 32px
+      );
+    }
+    
+    .hazard-stripe-red {
+      background: repeating-linear-gradient(
+        -45deg,
+        #93000a,
+        #93000a 14px,
+        #121316 14px,
+        #121316 28px
+      );
+    }
+
+    /* Strobe Pulse Effect for Critical Cab Alarm */
+    @keyframes alert-pulse {
+      0%, 100% {
+        box-shadow: inset 0 0 0 4px #93000a;
+        border-color: #ffb4ab;
+      }
+      50% {
+        box-shadow: inset 0 0 0 8px #a40217;
+        border-color: #93000a;
+      }
+    }
+    .pulse-emergency {
+      animation: alert-pulse 1.2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col justify-between select-none overflow-x-hidden p-0 m-0 border-4 border-error-container">
+<!-- Top Emergency Status Dock (Integrated TopBar Anchor) -->
+<header class="flex justify-between items-center w-full min-h-[56px] px-4 bg-surface-container border-b-2 border-surface-container-highest">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-primary-container text-2xl" data-icon="construction">construction</span>
+<span class="font-headline-sm text-headline-sm uppercase tracking-wider text-primary-container font-bold">EXC001 • SHIFT ACTIVE</span>
+</div>
+<!-- Audible & Visual Cab Lockout Annunciator -->
+<div class="flex items-center space-x-4">
+<div class="hidden sm:flex items-center bg-error-container px-3 py-1 border border-error">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-error mr-2 animate-ping"></span>
+<span class="font-label-md text-label-md uppercase text-on-error-container tracking-wider">SWING BRAKE: AUTO-ENGAGED</span>
+</div>
+<button aria-label="Alert Warning Active" class="flex items-center justify-center p-2 text-primary-container hover:bg-surface-container-high duration-75">
+<span class="material-symbols-outlined text-2xl" data-icon="warning">warning</span>
+</button>
+</div>
+</header>
+<!-- Top Caution Hazard Diagonal Stripes Divider -->
+<div class="w-full h-3 hazard-stripe-bar border-y border-surface-container-lowest"></div>
+<!-- Main Full-Screen Interruption Canvas -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-4 flex flex-col justify-between space-y-4">
+<!-- Critical Master Warning Header Bar -->
+<div class="w-full bg-secondary-container border-2 border-error p-4 sm:p-5 flex items-center justify-between shadow-none relative overflow-hidden">
+<div class="flex items-center space-x-4 z-10">
+<div class="w-14 h-14 bg-error-container flex items-center justify-center border-2 border-error">
+<span class="material-symbols-outlined text-error text-4xl animate-bounce" data-icon="warning">warning</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-secondary-container tracking-widest block uppercase">CRITICAL SYSTEM OVERRIDE</span>
+<h1 class="font-headline-lg-mobile sm:font-headline-xl text-headline-lg-mobile sm:text-headline-xl uppercase text-surface-dim font-black leading-none drop-shadow-sm text-white">
+            CRITICAL SAFETY ALERT
+          </h1>
+</div>
+</div>
+<!-- Annunciator Strobe Badge -->
+<div class="hidden md:flex flex-col items-end z-10">
+<span class="font-label-md text-label-md uppercase bg-surface-dim text-error px-3 py-1 border border-error font-mono">
+          SEVERITY: CODE RED-1
+        </span>
+<span class="font-label-sm text-label-sm text-on-secondary-container mt-1">SENSORS: RADAR-R + STEREO-CAM</span>
+</div>
+<!-- Ambient Hazard Stripe Accent in card corner -->
+<div class="absolute right-0 top-0 bottom-0 w-32 hazard-stripe-red opacity-30 pointer-events-none"></div>
+</div>
+<!-- Prominent Threat Description Block -->
+<div class="pulse-emergency bg-surface-container border-2 border-error p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex items-center space-x-4">
+<div class="w-12 h-12 rounded-none bg-surface-container-highest border border-error flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error text-3xl" data-icon="person_alert">person_alert</span>
+</div>
+<div>
+<h2 class="font-headline-lg-mobile sm:font-headline-lg text-headline-lg-mobile sm:text-headline-lg uppercase text-error font-extrabold tracking-tight">
+            PERSON DETECTED NEAR MACHINE
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface font-semibold mt-0.5">
+            Worker detected <span class="text-primary-container font-headline-md text-headline-md px-1 bg-surface-container-highest border border-outline-variant">2.8 m</span> from the machine.
+          </p>
+</div>
+</div>
+<div class="flex items-center space-x-2 bg-surface-container-lowest px-4 py-2 border-l-4 border-error">
+<span class="material-symbols-outlined text-error" data-icon="timer">timer</span>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">RESPONSE PROTOCOL</div>
+<div class="font-headline-sm text-headline-sm text-on-surface uppercase">CAB CONTROL LOCKED</div>
+</div>
+</div>
+</div>
+<!-- 12-Column Telemetry & Sensor Visual Cluster -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 flex-1">
+<!-- Center High-Contrast Telematics Readout Card (8 Cols) -->
+<section class="lg:col-span-8 bg-surface-container border-1.5 border-surface-container-highest flex flex-col justify-between">
+<!-- Header Strip -->
+<div class="h-9 bg-surface-container-high px-4 flex items-center justify-between border-b border-surface-container-highest">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-on-surface-variant text-base" data-icon="radar">radar</span>
+<span class="font-label-md text-label-md uppercase text-on-surface-variant">ACTIVE TELEMATICS &amp; ZONE MONITORING</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="w-2.5 h-2.5 bg-error"></span>
+<span class="font-label-sm text-label-sm uppercase text-error">PROXIMITY BREACH</span>
+</div>
+</div>
+<!-- Metric Grid -->
+<div class="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Distance Debossed Cell -->
+<div class="bg-surface-container-lowest p-4 border-t-2 border-l-2 border-[#0A0B0D] border-b-2 border-r-2 border-surface-container-highest">
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider block">MEASURED DISTANCE</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-metric-display text-metric-display text-error font-black leading-none">2.8</span>
+<span class="font-headline-md text-headline-md text-primary-container font-bold">METERS</span>
+</div>
+<div class="mt-2 text-xs font-label-sm text-error bg-surface-container-high px-2 py-1 inline-block border border-error">
+              CRITICAL ZONE &lt; 3.0 m
+            </div>
+</div>
+<!-- Machine Subsystem Cell -->
+<div class="bg-surface-container-lowest p-4 border-t-2 border-l-2 border-[#0A0B0D] border-b-2 border-r-2 border-surface-container-highest">
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider block">MACHINE &amp; SECTOR</span>
+<div class="font-headline-md text-headline-md text-on-surface uppercase font-bold mt-1">
+              EXC001
+            </div>
+<div class="mt-2 flex items-center space-x-1 text-primary-container">
+<span class="material-symbols-outlined text-sm" data-icon="adjust">adjust</span>
+<span class="font-label-md text-label-md uppercase">REAR SWING RADIUS (COUNTERWEIGHT)</span>
+</div>
+</div>
+<!-- Hazard Classification Cell -->
+<div class="bg-surface-container-lowest p-4 border-t-2 border-l-2 border-[#0A0B0D] border-b-2 border-r-2 border-surface-container-highest">
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider block">HAZARD TYPE</span>
+<div class="font-headline-sm text-headline-sm text-error uppercase font-bold mt-1 flex items-center space-x-2">
+<span class="material-symbols-outlined text-xl" data-icon="nature_people">nature_people</span>
+<span>PROXIMITY / PERSONNEL</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant block mt-1">Biometric thermal signature confirmed</span>
+</div>
+<!-- Timestamp Cell -->
+<div class="bg-surface-container-lowest p-4 border-t-2 border-l-2 border-[#0A0B0D] border-b-2 border-r-2 border-surface-container-highest">
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider block">EVENT TIMESTAMP</span>
+<div class="font-headline-md text-headline-md text-on-surface font-bold mt-1">
+              10:42 <span class="text-sm font-label-md text-on-surface-variant">AM (UTC+2)</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary-container block mt-1">LATENCY: 12ms • DIRECT CAN-BUS</span>
+</div>
+</div>
+<!-- Annunciator Status Strip -->
+<div class="bg-surface-container-low px-4 py-2.5 border-t border-surface-container-highest flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary-container text-sm" data-icon="sensors">sensors</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">RADAR PULSE ARRAY: NOMINAL</span>
+</div>
+<div class="font-label-sm text-label-sm text-error font-mono">
+            OPERATOR INTERVENTION REQUIRED IMMEDIATELY
+          </div>
+</div>
+</section>
+<!-- Secondary Warning Comparison & Field Feed Block (4 Cols) -->
+<section class="lg:col-span-4 flex flex-col justify-between space-y-3">
+<!-- Warning State Indicator Badge -->
+<div class="bg-surface-container border-2 border-outline-variant p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between pb-2 border-b border-surface-container-highest">
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant">ZONE THRESHOLD COMPARISON</span>
+<span class="w-3 h-3 bg-primary-container"></span>
+</div>
+<div class="py-3">
+<div class="bg-surface-container-high border-l-4 border-primary-container p-3 mb-2">
+<span class="font-label-sm text-label-sm uppercase text-primary-container block">ALERT SECTOR 02</span>
+<p class="font-headline-sm text-headline-sm uppercase text-on-surface leading-snug">
+                PROXIMITY WARNING: Object detected within warning zone — 5.2 m
+              </p>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Secondary LiDAR tracking indicates rapid approach from Blind Spot Delta. Machine hydraulics throttled to 10% idle.
+            </p>
+</div>
+<!-- Comparison Scale Indicator -->
+<div class="space-y-1.5 pt-2 border-t border-surface-container-highest">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-error font-bold">2.8m CRITICAL</span>
+<span class="text-primary-container font-bold">5.2m WARNING</span>
+<span class="text-tertiary-container">8.0m SAFE</span>
+</div>
+<div class="w-full h-3 bg-surface-container-lowest flex overflow-hidden border border-surface-container-highest">
+<div class="h-full bg-error" style="width: 35%"></div>
+<div class="h-full bg-primary-container" style="width: 30%"></div>
+<div class="h-full bg-tertiary" style="width: 35%"></div>
+</div>
+</div>
+</div>
+<!-- Camera Sector Feed Preview Pod -->
+<div class="bg-surface-container border-1.5 border-surface-container-highest p-3 flex-1 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase flex items-center">
+<span class="material-symbols-outlined text-sm mr-1 text-error" data-icon="videocam">videocam</span>
+              CAM_04 REAR_WIDE
+            </span>
+<span class="font-label-sm text-label-sm text-error bg-surface-container-highest px-1.5 py-0.5 border border-error">LIVE</span>
+</div>
+<div class="relative w-full h-28 bg-surface-container-lowest border border-surface-container-highest flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover opacity-60" data-alt="Heavy industrial rear safety camera view on a construction excavator displaying a worker wearing a high-visibility orange safety vest standing behind the machine tread in a dusty quarry site during bright midday lighting with sharp digital HUD overlay bounding box in bright alert crimson red framing the operator." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiMVz9Nd2-IYDFTca1qO5KJFrKwx_HP1gq4gpTeXvaI5GmHLguVrvXJtjDyMxF_vbiReJXMkm7TaFuQfYUUVCCXu4Sr0XEkLKOagfrCyzEULaBOvWzNyYHGiUUKyVkNDRac31GGb1i1EvaYPR1WvqfETOo1mjSI8g-d2SMWHmYX0Vi0Cw8S_pIHWRJZWgxyMkGk6tqqMLVOe93l8KatTWWw_uHuEA-aUwfGNhhbP0UxZ9ynirAlrHzvQ"/>
+<div class="absolute inset-0 border-2 border-error pointer-events-none flex items-center justify-center">
+<div class="border border-error w-16 h-20 border-dashed animate-pulse"></div>
+</div>
+<span class="absolute bottom-1 left-2 font-label-sm text-label-sm text-white bg-black/70 px-1 font-mono">TARGET_ID: WKR-094</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Massive Tactile Operator Action Cluster (Touch Optimized for Heavy Gloves) -->
+<div class="w-full flex flex-col sm:flex-row gap-3 pt-2">
+<!-- Primary Glove-Sized Emergency Action Button -->
+<button class="flex-1 min-h-[68px] sm:min-h-[76px] bg-secondary-container hover:bg-error-container active:scale-[0.99] border-2 border-error text-white font-headline-lg-mobile sm:font-headline-lg uppercase font-black tracking-wide flex items-center justify-center space-x-3 transition-all duration-75 cursor-pointer shadow-none" onclick="handleAcknowledge()">
+<span class="material-symbols-outlined text-3xl" data-icon="check_circle">check_circle</span>
+<span>ACKNOWLEDGE ALERT</span>
+</button>
+<!-- Secondary Glove-Sized Control Button -->
+<button class="min-h-[68px] sm:min-h-[76px] px-6 sm:px-10 bg-surface-container-high hover:bg-surface-container-highest active:bg-surface-container-highest active:border-outline-variant border-2 border-outline-variant text-on-surface font-headline-sm sm:font-headline-md uppercase font-bold flex items-center justify-center space-x-3 transition-all duration-75 cursor-pointer shadow-none" onclick="handleViewDetails()">
+<span class="material-symbols-outlined text-2xl text-primary-container" data-icon="emergency_recording">emergency_recording</span>
+<span>VIEW SAFETY DETAILS &amp; CAMERA FEED</span>
+</button>
+</div>
+</main>
+<!-- Bottom Caution Hazard Diagonal Stripes Divider -->
+<div class="w-full h-2 hazard-stripe-bar border-t border-surface-container-lowest mt-4"></div>
+<!-- Shared BottomNavBar Navigation Shell Anchor -->
+<nav class="w-full z-50 flex justify-around items-stretch min-h-[64px] bg-surface-container-low border-t-2 border-surface-container-highest">
+<!-- HOME Item (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface active:bg-primary active:text-on-primary duration-75 px-3" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">HOME</span>
+</a>
+<!-- TASKS Item (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface active:bg-primary active:text-on-primary duration-75 px-3" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="assignment">assignment</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">TASKS</span>
+</a>
+<!-- SAFETY Item (Active Navigation Destination Locked) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] bg-primary-container text-on-primary-container font-bold border-t-4 border-on-primary-container px-3" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="shield">shield</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">SAFETY</span>
+</a>
+<!-- PROFILE Item (Inactive) -->
+<a class="flex flex-col items-center justify-center min-h-[64px] min-w-[64px] text-on-surface-variant hover:text-on-surface active:bg-primary active:text-on-primary duration-75 px-3" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">PROFILE</span>
+</a>
+</nav>
+<!-- Interactive State Feedback Script -->
+<script>
+    function handleAcknowledge() {
+      const btn = event.currentTarget;
+      btn.classList.add('bg-tertiary-container', 'text-on-tertiary-container', 'border-tertiary');
+      btn.innerHTML = `<span class="material-symbols-outlined text-3xl" data-icon="verified">verified</span><span>ALERT ACKNOWLEDGED — LOGGED</span>`;
+      setTimeout(() => {
+        alert("Alert EXC001 acknowledged by Operator. Telemetry log transmitted to site dispatcher.");
+      }, 150);
+    }
+
+    function handleViewDetails() {
+      alert("Opening Full-Screen Optical Telematics & Radar Sector Overlays...");
+    }
+  </script>
+</body></html>
