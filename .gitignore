@@ -4,17 +4,12 @@
 # Keep the repo itself and the specific project files we want
 !.gitignore
 !requirements.txt
-!README.md
-!docs/
-!docs/**
-!backend/
-!backend/**
-!frontend/
-!frontend/**
 !ml/
-!ml/**
-!assest/
-!assest/**
+
+!ml/datasets/
+!ml/datasets/**
+!ml/task_time/
+!ml/task_time/**
 
 # Python and environment noise
 __pycache__/
@@ -44,7 +39,7 @@ Thumbs.db
 *.swo
 
 # Data / model artifacts
-*.pkl
+
 *.joblib
 *.h5
 *.hdf5
