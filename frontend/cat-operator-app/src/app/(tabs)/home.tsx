@@ -209,7 +209,7 @@ export default function Home() {
       </View>
       <NavRow icon="warning" title="Report Incident" caption="Safety, hazard or delay" tone="danger" onPress={() => router.push('/incident')} />
       <NavRow icon="menu_book" title="Operator Training" caption="SOPs & Site Procedures" onPress={() => router.push('/training')} />
-      <NavRow icon="settings_suggest" title="Machine Status" caption="Sensors, fluid, tracks" onPress={() => router.push('/machine')} />
+      <NavRow icon="settings_suggest" title="Machine Status" caption="Fleet, telemetry & AI anomaly check" onPress={() => router.push('/machine')} />
 
       {/* Shift summary */}
       <Panel title="Shift Shift-A Running Summary:" icon="assignment">

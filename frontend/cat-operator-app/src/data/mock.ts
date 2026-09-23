@@ -46,6 +46,16 @@ export const site = {
 
 export type TaskStatus = 'ready' | 'in_progress' | 'paused' | 'completed' | 'queued';
 
+export type TaskPrediction = {
+  deviationMin: number;
+  deviationPct: number;
+  /** 'On Schedule' | 'Delayed' | 'Accelerated' */
+  risk: string;
+  confidenceLabel: string;
+  modelType: string;
+  fallback: boolean;
+};
+
 export type Task = {
   id: string;
   title: string;
@@ -53,6 +63,8 @@ export type Task = {
   zone: string;
   estMin: number;
   predictedMin?: number;
+  /** CatBoost estimate details from POST /tasks/{id}/estimate. */
+  prediction?: TaskPrediction;
   weather: { icon: string; label: string; temp?: string };
   tier: { icon: string; label: string };
   volume?: string;

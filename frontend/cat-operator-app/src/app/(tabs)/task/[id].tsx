@@ -42,6 +42,8 @@ export default function TaskDetail() {
   }
 
   const running = task.status === 'in_progress';
+  const risk = task.prediction?.risk === 'Delayed' ? 'late' : 'ok';
+  const riskColor = risk === 'late' ? colors.secondary : colors.tertiaryContainer;
   const act = async (status: TaskStatus) => {
     setBusy(true);
     await setTaskStatus(task.id, status);
@@ -95,13 +97,34 @@ export default function TaskDetail() {
           <Metric
             label="Predicted Time"
             icon="analytics"
-            value={String(task.predictedMin ?? task.estMin)}
-            valueColor={colors.tertiaryContainer}
+            value={task.predictedMin != null ? String(task.predictedMin) : '--'}
+            valueColor={riskColor}
             unit="MIN"
             size="md"
           />
         </View>
       </Row>
+      {task.prediction && (
+        <Cell debossed style={{ gap: 6 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space.sm }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 }}>
+              <Icon name="insights" size={16} color={colors.primaryContainer} />
+              <Txt v="labelSm" color={colors.onSurfaceVariant}>
+                AI Duration Forecast
+              </Txt>
+            </View>
+            <Badge label={task.prediction.risk} tone={risk === 'late' ? 'outlineDanger' : 'outlineSafe'} />
+          </View>
+          <Txt v="bodyMd">
+            {task.prediction.deviationMin === 0
+              ? 'Expected to finish on plan.'
+              : `Expected ${Math.abs(task.prediction.deviationMin)} min ${task.prediction.deviationMin > 0 ? 'over' : 'under'} plan (${task.prediction.deviationPct > 0 ? '+' : ''}${task.prediction.deviationPct}%).`}
+          </Txt>
+          <Txt v="labelXs" color={colors.onSurfaceVariant}>
+            {task.prediction.fallback ? 'Heuristic fallback' : 'CatBoost regressor'} • {task.prediction.confidenceLabel}
+          </Txt>
+        </Cell>
+      )}
       <Row>
         <View style={{ flex: 1 }}>
           <Metric

@@ -9,9 +9,11 @@ import {
   ApiOperator,
   ApiRecommendation,
   ApiTask,
+  ApiTaskEstimate,
   ApiTrainingContent,
   setAuthToken,
 } from '@/api/client';
+import { fleetMachine } from '@/data/machines';
 import { machine as mockMachine, operator as mockOperator, SafetyEvent, Task, TaskStatus } from '@/data/mock';
 import { colors } from '@/theme/tokens';
 
@@ -63,12 +65,6 @@ const SKILL: Record<string, { level: number; label: string }> = {
   expert: { level: 4, label: 'Expert Operator' },
 };
 
-const MACHINE_MODELS: Record<string, { model: string; shortModel: string }> = {
-  'CAT-320-01': { model: 'CAT 320 Hydraulic Excavator', shortModel: 'CAT Hydraulic Excavator' },
-  'CAT-950-02': { model: 'CAT 950M Wheel Loader', shortModel: 'CAT Wheel Loader' },
-  'CAT-D6-03': { model: 'CAT D6 Track-Type Tractor', shortModel: 'CAT Dozer' },
-};
-
 const TASK_META: Record<string, { category: string; tier: Task['tier']; accent: string }> = {
   trenching: { category: 'Utility Infrastructure', tier: { icon: 'construction', label: 'Intermediate' }, accent: colors.primaryContainer },
   loading: { category: 'Haulage', tier: { icon: 'construction', label: 'Standard' }, accent: colors.tertiaryContainer },
@@ -110,7 +106,7 @@ function toStatus(s: string): TaskStatus {
   return 'queued'; // backend 'pending'
 }
 
-function toTask(t: ApiTask, predictedMin?: number): Task {
+function toTask(t: ApiTask, est?: ApiTaskEstimate): Task {
   const meta = TASK_META[t.type] ?? { category: humanize(t.type), tier: { icon: 'construction', label: 'Standard' }, accent: colors.primaryContainer };
   const status = toStatus(t.status);
   return {
@@ -119,7 +115,15 @@ function toTask(t: ApiTask, predictedMin?: number): Task {
     category: meta.category,
     zone: t.zone ?? '—',
     estMin: Math.round(t.estimatedMinutes ?? 45),
-    predictedMin,
+    predictedMin: est ? Math.round(est.predictedMinutes) : undefined,
+    prediction: est && {
+      deviationMin: est.deviationMinutes,
+      deviationPct: est.deviationPercent,
+      risk: est.riskAssessment,
+      confidenceLabel: est.confidenceLabel,
+      modelType: est.modelType,
+      fallback: est.fallbackUsed,
+    },
     weather: { icon: 'wb_sunny', label: 'Clear' },
     tier: meta.tier,
     description: t.description ?? '',
@@ -194,25 +198,30 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<ApiTrainingContent[]>([]);
   const [recs, setRecs] = useState<ApiRecommendation[]>([]);
   const [insights, setInsights] = useState<ApiInsights | null>(null);
-  const predictions = useRef<Record<string, number>>({});
+  const predictions = useRef<Record<string, ApiTaskEstimate>>({});
+  const taskRows = useRef<ApiTask[]>([]);
 
   const operator = useMemo(() => (apiOperator ? toOperator(apiOperator) : { ...mockOperator, role: 'operator', skillLevel: 'expert' }), [apiOperator]);
   const machineId = apiOperator?.activeMachineId ?? mockMachine.id;
 
-  const loadTasks = useCallback(async (skill: string) => {
+  const loadTasks = useCallback(async () => {
     const rows = await api.tasksToday();
-    // ML duration prediction per task, cached for the session
-    await Promise.all(
-      rows
-        .filter((t) => predictions.current[t.id] === undefined)
-        .map((t) =>
-          api
-            .predict(t.type, skill, t.estimatedMinutes ?? undefined)
-            .then((p) => (predictions.current[t.id] = Math.round(p.predictedMinutes)))
-            .catch(() => undefined),
-        ),
-    );
-    setTasks(sortTasks(rows.map((t) => toTask(t, predictions.current[t.id]))));
+    taskRows.current = rows;
+    // Always renders the newest rows, so a late estimate can't roll back a status change
+    const render = () => setTasks(sortTasks(taskRows.current.map((t) => toTask(t, predictions.current[t.id]))));
+    render();
+    // CatBoost duration estimate per task (backend reads machine + operator skill), cached for the session.
+    // Not awaited: each estimate does DB lookups, so tasks show first and the forecasts fill in.
+    const missing = rows.filter((t) => predictions.current[t.id] === undefined);
+    if (missing.length === 0) return;
+    Promise.all(
+      missing.map((t) =>
+        api
+          .estimateTask(t.id)
+          .then((p) => (predictions.current[t.id] = p))
+          .catch(() => undefined),
+      ),
+    ).then(render);
   }, []);
 
   const loadLive = useCallback(async (mid: string) => {
@@ -224,7 +233,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const loadAll = useCallback(
     async (op: ApiOperator) => {
       const mid = op.activeMachineId ?? mockMachine.id;
-      const [inc, tc, tr] = await Promise.all([api.incidents(), api.trainingContent(), api.trainingRecommendations(), loadTasks(op.skillLevel), loadLive(mid)]);
+      const [inc, tc, tr] = await Promise.all([api.incidents(), api.trainingContent(), api.trainingRecommendations(), loadTasks(), loadLive(mid)]);
       setIncidents(inc.map(toIncident));
       setContent(tc);
       setRecs(tr.recommendations);
@@ -246,6 +255,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(() => {
     setAuthToken(null);
     setApiOperator(null);
+    taskRows.current = [];
     setTasks([]);
     setAlerts([]);
     setIncidents([]);
@@ -272,12 +282,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           const startedAt = current?.startedAt;
           await api.completeTask(id, startedAt ? Math.max(1, minutesSince(startedAt)) : undefined);
         } else await api.setTaskStatus(id, status);
-        await loadTasks(operator.skillLevel);
+        await loadTasks();
       } catch (e) {
         reportError(e);
       }
     },
-    [tasks, loadTasks, operator.skillLevel],
+    [tasks, loadTasks],
   );
 
   const activeAlerts = useMemo(() => alerts.filter((a) => !a.acknowledged), [alerts]);
@@ -320,7 +330,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     const tel = insights?.lastTelemetry;
     return {
       ...mockMachine,
-      ...(MACHINE_MODELS[machineId] ?? {}),
+      model: fleetMachine(machineId).model,
+      shortModel: fleetMachine(machineId).shortModel,
       id: machineId,
       hydraulicBar: tel?.hydraulicPressure != null ? Math.round(tel.hydraulicPressure) : mockMachine.hydraulicBar,
       healthScore: insights?.healthScore ?? null,

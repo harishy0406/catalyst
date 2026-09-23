@@ -197,6 +197,9 @@ function TaskChips({ task }: { task: Task }) {
     { icon: task.weather.icon, label: task.weather.label, color: task.weather.label === 'Rainy' ? colors.secondary : colors.primaryContainer },
     { icon: task.tier.icon, label: task.tier.label, color: colors.primaryContainer },
     { icon: 'schedule', label: `Est: ${task.estMin} min`, color: colors.onSurfaceVariant },
+    ...(task.predictedMin != null
+      ? [{ icon: 'insights', label: `AI: ${task.predictedMin} min`, color: task.prediction?.risk === 'Delayed' ? colors.secondary : colors.tertiaryContainer }]
+      : []),
     ...(task.volume ? [{ icon: 'line_weight', label: `Vol: ${task.volume}`, color: colors.tertiaryContainer }] : []),
   ];
   return (
@@ -256,7 +259,7 @@ function QueueRow({ task }: { task: Task }) {
       <View style={{ flex: 1 }}>
         <Txt v="headlineSm">{task.title}</Txt>
         <Txt v="labelXs" color={colors.onSurfaceVariant}>
-          Est {task.estMin} min •{' '}
+          Est {task.estMin} min{task.predictedMin != null ? ` • AI ${task.predictedMin} min` : ''} •{' '}
           <Txt v="labelXs" color={task.accent}>
             {task.tier.label}
           </Txt>

@@ -130,6 +130,42 @@ export type ApiInsights = {
   lastTelemetry: ApiTelemetry | null;
 };
 
+/** POST /tasks/{id}/estimate — CatBoost task-duration regressor. */
+export type ApiTaskEstimate = {
+  predictedMinutes: number;
+  estimatedBaselineMinutes: number;
+  deviationMinutes: number;
+  deviationPercent: number;
+  confidenceScore: number;
+  confidenceLabel: string;
+  modelType: string;
+  riskAssessment: string;
+  fallbackUsed: boolean;
+};
+
+/** Anomaly model routes: one Random Forest classifier per machine type. */
+export type AnomalyModel = 'excavator' | 'bulldozer' | 'loader';
+
+export type ApiAnomalyRequest = {
+  machine_type: string;
+  context: Record<string, string | undefined>;
+  telemetry: Record<string, number>;
+  machine_context: Record<string, number>;
+};
+
+export type ApiAnomaly = {
+  machineType: string;
+  machineId: string;
+  isAnomaly: boolean;
+  prediction: string;
+  message: string;
+  recommendedAction: string;
+  confidence: number;
+  confidencePercent: number;
+  classProbabilities: Record<string, number>;
+  timestamp: string | null;
+};
+
 // ─── Endpoints ─────────────────────────────────────────────────────────────────
 
 export const api = {
@@ -144,12 +180,7 @@ export const api = {
     request<{ task: ApiTask }>('POST', `/tasks/${id}/complete`, { actualMinutes }),
   setTaskStatus: (id: string, status: string) => request<{ task: ApiTask }>('POST', `/tasks/${id}/status`, { status }),
 
-  predict: (taskType: string, operatorSkill: string, baseTime?: number) =>
-    request<{ predictedMinutes: number; confidence: number; modelType: string }>('POST', '/ml/predict', {
-      taskType,
-      operatorSkill,
-      baseTime,
-    }),
+  estimateTask: (id: string) => request<ApiTaskEstimate>('POST', `/tasks/${id}/estimate`),
 
   alerts: () => request<ApiAlert[]>('GET', '/safety/alerts'),
   ackAlert: (id: string) => request<{ success: boolean }>('POST', `/safety/alerts/${id}/ack`),
@@ -162,5 +193,8 @@ export const api = {
   trainingRecommendations: () => request<{ recommendations: ApiRecommendation[] }>('GET', '/training/recommendations'),
   completeTraining: (id: string) => request<{ success: boolean }>('POST', `/training/${id}/complete`),
 
+  telemetry: (machineId: string) => request<{ machineId: string; telemetry: ApiTelemetry | null }>('GET', `/telemetry/${machineId}`),
   insights: (machineId: string) => request<ApiInsights>('GET', `/machines/${machineId}/insights`),
+  // Per-type route: /ml/anomaly/predict infers the type from the machine ID and can pick the wrong model
+  detectAnomaly: (model: AnomalyModel, body: ApiAnomalyRequest) => request<ApiAnomaly>('POST', `/ml/anomaly/${model}`, body),
 };
