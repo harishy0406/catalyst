@@ -68,6 +68,10 @@ Heavy construction jobsites operate under intense pressure, tight delivery sched
 
 ## 🏗️ Architecture
 
+<p align="center">
+  <img src="docs/Architecture-diagram.png" alt="CATALYST System Architecture" width="100%" />
+</p>
+
 ```mermaid
 graph TD
     subgraph Cabin["In-Cabin Environment"]
