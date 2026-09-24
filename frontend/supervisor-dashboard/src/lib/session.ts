@@ -6,7 +6,13 @@ import { SignJWT, jwtVerify } from 'jose';
 /** Roles allowed into the supervisor dashboard (docs/SECURITY.md §2). */
 export const SUPERVISOR_ROLES = ['supervisor', 'safety_officer', 'admin'] as const;
 
-export type Session = { id: string; name: string; role: string };
+export type Session = {
+  id: string;
+  name: string;
+  role: string;
+  /** FastAPI backend JWT for the same user, used by the demo simulator (lib/backend.ts). */
+  backendToken?: string;
+};
 
 const COOKIE = 'catalyst_sup_session';
 const MAX_AGE = 60 * 60 * 12; // one shift
@@ -18,7 +24,7 @@ function secret() {
 }
 
 export async function createSession(user: Session) {
-  const token = await new SignJWT({ name: user.name, role: user.role })
+  const token = await new SignJWT({ name: user.name, role: user.role, ...(user.backendToken ? { bt: user.backendToken } : {}) })
     .setProtectedHeader({ alg: 'HS256' })
     .setSubject(user.id)
     .setIssuedAt()
@@ -46,7 +52,7 @@ export async function getSession(): Promise<Session | null> {
     const { payload } = await jwtVerify(token, secret());
     const role = String(payload.role);
     if (!payload.sub || !(SUPERVISOR_ROLES as readonly string[]).includes(role)) return null;
-    return { id: payload.sub, name: String(payload.name), role };
+    return { id: payload.sub, name: String(payload.name), role, backendToken: typeof payload.bt === 'string' ? payload.bt : undefined };
   } catch {
     return null;
   }

@@ -7,6 +7,32 @@
 export const TASK_TYPES = ['trenching', 'loading', 'grading', 'pipe_laying', 'bulk_excavation', 'demolition'] as const;
 export const PRIORITIES = ['high', 'medium', 'low'] as const;
 
+/**
+ * The three machine types the ML models are built around, and the task types each can perform.
+ * Mirrors backend/app/machine_types.py — keep them in sync.
+ */
+export const MACHINE_TYPES = ['excavator', 'bulldozer', 'wheel_loader'] as const;
+export type MachineType = (typeof MACHINE_TYPES)[number];
+
+export const TASKS_BY_MACHINE: Record<MachineType, readonly string[]> = {
+  excavator: ['trenching', 'pipe_laying', 'bulk_excavation', 'demolition', 'loading'],
+  bulldozer: ['grading', 'bulk_excavation'],
+  wheel_loader: ['loading'],
+};
+
+/** Machine type from its model name (preferred) or ID; null if it is none of the three. */
+export function machineTypeOf(model: string | null | undefined, id?: string | null): MachineType | null {
+  for (const text of [model, id]) {
+    const s = (text ?? '').toLowerCase();
+    if (s.includes('excavator') || s.includes('exc') || s.includes('320')) return 'excavator';
+    if (s.includes('loader') || s.includes('950')) return 'wheel_loader';
+    if (s.includes('dozer') || s.includes('tractor') || s.includes('d6')) return 'bulldozer';
+  }
+  return null;
+}
+
+export const canPerform = (type: MachineType | null, taskType: string) => type !== null && TASKS_BY_MACHINE[type].includes(taskType);
+
 /** The operator app understands these; anything else is shown to the operator as "queued". */
 export const TASK_STATUSES = ['pending', 'ready', 'in_progress', 'paused', 'completed'] as const;
 /** Only tasks that have not started can be reassigned or deleted. */

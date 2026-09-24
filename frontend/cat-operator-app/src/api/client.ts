@@ -119,7 +119,23 @@ export type ApiTelemetry = {
   hydraulicPressure: number | null;
   engineTemp: number | null;
   speed: number | null;
+  /** Cab sensors (null when the machine doesn't report them) */
+  seatbeltFastened?: boolean | null;
+  proximityM?: number | null;
+  /** Extra anomaly-model features sent with the reading, e.g. swing_speed_rpm */
+  features?: Record<string, number> | null;
+  /** 'live' or 'simulation' (demo stream) */
+  source?: string;
   recordedAt: string | null;
+};
+
+/** GET /simulation/status — the supervisor's demo stream. */
+export type ApiSimulation = {
+  running: boolean;
+  /** True when the stream is feeding this operator's machine */
+  forMe: boolean;
+  machineId: string | null;
+  phase: string | null;
 };
 
 export type ApiInsights = {
@@ -128,6 +144,18 @@ export type ApiInsights = {
   anomalies: { component: string; severity: string; metric: string; value: string; description: string }[];
   recommendations: { action: string; priority: string; reason: string }[];
   lastTelemetry: ApiTelemetry | null;
+};
+
+/** GET /machines/{id}. `type` is one of the three machine types the ML models cover. */
+export type ApiMachine = {
+  id: string;
+  model: string;
+  type: 'excavator' | 'bulldozer' | 'wheel_loader' | null;
+  serialNumber: string | null;
+  status: string;
+  operatingHours: number;
+  healthScore: number;
+  taskTypes: string[];
 };
 
 /** POST /tasks/{id}/estimate — CatBoost task-duration regressor. */
@@ -182,7 +210,7 @@ export const api = {
 
   estimateTask: (id: string) => request<ApiTaskEstimate>('POST', `/tasks/${id}/estimate`),
 
-  alerts: () => request<ApiAlert[]>('GET', '/safety/alerts'),
+  alerts: (machineId: string) => request<ApiAlert[]>('GET', `/safety/alerts?machineId=${encodeURIComponent(machineId)}`),
   ackAlert: (id: string) => request<{ success: boolean }>('POST', `/safety/alerts/${id}/ack`),
 
   incidents: () => request<ApiIncident[]>('GET', '/incidents'),
@@ -193,8 +221,10 @@ export const api = {
   trainingRecommendations: () => request<{ recommendations: ApiRecommendation[] }>('GET', '/training/recommendations'),
   completeTraining: (id: string) => request<{ success: boolean }>('POST', `/training/${id}/complete`),
 
+  machine: (machineId: string) => request<ApiMachine>('GET', `/machines/${machineId}`),
   telemetry: (machineId: string) => request<{ machineId: string; telemetry: ApiTelemetry | null }>('GET', `/telemetry/${machineId}`),
+  simulation: () => request<ApiSimulation>('GET', '/simulation/status'),
   insights: (machineId: string) => request<ApiInsights>('GET', `/machines/${machineId}/insights`),
-  // Per-type route: /ml/anomaly/predict infers the type from the machine ID and can pick the wrong model
+  // Per-type route, so the model always matches the machine's type
   detectAnomaly: (model: AnomalyModel, body: ApiAnomalyRequest) => request<ApiAnomaly>('POST', `/ml/anomaly/${model}`, body),
 };

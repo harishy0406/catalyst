@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 
 import { Badge, Button, Cell, HazardStripe, Icon, Panel, Pip, Screen, Txt } from '@/components';
+import { alertMessage, alertTitle, isProximityAlert } from '@/data/alerts';
 import { useApp } from '@/state/AppState';
 import { border, colors, space } from '@/theme/tokens';
 
@@ -11,13 +12,16 @@ import { border, colors, space } from '@/theme/tokens';
 export default function ActiveAlert() {
   const { alertActive, acknowledgeAlert, activeAlert, machine } = useApp();
   const strobe = useStrobe(alertActive);
+  // Proximity panels only apply to a proximity hazard (or an object measured inside the warning zone)
+  const dist = machine.telemetry?.proximityM ?? null;
+  const showProximity = isProximityAlert(activeAlert) || (dist != null && dist < 5);
+  const distLabel = dist != null ? dist.toFixed(1) : '--';
+  const at = activeAlert ? new Date(activeAlert.createdAt) : null;
 
   const bg = strobe.interpolate({ inputRange: [0, 1], outputRange: [colors.secondaryContainer, colors.surfaceContainer] });
 
   return (
-    <Screen
-      header={{ subtitle: alertActive ? 'Swing brake: auto-engaged' : 'Alert acknowledged', alert: alertActive, hazard: true }}
-    >
+    <Screen header={{ subtitle: alertActive ? 'Swing brake: auto-engaged' : 'Alert acknowledged', alert: alertActive, hazard: true }}>
       {/* Strobing banner */}
       <Animated.View
         style={{
@@ -59,152 +63,163 @@ export default function ActiveAlert() {
       {activeAlert && (
         <Cell debossed style={{ gap: 4, borderLeftWidth: 4, borderLeftColor: colors.danger }}>
           <Txt v="labelXs" color={colors.secondary}>
-            {activeAlert.severity} • {activeAlert.ruleId ?? 'Safety rule'} • {activeAlert.machineId}
+            {activeAlert.severity} • {alertTitle(activeAlert)} • {activeAlert.machineId}
           </Txt>
-          <Txt v="headlineSm">{activeAlert.message}</Txt>
+          <Txt v="headlineSm">{alertMessage(activeAlert)}</Txt>
         </Cell>
       )}
 
       {/* Person detected */}
-      <Panel borderColor={colors.secondary} borderWidth={2}>
-        <View style={{ flexDirection: 'row', gap: space.md - 4 }}>
-          <View
-            style={{
-              width: 52,
-              height: 52,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: colors.surfaceHigh,
-              borderWidth: 1,
-              borderColor: colors.outlineVariant,
-            }}
-          >
-            <Icon name="person_alert" size={28} color={colors.onSurface} />
+      {showProximity && (
+        <Panel borderColor={colors.secondary} borderWidth={2}>
+          <View style={{ flexDirection: 'row', gap: space.md - 4 }}>
+            <View
+              style={{
+                width: 52,
+                height: 52,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.surfaceHigh,
+                borderWidth: 1,
+                borderColor: colors.outlineVariant,
+              }}
+            >
+              <Icon name="person_alert" size={28} color={colors.onSurface} />
+            </View>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Txt v="headlineLg" color={colors.secondary}>
+                Person Detected Near Machine
+              </Txt>
+              <Txt v="bodyLg">
+                Worker detected{' '}
+                <Txt v="headlineMd" color={colors.primaryContainer}>
+                  {distLabel} m
+                </Txt>{' '}
+                from the machine.
+              </Txt>
+            </View>
           </View>
-          <View style={{ flex: 1, gap: 4 }}>
-            <Txt v="headlineLg" color={colors.secondary}>
-              Person Detected Near Machine
-            </Txt>
-            <Txt v="bodyLg">
-              Worker detected{' '}
-              <Txt v="headlineMd" color={colors.primaryContainer}>
-                2.8 m
-              </Txt>{' '}
-              from the machine.
-            </Txt>
-          </View>
-        </View>
-        <Cell debossed style={{ flexDirection: 'row', alignItems: 'center', gap: space.md - 4 }}>
-          <Icon name="timer" size={28} color={colors.secondary} />
-          <View>
-            <Txt v="labelXs" color={colors.onSurfaceVariant}>
-              Response Protocol
-            </Txt>
-            <Txt v="headlineSm">{alertActive ? 'Cab Control Locked' : 'Cab Control Restored'}</Txt>
-          </View>
-        </Cell>
-      </Panel>
+          <Cell debossed style={{ flexDirection: 'row', alignItems: 'center', gap: space.md - 4 }}>
+            <Icon name="timer" size={28} color={colors.secondary} />
+            <View>
+              <Txt v="labelXs" color={colors.onSurfaceVariant}>
+                Response Protocol
+              </Txt>
+              <Txt v="headlineSm">{alertActive ? 'Cab Control Locked' : 'Cab Control Restored'}</Txt>
+            </View>
+          </Cell>
+        </Panel>
+      )}
 
       {/* Zone monitoring */}
-      <Panel
-        title="Active Telematics & Zone Monitoring"
-        icon="radar"
-        right={<Badge label="Proximity Breach" tone="outlineDanger" />}
-      >
-        <Cell debossed>
-          <Txt v="labelSm" color={colors.onSurfaceVariant}>
-            Measured Distance
-          </Txt>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-            <Txt v="metric" color={colors.secondary} style={{ fontSize: 72, lineHeight: 76 }}>
-              2.8
+      {showProximity && (
+        <Panel title="Active Telematics & Zone Monitoring" icon="radar" right={<Badge label="Proximity Breach" tone="outlineDanger" />}>
+          <Cell debossed>
+            <Txt v="labelSm" color={colors.onSurfaceVariant}>
+              Measured Distance
             </Txt>
-            <Txt v="headlineMd" color={colors.primaryContainer} style={{ marginBottom: 12 }}>
-              Meters
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+              <Txt
+                v="metric"
+                color={dist != null && dist >= 3 ? colors.primaryContainer : colors.secondary}
+                style={{ fontSize: 72, lineHeight: 76 }}
+              >
+                {distLabel}
+              </Txt>
+              <Txt v="headlineMd" color={colors.primaryContainer} style={{ marginBottom: 12 }}>
+                Meters
+              </Txt>
+            </View>
+            <Badge label="Critical zone < 3.0 m" tone="outlineDanger" />
+          </Cell>
+          <Cell debossed>
+            <Txt v="labelSm" color={colors.onSurfaceVariant}>
+              Machine & Sector
             </Txt>
-          </View>
-          <Badge label="Critical zone < 3.0 m" tone="outlineDanger" />
-        </Cell>
-        <Cell debossed>
-          <Txt v="labelSm" color={colors.onSurfaceVariant}>
-            Machine & Sector
-          </Txt>
-          <Txt v="headlineMd">{machine.id}</Txt>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <Icon name="adjust" size={16} color={colors.primaryContainer} />
-            <Txt v="labelSm" color={colors.primaryContainer}>
-              Rear swing radius (counterweight)
+            <Txt v="headlineMd">{machine.id}</Txt>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Icon name="adjust" size={16} color={colors.primaryContainer} />
+              <Txt v="labelSm" color={colors.primaryContainer}>
+                Rear swing radius (counterweight)
+              </Txt>
+            </View>
+          </Cell>
+          <Cell debossed>
+            <Txt v="labelSm" color={colors.onSurfaceVariant}>
+              Hazard Type
             </Txt>
-          </View>
-        </Cell>
-        <Cell debossed>
-          <Txt v="labelSm" color={colors.onSurfaceVariant}>
-            Hazard Type
-          </Txt>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Icon name="nature_people" size={22} color={colors.secondary} />
+              <Txt v="headlineMd" color={colors.secondary}>
+                Proximity / Personnel
+              </Txt>
+            </View>
+            <Txt v="bodySm">Biometric thermal signature confirmed</Txt>
+          </Cell>
+          <Cell debossed>
+            <Txt v="labelSm" color={colors.onSurfaceVariant}>
+              Event Timestamp
+            </Txt>
+            <Txt v="headlineLg">
+              {at ? at.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--'}
+            </Txt>
+            <Txt v="labelXs" color={colors.tertiaryContainer}>
+              Latency: 12ms • Direct CAN-Bus
+            </Txt>
+          </Cell>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Icon name="nature_people" size={22} color={colors.secondary} />
-            <Txt v="headlineMd" color={colors.secondary}>
-              Proximity / Personnel
+            <Icon name="sensors" size={16} color={colors.primaryContainer} />
+            <Txt v="labelSm" color={colors.onSurfaceVariant}>
+              Radar pulse array: nominal
             </Txt>
           </View>
-          <Txt v="bodySm">Biometric thermal signature confirmed</Txt>
-        </Cell>
-        <Cell debossed>
-          <Txt v="labelSm" color={colors.onSurfaceVariant}>
-            Event Timestamp
-          </Txt>
-          <Txt v="headlineLg">
-            10:42{' '}
-            <Txt v="labelMd" color={colors.onSurfaceVariant}>
-              AM (UTC+2)
+          {alertActive && (
+            <Txt v="labelMd" color={colors.secondary} style={{ fontFamily: 'monospace' }}>
+              Operator intervention required immediately
             </Txt>
-          </Txt>
-          <Txt v="labelXs" color={colors.tertiaryContainer}>
-            Latency: 12ms • Direct CAN-Bus
-          </Txt>
-        </Cell>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Icon name="sensors" size={16} color={colors.primaryContainer} />
-          <Txt v="labelSm" color={colors.onSurfaceVariant}>
-            Radar pulse array: nominal
-          </Txt>
-        </View>
-        {alertActive && (
-          <Txt v="labelMd" color={colors.secondary} style={{ fontFamily: 'monospace' }}>
-            Operator intervention required immediately
-          </Txt>
-        )}
-      </Panel>
+          )}
+        </Panel>
+      )}
 
-      {/* Threshold comparison */}
-      <Panel title="Zone Threshold Comparison" right={<Pip round={false} size={12} color={colors.primaryContainer} />}>
-        <View style={{ borderLeftWidth: 4, borderLeftColor: colors.primaryContainer, paddingLeft: space.md - 4, gap: 4, backgroundColor: colors.surfaceLow, paddingVertical: space.md - 4 }}>
-          <Txt v="labelXs" color={colors.primaryContainer}>
-            Alert Sector 02
+      {/* Threshold comparison (rule thresholds from backend/app/routers/telemetry.py) */}
+      {showProximity && (
+        <Panel title="Zone Threshold Comparison" right={<Pip round={false} size={12} color={colors.primaryContainer} />}>
+          <View
+            style={{
+              borderLeftWidth: 4,
+              borderLeftColor: colors.primaryContainer,
+              paddingLeft: space.md - 4,
+              gap: 4,
+              backgroundColor: colors.surfaceLow,
+              paddingVertical: space.md - 4,
+            }}
+          >
+            <Txt v="labelXs" color={colors.primaryContainer}>
+              Alert Sector 02
+            </Txt>
+            <Txt v="headlineSm">Object measured at {distLabel} m (warning zone starts at 5.0 m)</Txt>
+          </View>
+          <Txt v="bodySm" color={colors.onSurfaceVariant}>
+            Secondary LiDAR tracking indicates rapid approach from Blind Spot Delta. Machine hydraulics throttled to 10% idle.
           </Txt>
-          <Txt v="headlineSm">Proximity warning: object detected within warning zone — 5.2 m</Txt>
-        </View>
-        <Txt v="bodySm" color={colors.onSurfaceVariant}>
-          Secondary LiDAR tracking indicates rapid approach from Blind Spot Delta. Machine hydraulics throttled to 10%
-          idle.
-        </Txt>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Txt v="labelXs" color={colors.secondary}>
-            2.8m Critical
-          </Txt>
-          <Txt v="labelXs" color={colors.primaryContainer}>
-            5.2m Warning
-          </Txt>
-          <Txt v="labelXs" color={colors.tertiaryContainer}>
-            8.0m Safe
-          </Txt>
-        </View>
-        <View style={{ flexDirection: 'row', height: 10 }}>
-          <View style={{ flex: 2.8, backgroundColor: colors.secondary }} />
-          <View style={{ flex: 2.4, backgroundColor: colors.primaryContainer }} />
-          <View style={{ flex: 2.8, backgroundColor: colors.tertiaryContainer }} />
-        </View>
-      </Panel>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Txt v="labelXs" color={colors.secondary}>
+              &lt; 3.0m Critical
+            </Txt>
+            <Txt v="labelXs" color={colors.primaryContainer}>
+              &lt; 5.0m Warning
+            </Txt>
+            <Txt v="labelXs" color={colors.tertiaryContainer}>
+              8.0m Safe
+            </Txt>
+          </View>
+          <View style={{ flexDirection: 'row', height: 10 }}>
+            <View style={{ flex: 3, backgroundColor: colors.secondary }} />
+            <View style={{ flex: 2, backgroundColor: colors.primaryContainer }} />
+            <View style={{ flex: 3, backgroundColor: colors.tertiaryContainer }} />
+          </View>
+        </Panel>
+      )}
 
       {/* Camera feed */}
       <Panel
@@ -214,8 +229,14 @@ export default function ActiveAlert() {
         right={<Badge label="Live" tone="outlineDanger" />}
       >
         <View style={{ borderWidth: border.strong, borderColor: colors.secondary }}>
-          <Image source={require('../../../assets/images/rear-cam.jpg')} style={{ width: '100%', aspectRatio: 512 / 279 }} contentFit="cover" />
-          <View style={{ position: 'absolute', left: 6, bottom: 6, backgroundColor: colors.black, paddingHorizontal: 6, paddingVertical: 2 }}>
+          <Image
+            source={require('../../../assets/images/rear-cam.jpg')}
+            style={{ width: '100%', aspectRatio: 512 / 279 }}
+            contentFit="cover"
+          />
+          <View
+            style={{ position: 'absolute', left: 6, bottom: 6, backgroundColor: colors.black, paddingHorizontal: 6, paddingVertical: 2 }}
+          >
             <Txt v="labelSm" style={{ fontFamily: 'monospace' }}>
               TARGET_ID: WKR-094
             </Txt>

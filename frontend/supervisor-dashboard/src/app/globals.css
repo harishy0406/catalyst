@@ -233,6 +233,25 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .progress > span { display: block; height: 100%; background: var(--gold); }
 .progress.over > span { background: var(--danger); }
 
+/* ---------- demo simulator ---------- */
+.sim { border-color: var(--gold); }
+.sim-body { display: grid; gap: 16px; }
+.sim-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+.sim-controls .field { min-width: 200px; }
+.sim button.chip { background: transparent; font: inherit; font-size: 13px; cursor: pointer; }
+.sim button.chip.on { background: var(--gold); }
+.sim button.chip:disabled { opacity: 0.5; cursor: not-allowed; }
+.sim-actions { margin-left: auto; }
+.sim-progress { display: grid; gap: 6px; }
+.sim-triggers { display: grid; gap: 8px; }
+.sim-feed { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; align-items: start; }
+.sim-ml { display: grid; gap: 8px; justify-items: start; }
+.sim-events { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.sim-events li { display: flex; gap: 10px; align-items: baseline; }
+.sim-events li .small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sim .disclaimer { padding: 0; margin: 0; }
+@media (max-width: 900px) { .sim-feed { grid-template-columns: 1fr; } }
+
 /* ---------- incidents ---------- */
 .incident { display: grid; gap: 10px; padding: 16px; border-bottom: 1px solid var(--surface-highest); }
 .incident:last-child { border-bottom: 0; }

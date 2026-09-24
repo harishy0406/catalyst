@@ -1,4 +1,6 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { setAudioModeAsync, useAudioPlayer } from 'expo-audio';
+import * as Haptics from 'expo-haptics';
 import { Alert, ImageSourcePropType } from 'react-native';
 
 import {
@@ -6,10 +8,13 @@ import {
   ApiAlert,
   ApiIncident,
   ApiInsights,
+  ApiMachine,
   ApiOperator,
   ApiRecommendation,
+  ApiSimulation,
   ApiTask,
   ApiTaskEstimate,
+  ApiTelemetry,
   ApiTrainingContent,
   setAuthToken,
 } from '@/api/client';
@@ -19,7 +24,15 @@ import { colors } from '@/theme/tokens';
 
 type Incident = { id: string; type: string; severity: string; description: string; time: string };
 type Operator = typeof mockOperator & { role: string; skillLevel: string };
-type Machine = typeof mockMachine & { healthScore: number | null; insights: ApiInsights | null };
+type Machine = typeof mockMachine & {
+  /** False when the supervisor hasn't bound a machine to this operator. */
+  assigned: boolean;
+  details: ApiMachine | null;
+  healthScore: number | null;
+  insights: ApiInsights | null;
+  /** Latest reading (GET /telemetry/{id}), refreshed on every poll. */
+  telemetry: ApiTelemetry | null;
+};
 export type TrainingModule = {
   id: string;
   area: string;
@@ -50,11 +63,17 @@ type AppState = {
   trainingModules: TrainingModule[];
   training: { done: number; total: number };
   completeTraining: (id: string) => Promise<void>;
+  /** Supervisor's demo stream; `forMe` when it is feeding this operator's machine. */
+  simulation: ApiSimulation | null;
 };
 
 const Ctx = createContext<AppState | null>(null);
 
 const POLL_MS = 10_000;
+/** While a demo stream feeds this machine, poll faster so each story beat shows up promptly. */
+const DEMO_POLL_MS = 3_000;
+/** Insights are several DB queries; refresh them at the normal rate even during a demo. */
+const INSIGHTS_MS = 10_000;
 
 // ─── Backend → UI mapping ──────────────────────────────────────────────────────
 
@@ -137,6 +156,7 @@ function toTask(t: ApiTask, est?: ApiTaskEstimate): Task {
           ? minutesSince(t.startedAt)
           : 0,
     startedAt: t.startedAt,
+    machineId: t.machineId,
   };
 }
 
@@ -198,6 +218,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<ApiTrainingContent[]>([]);
   const [recs, setRecs] = useState<ApiRecommendation[]>([]);
   const [insights, setInsights] = useState<ApiInsights | null>(null);
+  const [machineDetails, setMachineDetails] = useState<ApiMachine | null>(null);
+  const [telemetry, setTelemetry] = useState<ApiTelemetry | null>(null);
+  const [simulation, setSimulation] = useState<ApiSimulation | null>(null);
+  const insightsAt = useRef(0);
+  const seenAlerts = useRef<Set<string> | null>(null);
+  const alarm = useAudioPlayer(require('../../assets/sounds/alert.wav'));
   const predictions = useRef<Record<string, ApiTaskEstimate>>({});
   const taskRows = useRef<ApiTask[]>([]);
 
@@ -224,16 +250,35 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     ).then(render);
   }, []);
 
-  const loadLive = useCallback(async (mid: string) => {
-    const [a, ins] = await Promise.all([api.alerts(), api.insights(mid).catch(() => null)]);
+  const loadLive = useCallback(async (mid: string, force = false) => {
+    const insightsDue = force || Date.now() - insightsAt.current >= INSIGHTS_MS;
+    const [a, tel, sim, ins] = await Promise.all([
+      api.alerts(mid), // only this operator's machine
+      api.telemetry(mid).catch(() => null),
+      api.simulation().catch(() => null), // older backends have no /simulation
+      insightsDue ? api.insights(mid).catch(() => null) : undefined,
+    ]);
     setAlerts(a);
-    setInsights(ins);
+    setTelemetry(tel?.telemetry ?? null);
+    setSimulation(sim);
+    if (insightsDue) {
+      insightsAt.current = Date.now();
+      setInsights(ins ?? null);
+    }
   }, []);
 
   const loadAll = useCallback(
     async (op: ApiOperator) => {
       const mid = op.activeMachineId ?? mockMachine.id;
-      const [inc, tc, tr] = await Promise.all([api.incidents(), api.trainingContent(), api.trainingRecommendations(), loadTasks(), loadLive(mid)]);
+      const [inc, tc, tr, md] = await Promise.all([
+        api.incidents(),
+        api.trainingContent(),
+        api.trainingRecommendations(),
+        op.activeMachineId ? api.machine(op.activeMachineId).catch(() => null) : null,
+        loadTasks(),
+        loadLive(mid, true),
+      ]);
+      setMachineDetails(md);
       setIncidents(inc.map(toIncident));
       setContent(tc);
       setRecs(tr.recommendations);
@@ -260,18 +305,28 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setAlerts([]);
     setIncidents([]);
     setInsights(null);
+    setMachineDetails(null);
+    setTelemetry(null);
+    setSimulation(null);
+    seenAlerts.current = null;
   }, []);
 
   const refresh = useCallback(async () => {
     if (apiOperator) await loadAll(apiOperator).catch(reportError);
   }, [apiOperator, loadAll]);
 
-  // Poll alerts + machine insights so telemetry-triggered alerts show up live
+  // Poll alerts + machine telemetry so telemetry-triggered alerts show up live
+  const demoForMe = !!simulation?.forMe;
   useEffect(() => {
     if (!apiOperator) return;
-    const id = setInterval(() => loadLive(machineId).catch(() => undefined), POLL_MS);
+    const id = setInterval(() => loadLive(machineId).catch(() => undefined), demoForMe ? DEMO_POLL_MS : POLL_MS);
     return () => clearInterval(id);
-  }, [apiOperator, machineId, loadLive]);
+  }, [apiOperator, machineId, loadLive, demoForMe]);
+
+  // Alarms should sound even with the phone on silent (it's a safety alert)
+  useEffect(() => {
+    setAudioModeAsync({ playsInSilentMode: true }).catch(() => undefined);
+  }, []);
 
   const setTaskStatus = useCallback(
     async (id: string, status: TaskStatus) => {
@@ -292,10 +347,25 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const activeAlerts = useMemo(() => alerts.filter((a) => !a.acknowledged), [alerts]);
 
+  // Sound + vibration for alerts that appear while signed in (not the backlog present at login)
+  useEffect(() => {
+    if (!apiOperator) return;
+    const ids = activeAlerts.map((a) => a.id);
+    if (seenAlerts.current === null) {
+      seenAlerts.current = new Set(ids);
+      return;
+    }
+    const fresh = ids.filter((id) => !seenAlerts.current!.has(id));
+    ids.forEach((id) => seenAlerts.current!.add(id));
+    if (fresh.length === 0) return;
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
+    alarm.seekTo(0).then(() => alarm.play()).catch(() => undefined);
+  }, [activeAlerts, apiOperator, alarm]);
+
   const acknowledgeAlert = useCallback(async () => {
     try {
       await Promise.all(activeAlerts.map((a) => api.ackAlert(a.id)));
-      await loadLive(machineId);
+      await loadLive(machineId, true);
     } catch (e) {
       reportError(e);
     }
@@ -327,17 +397,24 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const machine = useMemo<Machine>(() => {
-    const tel = insights?.lastTelemetry;
+    const tel = telemetry ?? insights?.lastTelemetry;
+    const fm = fleetMachine(machineId);
     return {
       ...mockMachine,
-      model: fleetMachine(machineId).model,
-      shortModel: fleetMachine(machineId).shortModel,
+      model: machineDetails?.model ?? fm?.model ?? mockMachine.model,
+      shortModel: fm?.shortModel ?? mockMachine.shortModel,
       id: machineId,
+      engineHours: machineDetails
+        ? machineDetails.operatingHours.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+        : mockMachine.engineHours,
       hydraulicBar: tel?.hydraulicPressure != null ? Math.round(tel.hydraulicPressure) : mockMachine.hydraulicBar,
-      healthScore: insights?.healthScore ?? null,
+      assigned: !!apiOperator?.activeMachineId,
+      details: machineDetails,
+      healthScore: insights?.healthScore ?? machineDetails?.healthScore ?? null,
       insights,
+      telemetry: tel ?? null,
     };
-  }, [machineId, insights]);
+  }, [machineId, insights, machineDetails, apiOperator, telemetry]);
 
   const trainingModules = useMemo(() => {
     const byId = new Map(recs.map((r) => [r.contentId, r]));
@@ -364,6 +441,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       trainingModules,
       training: { done: trainingModules.filter((m) => m.completed).length, total: trainingModules.length },
       completeTraining,
+      simulation,
     }),
     [
       apiOperator,
@@ -381,6 +459,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       submitIncident,
       trainingModules,
       completeTraining,
+      simulation,
     ],
   );
 

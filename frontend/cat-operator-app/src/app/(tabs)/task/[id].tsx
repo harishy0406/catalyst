@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { Badge, Button, Cell, Icon, Metric, Panel, Row, Screen, Txt } from '@/components';
+import { fleetMachine } from '@/data/machines';
 import { TaskStatus } from '@/data/mock';
 import { useApp } from '@/state/AppState';
 import { border, colors, space } from '@/theme/tokens';
@@ -77,7 +78,7 @@ export default function TaskDetail() {
               {task.title}
             </Txt>
             <Txt v="labelSm" color={colors.onSurfaceVariant}>
-              Task ID: {task.id} • Machine: {machine.id}
+              Task ID: {task.id} • Machine: {task.machineId ?? machine.id}
             </Txt>
           </View>
         </View>
@@ -147,7 +148,14 @@ export default function TaskDetail() {
           />
         </View>
       </Row>
-      <Metric label="Machine Age" icon="schedule" value="2" unit="Years" unitColor={colors.onSurfaceVariant} size="md" />
+      <Metric
+        label="Machine"
+        icon="precision_manufacturing"
+        value={fleetMachine(task.machineId ?? machine.id)?.kind ?? '--'}
+        unit={task.machineId ?? machine.id}
+        unitColor={colors.onSurfaceVariant}
+        size="md"
+      />
 
       {/* Checklist */}
       <Panel

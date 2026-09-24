@@ -47,8 +47,9 @@ def seed_database():
     tasks = [
         ("T001", "Trenching North Utility Trench", "Excavate 45m conduit corridor to 1.8m grade depth.", "trenching", "Zone A - Sector 3", "high", "pending", "OP-4412", "CAT-320-01", 60.0, None, t1_chk),
         ("T002", "Truck Loading Zone B", "Load haulers with aggregate stockpile material.", "loading", "Zone B - Stockpile", "medium", "pending", "OP-8821", "CAT-950-02", 45.0, None, t2_chk),
-        ("T003", "Grade Sub-base Pad 4", "Laser grade leveling for foundation prep.", "grading", "Pad 4 South", "low", "pending", "OP-4412", "CAT-320-01", 30.0, None, "[]"),
-        ("T004", "Pipe Laying Trench 2", "Assist pipe bedding placement and gravel backfill.", "pipe_laying", "Zone A - Sector 4", "high", "pending", "OP-8821", "CAT-950-02", 35.0, None, "[]"),
+        # Every task's type must be one its machine can do (app/machine_types.py → TASKS_BY_MACHINE)
+        ("T003", "Stormwater Drain Trench Pad 4", "Excavate 30m stormwater drain trench along Pad 4 to 1.2m depth.", "trenching", "Pad 4 South", "low", "pending", "OP-4412", "CAT-320-01", 30.0, None, "[]"),
+        ("T004", "Stockpile Loading Zone C", "Load haul trucks from the gravel stockpile for Zone A backfill.", "loading", "Zone C - Stockpile", "high", "pending", "OP-8821", "CAT-950-02", 35.0, None, "[]"),
         ("T005", "Bulk Excavation Retention Basin", "Bulk earth movement for stormwater pond.", "bulk_excavation", "Zone C Basin", "medium", "pending", "OP-4412", "CAT-320-01", 90.0, None, "[]"),
     ]
     for t in tasks:

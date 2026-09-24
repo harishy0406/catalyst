@@ -31,6 +31,7 @@ cd backend
 cd frontend/cat-operator-app && npx expo start
 ```
 
+- **Deployed backend**: `cat-operator-app/.env` sets `EXPO_PUBLIC_API_URL=https://catalyst-api-wn32.onrender.com`, so `npx expo start` works with no local backend. To use a local backend, put `EXPO_PUBLIC_API_URL=http://<LAN-IP>:3000` in `.env.local`, which overrides `.env`. The Render free tier sleeps when idle, so the first request can take up to about a minute.
 - **Base URL** (`src/api/client.ts`): `EXPO_PUBLIC_API_URL` if it is set. Otherwise the app uses the Metro host IP on port 3000 (Expo Go on the same Wi-Fi), or `localhost:3000` on web. The login screen shows the URL it is using and whether the API is reachable.
 - **Demo logins** (from `backend/app/seed.py`): `OP-4412` / PIN `4412` (expert, CAT-320-01), `OP-8821` / `8821`, `SUP-101` / `1001`. Tap ⇄ to switch operator. Switching clears the PIN.
 - **To trigger a live alert**, post telemetry above a rule threshold. The app polls alerts every 10 s:
@@ -40,6 +41,34 @@ cd frontend/cat-operator-app && npx expo start
   ```
 - **For APK builds**, set `EXPO_PUBLIC_API_URL=http://<laptop-LAN-IP>:3000` before building. Release builds block plain HTTP by default, so the backend needs HTTPS, or `usesCleartextTraffic` has to be enabled through `expo-build-properties`.
 - `POST /seed` resets the whole Supabase DB to the demo data. Everyone shares that DB, so only run it on purpose.
+
+## Live demo stream (simulator)
+
+For presentations, the supervisor dashboard has a **Demo Simulator** panel at the top of the Overview page. It streams synthetic readings through the real `POST /telemetry` pipeline, so safety rules, ML anomaly detection, alerts and auto-incidents all fire as they would for a real machine.
+
+1. Sign in to the dashboard as `SUP-101` / `1001`. The simulator uses the same login against the backend, so sessions from before this feature need to sign out and back in.
+2. Sign in to the operator app on the phone as `OP-4412` / `4412`. Its machine is CAT-320-01.
+3. Pick **CAT-320-01** and **Safety crisis**, then press **▶ Start live demo**. The story is 33 readings, about 100 s at the 3 s interval:
+
+| Timeline | Phase | What happens |
+|---|---|---|
+| 0–15 s | Normal operation | Normal readings, seatbelt on, 15 m clear. The app shows "Safe to Operate". |
+| 15–30 s | Seatbelt violation | The machine speeds up with the seatbelt off. A critical alert fires, and the app plays an alarm, vibrates and shows a red banner. |
+| 30–50 s | Proximity hazard | The obstacle closes in from 12 m → 4 m (warning) → 1.8 m (critical). |
+| 50–60 s | Hazard unacknowledged | A critical alert left unacknowledged for 20 s is auto-logged as an incident (INC-XXXX) for the supervisor. |
+| 60–100 s | Machine drift | Engine temperature and RPM drift from normal into a fault. The AI flips to "Engine Overheating" around 80 s (Transmission Overheating on the loader). |
+
+- **Instant triggers**: Seatbelt, Proximity, plus one button per anomaly type (8 per machine type) for the selected machine.
+- **Other scenarios**: *Machine fault* (only the drift, about 50 s) and *Normal stream* (3 min of healthy readings).
+- **Auto-stop**: the stream stops by itself at the end of the scenario, or after 5 minutes at the latest.
+- **Timeline pacing**: the timeline advances per reading, not by the clock, so a slow network stretches the demo instead of skipping story beats.
+- **Operator app during a demo**: while the stream feeds this operator's machine, the app polls every 3 s instead of 10 s and shows a **Simulated feed** strip under the header.
+- **Tagged data**: simulated telemetry, alerts and incidents are tagged `source = 'simulation'`. To clean up after a demo:
+  ```sql
+  UPDATE alerts SET acknowledged = TRUE WHERE source = 'simulation' AND acknowledged = FALSE;
+  UPDATE incidents SET status = 'resolved', resolved_at = NOW() WHERE source = 'simulation' AND status <> 'resolved';
+  ```
+- **Backend version**: needs the updated backend deployed on Render. The dashboard uses `BACKEND_URL`, which defaults to the Render URL.
 
 ## Build an APK (local, no Expo account needed)
 
@@ -184,7 +213,7 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 | 6 | Task Detail | `/task/[id]` | ✅ Built | Toggleable pre-task checklist gates **Start**; Start / Pause / Complete update the shared task state |
 | 7 | Incident Report | `/incident` | ✅ Built | One-touch type grid, severity (HIGH has hazard stripe), macros, press-and-hold voice button, snapshot attach, submit → new `INC-xxxx` |
 | 8 | Training Hub | `/training` | ✅ Built | Progress, 3 module cards with photos, Start/In-progress toggle, shift bulletin |
-| 9 | Machine Status | `/machine` | ✅ Built | Fleet selector (3 machine images), AI anomaly detection with class probabilities, test scenarios, live telemetry, advisories (dismiss), manual notes |
+| 9 | Machine Status | `/machine` | ✅ Built | The operator's assigned machine only (image, status, health, hours), AI anomaly detection with class probabilities, 8 test scenarios per machine, live telemetry, advisories (dismiss), manual notes |
 | 10 | Operator Profile | `/profile` | ✅ Built | Identity and stats, menu rows → Training / Safety / Incident, **Log out** → Login |
 
 **Which tab is highlighted on sub-screens** (matches the mocks): Machine → HOME; Task Detail → TASKS; Alert, Incident and Training → SAFETY.
@@ -205,7 +234,8 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 
 - [x] Replace `data/mock.ts` with API calls to `backend/` (auth, tasks, ML prediction, alerts, incidents, training, machine insights)
 - [ ] Backend endpoint for machine details (model, engine hours, fuel %); these still come from `data/mock.ts`
-- [ ] Backend: fix the anomaly defaults and feature names in `app/schemas/ml.py` and `anomaly_service.py`. The server-side ML checks in `/insights` and `POST /telemetry` currently flag every excavator reading. After that, un-hide the backend AI advisory.
+- [x] Backend: fix the anomaly defaults and feature names (2026-09-24). **Redeploy Render** so the app, `/insights` and `POST /telemetry` use them.
+- [ ] Hide the diagnostic test scenarios behind a demo-mode toggle (see the UX review)
 - [ ] Real voice capture (`expo-audio`) and camera snapshot (`expo-camera`) on Incident Report
 - [ ] Persist the JWT across app restarts (`expo-secure-store`). Right now it lives in memory only
 - [ ] Landscape / in-dash tablet layout (12-column spec in DESIGN.md)
@@ -215,6 +245,59 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 ---
 
 ## Changelog
+
+### 2026-09-24 — Live demo stream + real cab sensors
+- **Backend**
+  - `POST /telemetry` accepts `seatbeltFastened`, `proximityM`, extra ML `features` and `source`, with new DB columns added by an additive migration in `init_db`.
+  - New built-in rules:
+    - seatbelt unbuckled above 2 km/h → critical
+    - proximity < 5 m → warning, < 3 m → critical
+  - Alerts are de-duplicated: there is one open alert per rule per machine, not one per reading.
+  - A critical alert left unacknowledged for 20 s becomes an incident, linked through `incidents.alert_id`.
+  - New `/simulation` router (start / stop / trigger-event / status) and a synthetic reading generator in `app/simulation.py`.
+- **Dashboard**
+  - New Demo Simulator widget on the Overview page.
+  - Sign-in also gets a backend token, stored in the signed session.
+  - Status polling goes through a route handler (`/api/sim/status`), because server actions run one at a time and would queue up Start/Stop clicks.
+- **Operator app**
+  - **Alerts**: a new alert plays an alarm (`assets/sounds/alert.wav`, audible in silent mode) and vibrates (`expo-audio`, `expo-haptics`; both are in Expo Go). The Home banner and the Alert screen show the real alert title and message.
+  - **Real sensor data**:
+    - The Home "Safety Status" panel now uses the latest seatbelt and proximity readings and open critical faults, instead of a hardcoded "all clear".
+    - The Alert screen's proximity panels show the measured distance and appear only for proximity hazards.
+  - **Scoping and polling**:
+    - Alerts are scoped to the operator's own machine (`/safety/alerts?machineId=`).
+    - The latest telemetry is fetched on every poll, and insights at most every 10 s.
+
+### 2026-09-24 — Machine type links supervisor, app and ML
+The ML models only cover **excavator, bulldozer and wheel loader**, so everything now uses those three types. The rules live in `backend/app/machine_types.py`, with copies in `supervisor-dashboard/src/lib/domain.ts` and `cat-operator-app/src/data/machines.ts`.
+
+Which task types each machine can do:
+
+| Machine | Task types |
+|---|---|
+| Excavator | trenching, pipe laying, bulk excavation, demolition, loading |
+| Bulldozer | grading, bulk excavation |
+| Wheel loader | loading |
+
+- **Supervisor dashboard**
+  - Picking an operator locks the task to that operator's machine.
+  - The task-type list only shows what that machine can do.
+  - Operators with no machine, and machines in maintenance, can't be picked.
+  - The reassign dropdown disables operators whose machine can't do the task.
+  - The server re-checks all of this.
+- **Backend**
+  - `/tasks/{id}/estimate` maps the machine and task onto CatBoost's categories. For example, `CAT 320 Hydraulic Excavator` → `Excavator` and `pipe_laying` → `Trenching`. Before, unknown categories pushed every estimate about 25% too high. It also passes the maintenance status, based on machine health.
+  - The anomaly service now builds its inputs from each model's own feature list. Missing readings are filled with Normal-class medians, and loader/dozer feature names are fixed, so all 24 anomaly classes can be detected. Previously the excavator model returned "Aggressive Boom Movement" for everything.
+  - New `GET /machines/{id}` returns type, status, hours, health and allowed task types.
+  - `/tasks/today` only offers an unassigned task to the operator driving its machine.
+- **Operator app**
+  - The Machine page shows only the machine the supervisor assigned. It has no fleet selector and shows a "No machine assigned" state when there isn't one. Engine hours and status come from `GET /machines/{id}`.
+  - Task Detail shows the task's own machine instead of a hardcoded machine age.
+  - Test scenarios were added for the anomaly classes that couldn't be triggered before. There are now 8 per machine.
+- **Data**: in the seed and the shared DB, T003 became a stormwater trench (was grading on the excavator) and T004 became stockpile loading (was pipe laying on the loader).
+
+### 2026-09-24 — Deployed backend
+- Added `.env` pointing the app at the Render deployment. All endpoints the app uses were checked against it: tasks, estimate, telemetry, insights and anomaly.
 
 ### 2026-09-24 — ML outputs and Machine page rebuild
 - **Task duration (CatBoost)**: tasks now use `POST /tasks/{id}/estimate` instead of the older `/ml/predict`. Tasks show first, and the estimates fill in when they arrive.

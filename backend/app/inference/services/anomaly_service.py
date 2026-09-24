@@ -4,6 +4,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 
 from app.inference.registry import model_registry
+from app.machine_types import machine_type_of
 
 logger = logging.getLogger("catalyst.ml.anomaly")
 
@@ -66,6 +67,95 @@ RECOMMENDED_ACTIONS = {
 }
 
 
+# Median readings of the "Normal" class in ml/datasets/anomaly/*_dataset_50k.csv. Used for any
+# feature the caller doesn't send, so a partial reading (e.g. the 5 CAN-bus values from /telemetry)
+# is scored against a normal machine rather than against out-of-range placeholders.
+NORMAL_PROFILE: Dict[str, Dict[str, float]] = {
+    "excavator": {
+        "engine_rpm": 1800.1, "engine_temperature_c": 82.0, "hydraulic_pressure_bar": 269.8,
+        "hydraulic_oil_temperature_c": 62.0, "fuel_rate_lph": 20.02, "fuel_level_pct": 62.6,
+        "machine_speed_kmh": 2.8, "idle_duration_min": 2.79, "boom_movement_rate": 0.72,
+        "arm_movement_rate": 0.68, "bucket_movement_rate": 0.65, "swing_speed_rpm": 8.0,
+        "bucket_cycles_per_min": 3.0, "excavation_depth_m": 2.51, "bucket_load_pct": 70.0,
+        "vibration_level": 1.2, "slope_deg": 4.01, "ambient_temperature_c": 30.0,
+        "operator_experience_years": 7.7, "machine_hours": 5238.1, "maintenance_due_days": 30.0,
+        "previous_anomaly_count_1hr": 0.0,
+    },
+    "bulldozer": {
+        "engine_rpm": 1751.0, "engine_temperature_c": 82.0, "hydraulic_pressure_bar": 250.1,
+        "hydraulic_oil_temperature_c": 60.0, "fuel_rate_lph": 18.5, "fuel_level_pct": 62.5,
+        "vehicle_speed_kmh": 6.01, "idle_duration_min": 2.75, "blade_load_pct": 69.9,
+        "blade_angle_deg": 8.0, "blade_height_m": 0.5, "drawbar_load_pct": 65.1,
+        "traction_force_kn": 110.0, "track_speed_left_kmh": 6.01, "track_speed_right_kmh": 6.0,
+        "track_slip_pct": 4.99, "dozing_depth_m": 0.35, "grading_accuracy_error_cm": 2.5,
+        "vibration_level": 1.4, "slope_deg": 4.04, "ambient_temperature_c": 30.0,
+        "operator_experience_years": 7.7, "machine_hours": 5203.0, "maintenance_due_days": 30.0,
+        "previous_anomaly_count_1hr": 0.0,
+    },
+    "wheel_loader": {
+        "engine_rpm": 1749.6, "engine_temperature_c": 82.0, "transmission_temperature_c": 78.0,
+        "hydraulic_pressure_bar": 255.1, "hydraulic_oil_temperature_c": 60.9, "fuel_rate_lph": 18.54,
+        "fuel_level_pct": 62.7, "vehicle_speed_kmh": 8.98, "idle_duration_min": 2.73,
+        "bucket_load_pct": 72.0, "bucket_fill_ratio_pct": 78.0, "lift_height_m": 2.5,
+        "forward_speed_kmh": 8.0, "reverse_speed_kmh": 6.01, "acceleration_mps2": 1.2,
+        "braking_intensity": 0.9, "loading_cycles_per_hour": 28.0, "cycle_time_sec": 38.0,
+        "tire_slip_pct": 5.01, "vibration_level": 1.3, "slope_deg": 2.99, "ambient_temperature_c": 30.0,
+        "operator_experience_years": 7.8, "machine_hours": 5227.1, "maintenance_due_days": 30.0,
+        "previous_anomaly_count_1hr": 0.0,
+    },
+}
+
+# Categorical values the models were trained on; the first one is the default
+CATEGORIES: Dict[str, Dict[str, List[str]]] = {
+    "excavator": {
+        "task_type": ["Excavation", "Digging", "Loading", "Trenching"],
+        "soil_type": ["Medium", "Hard", "Rocky", "Soft"],
+        "ground_condition": ["Dry", "Damp", "Loose", "Wet"],
+    },
+    "bulldozer": {
+        "task_type": ["Dozing", "Grading", "Leveling", "Ripping"],
+        "soil_type": ["Medium", "Hard", "Rocky", "Soft"],
+        "ground_condition": ["Dry", "Damp", "Loose", "Wet"],
+    },
+    "wheel_loader": {
+        "task_type": ["Loading", "Hauling", "Material_Handling", "Stockpiling"],
+        "material_type": ["Gravel", "Coal", "Rock", "Sand", "Soil"],
+        "ground_condition": ["Dry", "Damp", "Loose", "Wet"],
+    },
+}
+
+# Other names callers use for a model feature (CAN-bus names from /telemetry, older API fields)
+ALIASES: Dict[str, List[str]] = {
+    "engine_temperature_c": ["engine_temp"],
+    "hydraulic_pressure_bar": ["hydraulic_pressure"],
+    "fuel_rate_lph": ["fuel_rate"],
+    "machine_speed_kmh": ["speed", "vehicle_speed_kmh"],
+    "vehicle_speed_kmh": ["speed", "machine_speed_kmh"],
+    "track_speed_left_kmh": ["left_track_speed_kmh"],
+    "track_speed_right_kmh": ["right_track_speed_kmh"],
+    "acceleration_mps2": ["acceleration_m_s2"],
+    "tire_slip_pct": ["front_tire_slip_pct", "rear_tire_slip_pct"],
+}
+
+MESSAGES = {"excavator": EXCAVATOR_MESSAGES, "bulldozer": BULLDOZER_MESSAGES, "wheel_loader": LOADER_MESSAGES}
+DEFAULT_IDS = {"excavator": "CAT-320-01", "bulldozer": "CAT-D6-03", "wheel_loader": "CAT-950-02"}
+
+
+def _first(*sources: Dict[str, Any], keys: List[str]) -> Optional[float]:
+    """First non-None value (0 is a valid reading, so no `or` chaining)."""
+    for src in sources:
+        for k in keys:
+            v = src.get(k)
+            if v is not None:
+                return float(v)
+    return None
+
+
+def _category(value: Any, allowed: List[str]) -> str:
+    key = str(value or "").strip().lower().replace(" ", "_")
+    return next((c for c in allowed if c.lower() == key), allowed[0])
+
+
 class AnomalyService:
     """
     Unified multi-machine predictive anomaly detection service.
@@ -74,232 +164,69 @@ class AnomalyService:
 
     @staticmethod
     def _normalize_machine_type(raw_type: str, model_id: str = "") -> str:
-        s = f"{raw_type} {model_id}".lower()
-        if "excavator" in s or "320" in s or "exc" in s:
-            return "excavator"
-        elif "dozer" in s or "d6" in s or "bulldozer" in s:
-            return "bulldozer"
-        elif "loader" in s or "950" in s:
-            return "wheel_loader"
-        return "excavator"
+        # Explicit type wins; the machine ID is only a fallback (e.g. "wheel_loader" + "CAT-320-01" → loader)
+        return machine_type_of(raw_type) or machine_type_of(None, model_id) or "excavator"
 
     def predict(self, machine_input: Dict[str, Any]) -> Dict[str, Any]:
-        raw_mtype = machine_input.get("machine_type") or machine_input.get("machineType") or "excavator"
-        context = machine_input.get("context", {})
+        raw_mtype = machine_input.get("machine_type") or machine_input.get("machineType") or ""
+        context = machine_input.get("context") or {}
         mid = context.get("machine_id") or machine_input.get("machine_id") or machine_input.get("machineId") or ""
-        mtype = self._normalize_machine_type(raw_mtype, mid)
-
-        if mtype == "excavator":
-            return self.predict_excavator(machine_input)
-        elif mtype == "bulldozer":
-            return self.predict_bulldozer(machine_input)
-        elif mtype == "wheel_loader":
-            return self.predict_loader(machine_input)
-        else:
-            return self.predict_excavator(machine_input)
+        return self._predict(self._normalize_machine_type(raw_mtype, mid), machine_input)
 
     def predict_excavator(self, machine_input: Dict[str, Any]) -> Dict[str, Any]:
-        artifact = model_registry.get_excavator_model()
-        if not artifact or "model" not in artifact:
-            return self._build_mock_response("excavator", machine_input)
-
-        model = artifact["model"]
-        features = artifact["features"]
-        classes = artifact["classes"]
-
-        context = machine_input.get("context", {})
-        tel = machine_input.get("telemetry", {})
-        m_ctx = machine_input.get("machine_context", {})
-
-        row = {
-            "task_type": context.get("task_type", "excavation"),
-            "soil_type": context.get("soil_type", "clay"),
-            "ground_condition": context.get("ground_condition", "normal"),
-            "engine_rpm": tel.get("engine_rpm", 1750),
-            "engine_temperature_c": tel.get("engine_temperature_c") or tel.get("engine_temp", 88),
-            "hydraulic_pressure_bar": tel.get("hydraulic_pressure_bar") or tel.get("hydraulic_pressure", 260),
-            "hydraulic_oil_temperature_c": tel.get("hydraulic_oil_temperature_c", 72),
-            "fuel_rate_lph": tel.get("fuel_rate_lph") or tel.get("fuel_rate", 16.5),
-            "fuel_level_pct": tel.get("fuel_level_pct", 70),
-            "machine_speed_kmh": tel.get("machine_speed_kmh") or tel.get("speed", 2.0),
-            "idle_duration_min": tel.get("idle_duration_min", 0),
-            "boom_movement_rate": tel.get("boom_movement_rate", 24),
-            "arm_movement_rate": tel.get("arm_movement_rate", 22),
-            "bucket_movement_rate": tel.get("bucket_movement_rate", 20),
-            "swing_speed_rpm": tel.get("swing_speed_rpm", 6),
-            "bucket_cycles_per_min": tel.get("bucket_cycles_per_min", 6),
-            "excavation_depth_m": tel.get("excavation_depth_m", 1.8),
-            "bucket_load_pct": tel.get("bucket_load_pct", 65),
-            "vibration_level": tel.get("vibration_level", 1.5),
-            "slope_deg": tel.get("slope_deg", 2),
-            "ambient_temperature_c": tel.get("ambient_temperature_c", 25),
-            "operator_experience_years": m_ctx.get("operator_experience_years", 4),
-            "machine_hours": m_ctx.get("machine_hours", 2500),
-            "maintenance_due_days": m_ctx.get("maintenance_due_days", 20),
-            "previous_anomaly_count_1hr": m_ctx.get("previous_anomaly_count_1hr", 0),
-        }
-
-        df = pd.DataFrame([[row.get(f) for f in features]], columns=features)
-        pred = str(model.predict(df)[0])
-        probs = model.predict_proba(df)[0]
-        confidence = float(max(probs))
-        class_probs = {c: round(float(p), 4) for c, p in zip(classes, probs)}
-
-        is_anomaly = (pred != "Normal")
-        message = EXCAVATOR_MESSAGES.get(pred, "Unusual machine behavior detected.")
-        action = RECOMMENDED_ACTIONS.get(pred, "Inspect machine systems.")
-
-        return {
-            "machineType": "excavator",
-            "machineId": context.get("machine_id", "CAT-320-01"),
-            "operatorId": context.get("operator_id"),
-            "isAnomaly": is_anomaly,
-            "prediction": pred,
-            "message": message,
-            "recommendedAction": action,
-            "confidence": round(confidence, 4),
-            "confidencePercent": round(confidence * 100, 1),
-            "classProbabilities": class_probs,
-            "timestamp": context.get("timestamp") or datetime.utcnow().isoformat()
-        }
+        return self._predict("excavator", machine_input)
 
     def predict_bulldozer(self, machine_input: Dict[str, Any]) -> Dict[str, Any]:
-        artifact = model_registry.get_bulldozer_model()
-        if not artifact or "model" not in artifact:
-            return self._build_mock_response("bulldozer", machine_input)
-
-        model = artifact["model"]
-        features = artifact["features"]
-        classes = artifact["classes"]
-
-        context = machine_input.get("context", {})
-        tel = machine_input.get("telemetry", {})
-        m_ctx = machine_input.get("machine_context", {})
-
-        row = {
-            "task_type": context.get("task_type", "dozing"),
-            "soil_type": context.get("soil_type", "gravel"),
-            "ground_condition": context.get("ground_condition", "normal"),
-            "engine_rpm": tel.get("engine_rpm", 1900),
-            "engine_temperature_c": tel.get("engine_temperature_c") or tel.get("engine_temp", 90),
-            "hydraulic_pressure_bar": tel.get("hydraulic_pressure_bar") or tel.get("hydraulic_pressure", 240),
-            "hydraulic_oil_temperature_c": tel.get("hydraulic_oil_temperature_c", 75),
-            "fuel_rate_lph": tel.get("fuel_rate_lph") or tel.get("fuel_rate", 22.0),
-            "fuel_level_pct": tel.get("fuel_level_pct", 65),
-            "vehicle_speed_kmh": tel.get("vehicle_speed_kmh") or tel.get("speed", 3.5),
-            "idle_duration_min": tel.get("idle_duration_min", 0),
-            "blade_load_pct": tel.get("blade_load_pct", 70),
-            "blade_angle_deg": tel.get("blade_angle_deg", 10),
-            "blade_height_m": tel.get("blade_height_m", 0.1),
-            "drawbar_load_pct": tel.get("drawbar_load_pct", 60),
-            "traction_force_kn": tel.get("traction_force_kn", 120),
-            "left_track_speed_kmh": tel.get("left_track_speed_kmh", 3.5),
-            "right_track_speed_kmh": tel.get("right_track_speed_kmh", 3.5),
-            "track_slip_pct": tel.get("track_slip_pct", 5),
-            "vibration_level": tel.get("vibration_level", 2.0),
-            "slope_deg": tel.get("slope_deg", 5),
-            "ambient_temperature_c": tel.get("ambient_temperature_c", 26),
-            "operator_experience_years": m_ctx.get("operator_experience_years", 6),
-            "machine_hours": m_ctx.get("machine_hours", 3400),
-            "maintenance_due_days": m_ctx.get("maintenance_due_days", 14),
-            "previous_anomaly_count_1hr": m_ctx.get("previous_anomaly_count_1hr", 0),
-        }
-
-        df = pd.DataFrame([[row.get(f) for f in features]], columns=features)
-        pred = str(model.predict(df)[0])
-        probs = model.predict_proba(df)[0]
-        confidence = float(max(probs))
-        class_probs = {c: round(float(p), 4) for c, p in zip(classes, probs)}
-
-        is_anomaly = (pred != "Normal")
-        message = BULLDOZER_MESSAGES.get(pred, "Unusual bulldozer behavior detected.")
-        action = RECOMMENDED_ACTIONS.get(pred, "Inspect bulldozer powertrain.")
-
-        return {
-            "machineType": "bulldozer",
-            "machineId": context.get("machine_id", "CAT-D6-03"),
-            "operatorId": context.get("operator_id"),
-            "isAnomaly": is_anomaly,
-            "prediction": pred,
-            "message": message,
-            "recommendedAction": action,
-            "confidence": round(confidence, 4),
-            "confidencePercent": round(confidence * 100, 1),
-            "classProbabilities": class_probs,
-            "timestamp": context.get("timestamp") or datetime.utcnow().isoformat()
-        }
+        return self._predict("bulldozer", machine_input)
 
     def predict_loader(self, machine_input: Dict[str, Any]) -> Dict[str, Any]:
-        artifact = model_registry.get_loader_model()
+        return self._predict("wheel_loader", machine_input)
+
+    def _predict(self, mtype: str, machine_input: Dict[str, Any]) -> Dict[str, Any]:
+        artifact = {
+            "excavator": model_registry.get_excavator_model,
+            "bulldozer": model_registry.get_bulldozer_model,
+            "wheel_loader": model_registry.get_loader_model,
+        }[mtype]()
         if not artifact or "model" not in artifact:
-            return self._build_mock_response("wheel_loader", machine_input)
+            return self._build_mock_response(mtype, machine_input)
 
+        context = machine_input.get("context") or {}
+        tel = machine_input.get("telemetry") or {}
+        m_ctx = machine_input.get("machine_context") or {}
+        cats = CATEGORIES[mtype]
+        normal = NORMAL_PROFILE[mtype]
+
+        row: Dict[str, Any] = {}
+        for f in artifact["features"]:
+            if f in cats:
+                row[f] = _category(context.get(f), cats[f])
+            else:
+                v = _first(tel, m_ctx, keys=[f, *ALIASES.get(f, [])])
+                row[f] = v if v is not None else normal.get(f, 0.0)
+
+        df = pd.DataFrame([[row[f] for f in artifact["features"]]], columns=artifact["features"])
         model = artifact["model"]
-        features = artifact["features"]
-        classes = artifact["classes"]
-
-        context = machine_input.get("context", {})
-        tel = machine_input.get("telemetry", {})
-        m_ctx = machine_input.get("machine_context", {})
-
-        row = {
-            "task_type": context.get("task_type", "loading"),
-            "material_type": context.get("material_type", "aggregate"),
-            "ground_condition": context.get("ground_condition", "normal"),
-            "engine_rpm": tel.get("engine_rpm", 1650),
-            "engine_temperature_c": tel.get("engine_temperature_c") or tel.get("engine_temp", 85),
-            "transmission_temperature_c": tel.get("transmission_temperature_c", 78),
-            "hydraulic_pressure_bar": tel.get("hydraulic_pressure_bar") or tel.get("hydraulic_pressure", 250),
-            "hydraulic_oil_temperature_c": tel.get("hydraulic_oil_temperature_c", 70),
-            "fuel_rate_lph": tel.get("fuel_rate_lph") or tel.get("fuel_rate", 14.5),
-            "fuel_level_pct": tel.get("fuel_level_pct", 75),
-            "vehicle_speed_kmh": tel.get("vehicle_speed_kmh") or tel.get("speed", 6.5),
-            "idle_duration_min": tel.get("idle_duration_min", 0),
-            "bucket_load_pct": tel.get("bucket_load_pct", 70),
-            "bucket_fill_ratio_pct": tel.get("bucket_fill_ratio_pct", 85),
-            "lift_height_m": tel.get("lift_height_m", 2.2),
-            "forward_speed_kmh": tel.get("forward_speed_kmh", 5.0),
-            "reverse_speed_kmh": tel.get("reverse_speed_kmh", 4.0),
-            "acceleration_m_s2": tel.get("acceleration_m_s2", 1.2),
-            "braking_intensity": tel.get("braking_intensity", 0.4),
-            "front_tire_slip_pct": tel.get("front_tire_slip_pct", 4),
-            "rear_tire_slip_pct": tel.get("rear_tire_slip_pct", 3),
-            "steering_angle_deg": tel.get("steering_angle_deg", 12),
-            "cycle_time_sec": tel.get("cycle_time_sec", 32),
-            "ambient_temperature_c": tel.get("ambient_temperature_c", 25),
-            "slope_deg": tel.get("slope_deg", 1),
-            "operator_experience_years": m_ctx.get("operator_experience_years", 5),
-            "machine_hours": m_ctx.get("machine_hours", 2150),
-            "maintenance_due_days": m_ctx.get("maintenance_due_days", 22),
-            "previous_anomaly_count_1hr": m_ctx.get("previous_anomaly_count_1hr", 0),
-        }
-
-        df = pd.DataFrame([[row.get(f) for f in features]], columns=features)
         pred = str(model.predict(df)[0])
         probs = model.predict_proba(df)[0]
         confidence = float(max(probs))
-        class_probs = {c: round(float(p), 4) for c, p in zip(classes, probs)}
-
-        is_anomaly = (pred != "Normal")
-        message = LOADER_MESSAGES.get(pred, "Unusual loader behavior detected.")
-        action = RECOMMENDED_ACTIONS.get(pred, "Inspect loader hydraulics and driveline.")
 
         return {
-            "machineType": "wheel_loader",
-            "machineId": context.get("machine_id", "CAT-950-02"),
+            "machineType": mtype,
+            "machineId": context.get("machine_id") or DEFAULT_IDS[mtype],
             "operatorId": context.get("operator_id"),
-            "isAnomaly": is_anomaly,
+            "isAnomaly": pred != "Normal",
             "prediction": pred,
-            "message": message,
-            "recommendedAction": action,
+            "message": MESSAGES[mtype].get(pred, "Unusual machine behavior detected."),
+            "recommendedAction": RECOMMENDED_ACTIONS.get(pred, "Inspect machine systems."),
             "confidence": round(confidence, 4),
             "confidencePercent": round(confidence * 100, 1),
-            "classProbabilities": class_probs,
-            "timestamp": context.get("timestamp") or datetime.utcnow().isoformat()
+            "classProbabilities": {c: round(float(p), 4) for c, p in zip(artifact["classes"], probs)},
+            "timestamp": context.get("timestamp") or datetime.utcnow().isoformat(),
         }
 
     def _build_mock_response(self, mtype: str, machine_input: Dict[str, Any]) -> Dict[str, Any]:
-        context = machine_input.get("context", {})
+        context = machine_input.get("context") or {}
         return {
             "machineType": mtype,
             "machineId": context.get("machine_id", "UNKNOWN"),

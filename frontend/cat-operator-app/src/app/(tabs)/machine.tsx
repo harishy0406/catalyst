@@ -3,11 +3,11 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { Badge, Button, Cell, Icon, Metric, Panel, Pip, ProgressBar, Row, Screen, Spec, Txt } from '@/components';
-import { api, ApiAnomaly, ApiInsights, ApiTelemetry } from '@/api/client';
-import { anomalyLabel, anomalyRequest, FLEET, FleetMachine, fleetMachine, Scenario } from '@/data/machines';
+import { Badge, Button, Cell, Icon, Metric, Panel, ProgressBar, Row, Screen, Spec, Txt } from '@/components';
+import { api, ApiAnomaly, ApiTelemetry } from '@/api/client';
+import { anomalyLabel, anomalyRequest, FleetMachine, fleetMachine, Scenario } from '@/data/machines';
 import { useApp } from '@/state/AppState';
-import { border, colors, space } from '@/theme/tokens';
+import { colors, space } from '@/theme/tokens';
 
 const POLL_MS = 10_000;
 
@@ -18,18 +18,22 @@ const isCritical = (prediction: string) => /Overheating|Stress/.test(prediction)
 const BACKEND_ML_COMPONENT = 'AI Predictive Fleet Diagnostics';
 
 const hhmm = (iso: string | null | undefined) =>
-  iso ? new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--';
+  iso
+    ? new Date(iso).toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })
+    : '--';
 
-/** Screen 9 — Machine Status (stitch: screen_9_machine_status) + fleet view and ML anomaly detection. */
+/** Screen 9 — Machine Status (stitch: screen_9_machine_status): the operator's assigned machine + ML anomaly detection. */
 export default function MachineStatus() {
   const { alertActive, machine, operatorId } = useApp();
-  const ownId = FLEET.some((m) => m.id === machine.id) ? machine.id : FLEET[0].id;
-  const [selectedId, setSelectedId] = useState(ownId);
-  const fm = fleetMachine(selectedId);
-  const isOwn = fm.id === ownId;
+  // Only the machine the supervisor bound to this operator is shown
+  const fm = machine.assigned ? fleetMachine(machine.id) : undefined;
+  const insights = machine.insights;
 
   const [scenario, setScenario] = useState<Scenario | null>(null);
-  const [fleetInsights, setFleetInsights] = useState<ApiInsights | null>(null);
   const [live, setLive] = useState<ApiTelemetry | null>(null);
   const [anomaly, setAnomaly] = useState<ApiAnomaly | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,9 +41,6 @@ export default function MachineStatus() {
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
   const reqId = useRef(0);
-  const insightsId = useRef(0);
-  // AppState already polls insights for the operator's own machine; other units are fetched here
-  const insights = isOwn ? machine.insights : fleetInsights;
 
   /** Latest telemetry → per-type Random Forest. Stale responses (after switching machine) are dropped. */
   const diagnose = useCallback(
@@ -63,40 +64,16 @@ export default function MachineStatus() {
     [operatorId],
   );
 
-  const loadFleetInsights = useCallback(async (m: FleetMachine) => {
-    const id = ++insightsId.current;
-    const ins = await api.insights(m.id).catch(() => null);
-    if (id === insightsId.current) setFleetInsights(ins);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (isOwn) return;
-      loadFleetInsights(fm);
-      const t = setInterval(() => loadFleetInsights(fm), POLL_MS);
-      return () => clearInterval(t);
-    }, [isOwn, fm, loadFleetInsights]),
-  );
-
   // Run on focus / machine / scenario change; keep polling while showing live telemetry
   useFocusEffect(
     useCallback(() => {
+      if (!fm) return;
       diagnose(fm, scenario);
       if (scenario) return;
       const t = setInterval(() => diagnose(fm, null, true), POLL_MS);
       return () => clearInterval(t);
     }, [diagnose, fm, scenario]),
   );
-
-  const selectMachine = (id: string) => {
-    if (id === selectedId) return;
-    setSelectedId(id);
-    setScenario(null);
-    setFleetInsights(null);
-    setLive(null);
-    setAnomaly(null);
-    setDismissed([]);
-  };
 
   const tel = live ?? insights?.lastTelemetry;
   const advisories = [
@@ -122,36 +99,55 @@ export default function MachineStatus() {
       })),
   ].filter((a) => !dismissed.includes(a.id));
 
+  if (!fm) {
+    return (
+      <Screen header={{ subtitle: 'No machine assigned', alert: alertActive }}>
+        <Txt v="headlineLg">Machine Status</Txt>
+        <Panel title="No machine assigned" icon="precision_manufacturing">
+          <Txt v="bodyMd">
+            {machine.assigned
+              ? `${machine.id} is not an excavator, bulldozer or wheel loader, so AI diagnostics aren't available for it.`
+              : 'Your supervisor has not assigned you a machine yet. Ask them to bind one to your operator ID.'}
+          </Txt>
+        </Panel>
+      </Screen>
+    );
+  }
+
+  const details = machine.details;
+  const inMaintenance = details?.status === 'maintenance';
+
   return (
-    <Screen header={{ subtitle: fm.model, alert: alertActive }}>
+    <Screen header={{ subtitle: machine.model, alert: alertActive }}>
       {/* Title */}
       <View style={{ gap: 4 }}>
-        <Txt v="headlineLg">Machine Status</Txt>
+        <Txt v="headlineLg">My Machine</Txt>
         <Txt v="labelSm" color={colors.onSurfaceVariant}>
-          Fleet diagnostics • AI anomaly detection
+          Assigned by your supervisor • AI anomaly detection
         </Txt>
       </View>
 
-      {/* Fleet selector */}
-      <Row>
-        {FLEET.map((m) => (
-          <FleetCard key={m.id} m={m} selected={m.id === selectedId} own={m.id === ownId} onPress={() => selectMachine(m.id)} />
-        ))}
-      </Row>
-
       {/* Hero */}
       <Panel borderColor={colors.primaryContainer}>
-        <View style={{ backgroundColor: colors.surfaceLowest, borderWidth: 1, borderColor: colors.surfaceHighest, padding: space.sm }}>
+        <View
+          style={{
+            backgroundColor: colors.surfaceLowest,
+            borderWidth: 1,
+            borderColor: colors.surfaceHighest,
+            padding: space.sm,
+          }}
+        >
           <Image source={fm.image} style={{ width: '100%', height: 180 }} contentFit="contain" accessibilityLabel={fm.model} />
         </View>
         <View style={{ gap: 4 }}>
-          <Txt v="headlineMd">{fm.model}</Txt>
+          <Txt v="headlineMd">{machine.model}</Txt>
           <Txt v="labelSm" color={colors.onSurfaceVariant}>
             {fm.id} • {fm.kind}
+            {details ? ` • ${machine.engineHours} H` : ''}
           </Txt>
         </View>
         <Row style={{ flexWrap: 'wrap' }} gap={6}>
-          <Badge label={isOwn ? 'Your machine' : 'Fleet unit'} tone={isOwn ? 'primary' : 'neutral'} />
+          <Badge label={inMaintenance ? 'In maintenance' : 'Active'} tone={inMaintenance ? 'danger' : 'safe'} />
           {insights && (
             <Badge label={`Health: ${insights.healthScore}%`} tone={insights.healthScore >= 85 ? 'outlineSafe' : 'outlineDanger'} />
           )}
@@ -172,7 +168,9 @@ export default function MachineStatus() {
         right={scenario ? `Simulated: ${scenario.label}` : 'Live telemetry'}
         rightColor={scenario ? colors.primaryContainer : colors.tertiaryContainer}
       >
-        {anomaly ? <AnomalyResult a={anomaly} /> : (
+        {anomaly ? (
+          <AnomalyResult a={anomaly} />
+        ) : (
           <Cell debossed>
             <Txt v="bodyMd" color={colors.onSurfaceVariant}>
               {loading ? 'Running diagnostic…' : error ? 'Diagnostic unavailable.' : 'No result yet.'}
@@ -187,13 +185,20 @@ export default function MachineStatus() {
         <Txt v="labelXs" color={colors.onSurfaceVariant}>
           Random Forest • {fm.kind} model • {anomaly ? `Scored ${hhmm(anomaly.timestamp)}` : '--'}
         </Txt>
-        <Button label={loading ? 'Analysing' : 'Re-run Diagnostic'} icon="refresh" variant="secondary" loading={loading} onPress={() => diagnose(fm, scenario)} />
+        <Button
+          label={loading ? 'Analysing' : 'Re-run Diagnostic'}
+          icon="refresh"
+          variant="secondary"
+          loading={loading}
+          onPress={() => diagnose(fm, scenario)}
+        />
       </Panel>
 
       {/* Test scenarios */}
       <Panel title="Diagnostic Test Scenarios" icon="science" right={`${fm.scenarios.length} profiles`}>
         <Txt v="bodySm" color={colors.onSurfaceVariant}>
-          Score a simulated sensor profile with the {fm.kind.toLowerCase()} model instead of the live feed. Nothing is written to the machine&apos;s telemetry.
+          Score a simulated sensor profile with the {fm.kind.toLowerCase()} model instead of the live feed. Nothing is written to the
+          machine&apos;s telemetry.
         </Txt>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
           <ScenarioChip label="Live" icon="sensors" active={!scenario} onPress={() => setScenario(null)} />
@@ -204,15 +209,30 @@ export default function MachineStatus() {
       </Panel>
 
       {/* Live telemetry */}
-      <Panel title="Live Telemetry" icon="cell_tower" right={tel ? `Updated ${hhmm(tel.recordedAt)}` : 'No feed'} rightColor={tel ? colors.tertiaryContainer : colors.onSurfaceVariant}>
+      <Panel
+        title="Live Telemetry"
+        icon="cell_tower"
+        right={tel ? `Updated ${hhmm(tel.recordedAt)}` : 'No feed'}
+        rightColor={tel ? colors.tertiaryContainer : colors.onSurfaceVariant}
+      >
         {tel ? (
           <>
             <Row>
               <Spec label="Engine RPM" value={fmt(tel.engineRpm, 0)} />
-              <Spec label="Engine Temp" value={fmt(tel.engineTemp)} unit="°C" valueColor={(tel.engineTemp ?? 0) > 100 ? colors.secondary : colors.onSurface} />
+              <Spec
+                label="Engine Temp"
+                value={fmt(tel.engineTemp)}
+                unit="°C"
+                valueColor={(tel.engineTemp ?? 0) > 100 ? colors.secondary : colors.onSurface}
+              />
             </Row>
             <Row>
-              <Spec label="Hydraulics" value={fmt(tel.hydraulicPressure, 0)} unit="BAR" valueColor={(tel.hydraulicPressure ?? 0) > 320 ? colors.secondary : colors.onSurface} />
+              <Spec
+                label="Hydraulics"
+                value={fmt(tel.hydraulicPressure, 0)}
+                unit="BAR"
+                valueColor={(tel.hydraulicPressure ?? 0) > 320 ? colors.secondary : colors.onSurface}
+              />
               <Spec label="Fuel Rate" value={fmt(tel.fuelRate)} unit="L/H" />
             </Row>
             <Spec label="Ground Speed" value={fmt(tel.speed)} unit="KM/H" style={{ flex: 0 }} />
@@ -254,10 +274,20 @@ export default function MachineStatus() {
                 borderColor: colors.tertiaryContainer,
               }}
             >
-              <Icon name={a.warn ? 'warning' : 'check_circle'} size={22} color={a.warn ? colors.onPrimaryContainer : colors.tertiaryContainer} />
+              <Icon
+                name={a.warn ? 'warning' : 'check_circle'}
+                size={22}
+                color={a.warn ? colors.onPrimaryContainer : colors.tertiaryContainer}
+              />
             </View>
             <View style={{ flex: 1, gap: 4 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 6 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  gap: 6,
+                }}
+              >
                 <Txt v="labelSm" color={a.warn ? colors.primaryContainer : colors.tertiaryContainer} style={{ flex: 1 }}>
                   {a.title}
                 </Txt>
@@ -272,34 +302,45 @@ export default function MachineStatus() {
                 </Txt>
               )}
               {a.warn && (
-                <Button label="Dismiss" variant="secondary" size="sm" style={{ marginTop: 6 }} onPress={() => setDismissed((d) => [...d, a.id])} />
+                <Button
+                  label="Dismiss"
+                  variant="secondary"
+                  size="sm"
+                  style={{ marginTop: 6 }}
+                  onPress={() => setDismissed((d) => [...d, a.id])}
+                />
               )}
             </View>
           </View>
         ))}
       </Panel>
 
-      {/* Shift metrics (operator's own machine only) */}
-      {isOwn && (
-        <Panel title="Key Operational Metrics" right="This shift" iconColor={colors.primaryContainer}>
-          <Row>
-            <View style={{ flex: 1 }}>
-              <Metric label="Engine Hours" icon="timer" value={machine.engineHours} unit="H" size="md" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Metric label="Fuel" icon="local_gas_station" value={String(machine.fuelPct)} unit="%" size="md" />
-            </View>
-          </Row>
-          <Row>
-            <View style={{ flex: 1 }}>
-              <Metric label="Load Cycles" icon="sync" value={String(machine.loadCycles)} unit={`/ ${machine.cycleGoal}`} size="md" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Metric label="Idle Time" icon="hourglass_empty" value={String(machine.idleMin)} valueColor={colors.primaryContainer} unit="MIN" size="md" />
-            </View>
-          </Row>
-        </Panel>
-      )}
+      {/* Shift metrics */}
+      <Panel title="Key Operational Metrics" right="This shift" iconColor={colors.primaryContainer}>
+        <Row>
+          <View style={{ flex: 1 }}>
+            <Metric label="Engine Hours" icon="timer" value={machine.engineHours} unit="H" size="md" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Metric label="Fuel" icon="local_gas_station" value={String(machine.fuelPct)} unit="%" size="md" />
+          </View>
+        </Row>
+        <Row>
+          <View style={{ flex: 1 }}>
+            <Metric label="Load Cycles" icon="sync" value={String(machine.loadCycles)} unit={`/ ${machine.cycleGoal}`} size="md" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Metric
+              label="Idle Time"
+              icon="hourglass_empty"
+              value={String(machine.idleMin)}
+              valueColor={colors.primaryContainer}
+              unit="MIN"
+              size="md"
+            />
+          </View>
+        </Row>
+      </Panel>
 
       {/* Manual log */}
       <Cell style={{ gap: space.sm }}>
@@ -331,37 +372,6 @@ export default function MachineStatus() {
 }
 
 const fmt = (v: number | null | undefined, digits = 1) => (v == null ? '--' : v.toFixed(digits));
-
-function FleetCard({ m, selected, own, onPress }: { m: FleetMachine; selected: boolean; own: boolean; onPress: () => void }) {
-  return (
-    <Pressable
-      accessibilityRole="tab"
-      accessibilityState={{ selected }}
-      accessibilityLabel={`${m.kind} ${m.id}`}
-      onPress={onPress}
-      style={({ pressed }) => ({
-        flex: 1,
-        gap: 4,
-        padding: space.sm,
-        minHeight: 110,
-        backgroundColor: pressed ? colors.surfaceHigh : selected ? colors.surfaceHigh : colors.surfaceLow,
-        borderWidth: selected ? 2 : border.panel,
-        borderColor: selected ? colors.primaryContainer : colors.surfaceHighest,
-      })}
-    >
-      <Image source={m.image} style={{ width: '100%', height: 48 }} contentFit="contain" />
-      <Txt v="labelSm" color={selected ? colors.primaryContainer : colors.onSurface} numberOfLines={1}>
-        {m.kind}
-      </Txt>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-        {own && <Pip size={6} color={colors.tertiaryContainer} />}
-        <Txt v="labelXs" color={colors.onSurfaceVariant} numberOfLines={1} style={{ flexShrink: 1 }}>
-          {m.id}
-        </Txt>
-      </View>
-    </Pressable>
-  );
-}
 
 function ScenarioChip({ label, icon, active, onPress }: { label: string; icon: string; active: boolean; onPress: () => void }) {
   return (
@@ -396,8 +406,26 @@ function AnomalyResult({ a }: { a: ApiAnomaly }) {
     .slice(0, 4);
   return (
     <>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md - 4, padding: space.md - 4, borderWidth: 2, borderColor: tone, backgroundColor: colors.surfaceLowest }}>
-        <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', backgroundColor: tone }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: space.md - 4,
+          padding: space.md - 4,
+          borderWidth: 2,
+          borderColor: tone,
+          backgroundColor: colors.surfaceLowest,
+        }}
+      >
+        <View
+          style={{
+            width: 48,
+            height: 48,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: tone,
+          }}
+        >
           <Icon name={a.isAnomaly ? 'warning' : 'verified'} size={28} color={a.isAnomaly ? colors.hazardBlack : colors.onTertiary} />
         </View>
         <View style={{ flex: 1 }}>

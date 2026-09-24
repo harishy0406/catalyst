@@ -43,7 +43,8 @@
           "backgroundColor": "#121316"
         }
       ],
-      "expo-image"
+      "expo-image",
+      "expo-audio"
     ],
     "scheme": "catoperator",
     "backgroundColor": "#121316",

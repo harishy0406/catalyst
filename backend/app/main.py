@@ -16,6 +16,7 @@ from app.routers import (
     anomaly,
     analytics,
     ml,
+    simulation,
 )
 
 
@@ -65,6 +66,7 @@ app.include_router(training.router)
 app.include_router(anomaly.router)
 app.include_router(analytics.router)
 app.include_router(ml.router)
+app.include_router(simulation.router)
 
 
 @app.get("/health")

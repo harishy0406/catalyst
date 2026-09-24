@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { createTask } from '@/app/actions';
 import { SubmitButton } from '@/components/SubmitButton';
-import { estimateMinutes, humanize, PRIORITIES, TASK_TYPES, WEATHER } from '@/lib/domain';
+import { estimateMinutes, humanize, machineTypeOf, PRIORITIES, TASK_TYPES, TASKS_BY_MACHINE, WEATHER } from '@/lib/domain';
 import type { Machine, OperatorBasic } from '@/lib/queries';
 
 export function NewTaskForm({
@@ -15,8 +15,19 @@ export function NewTaskForm({
   const [type, setType] = useState<string>(TASK_TYPES[0]);
   const [weather, setWeather] = useState<string>('clear');
   const [operator, setOperator] = useState(defaultOperator ?? '');
-  const skill = operators.find((o) => o.id === operator)?.skillLevel;
-  const suggested = estimateMinutes(type, weather, skill);
+  const [pickedMachine, setPickedMachine] = useState('');
+  const op = operators.find((o) => o.id === operator);
+  const skill = op?.skillLevel;
+
+  // Only the three ML-supported machine types can take work. An assigned task always uses the
+  // operator's bound machine; an unassigned one needs a machine picked here.
+  const fleet = machines.filter((m) => machineTypeOf(m.model, m.id));
+  const machineId = op ? op.machineId : pickedMachine;
+  const machine = fleet.find((m) => m.id === machineId);
+  const machineType = machine ? machineTypeOf(machine.model, machine.id) : null;
+  const allowedTypes = machineType ? TASKS_BY_MACHINE[machineType] : [];
+  const typeValue = allowedTypes.includes(type) ? type : (allowedTypes[0] ?? '');
+  const suggested = estimateMinutes(typeValue, weather, skill);
   const [estimate, setEstimate] = useState<string>(String(suggested));
   const [touched, setTouched] = useState(false);
 
@@ -31,6 +42,7 @@ export function NewTaskForm({
       setType(TASK_TYPES[0]);
       setWeather('clear');
       setOperator(defaultOperator ?? '');
+      setPickedMachine('');
       setTouched(false);
     }
   }, [state, defaultOperator]);
@@ -43,11 +55,13 @@ export function NewTaskForm({
       </label>
       <label className="field">
         <span className="label">Task type</span>
-        <select name="type" value={type} onChange={(e) => setType(e.target.value)}>
-          {TASK_TYPES.map((t) => (
+        <select name="type" value={typeValue} onChange={(e) => setType(e.target.value)} disabled={!machineType} required>
+          {!machineType && <option value="">Pick an operator or machine first</option>}
+          {allowedTypes.map((t) => (
             <option key={t} value={t}>{humanize(t)}</option>
           ))}
         </select>
+        {machineType && <span className="hint">Tasks a {humanize(machineType)} can do.</span>}
       </label>
       <label className="field">
         <span className="label">Priority</span>
@@ -60,25 +74,36 @@ export function NewTaskForm({
       <label className="field">
         <span className="label">Assign to operator</span>
         <select name="assignedTo" value={operator} onChange={(e) => setOperator(e.target.value)}>
-          <option value="">Unassigned (visible to all operators)</option>
-          {operators.map((o) => (
-            <option key={o.id} value={o.id}>
-              {o.name} · {o.id} · {humanize(o.skillLevel)}
-            </option>
-          ))}
+          <option value="">Unassigned (offered to whoever drives the machine)</option>
+          {operators.map((o) => {
+            const m = fleet.find((x) => x.id === o.machineId);
+            return (
+              <option key={o.id} value={o.id} disabled={!m}>
+                {o.name} · {o.id} · {humanize(o.skillLevel)} · {m ? humanize(machineTypeOf(m.model, m.id)) : 'no machine'}
+              </option>
+            );
+          })}
         </select>
       </label>
       <label className="field">
         <span className="label">Machine</span>
-        <select name="machineId" defaultValue="">
-          <option value="">Operator’s assigned machine</option>
-          {machines.map((m) => (
-            <option key={m.id} value={m.id} disabled={m.status === 'maintenance' || m.status === 'offline'}>
-              {m.id} · {m.model}
-              {m.status !== 'active' ? ` (${m.status})` : ''}
-            </option>
-          ))}
-        </select>
+        {op ? (
+          <>
+            <input type="hidden" name="machineId" value={op.machineId ?? ''} />
+            <input value={machine ? `${machine.id} · ${machine.model}` : 'No machine assigned'} readOnly disabled />
+            <span className="hint">Locked to the operator’s assigned machine.</span>
+          </>
+        ) : (
+          <select name="machineId" value={pickedMachine} onChange={(e) => setPickedMachine(e.target.value)} required>
+            <option value="">Pick a machine</option>
+            {fleet.map((m) => (
+              <option key={m.id} value={m.id} disabled={m.status === 'maintenance' || m.status === 'offline'}>
+                {m.id} · {humanize(machineTypeOf(m.model, m.id))} · {m.model}
+                {m.status !== 'active' ? ` (${m.status})` : ''}
+              </option>
+            ))}
+          </select>
+        )}
       </label>
       <label className="field">
         <span className="label">Zone</span>

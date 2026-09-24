@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, Dict, Any, List
 
 
@@ -78,54 +78,61 @@ class MLTrainResponse(BaseModel):
 # ANOMALY DETECTION SCHEMAS
 # -------------------------------------------------------------
 
+# Every field is optional and defaults to None: the anomaly service fills anything missing with the
+# "Normal" median for that machine type (see NORMAL_PROFILE in anomaly_service.py). Extra keys are
+# accepted so callers can send any feature a model uses (e.g. braking_intensity for the loader).
+
 class AnomalyContext(BaseModel):
-    machine_id: Optional[str] = "CAT-320-01"
-    operator_id: Optional[str] = "OP-4412"
+    model_config = ConfigDict(extra="allow")
+    machine_id: Optional[str] = None
+    operator_id: Optional[str] = None
     timestamp: Optional[str] = None
-    task_type: Optional[str] = "excavation"
-    soil_type: Optional[str] = "clay"
-    ground_condition: Optional[str] = "normal"
-    material_type: Optional[str] = "aggregate"
+    task_type: Optional[str] = None
+    soil_type: Optional[str] = None
+    ground_condition: Optional[str] = None
+    material_type: Optional[str] = None
 
 
 class AnomalyTelemetry(BaseModel):
-    engine_rpm: Optional[float] = 1750.0
-    engine_temperature_c: Optional[float] = 88.0
-    hydraulic_pressure_bar: Optional[float] = 260.0
-    hydraulic_oil_temperature_c: Optional[float] = 72.0
-    transmission_temperature_c: Optional[float] = 78.0
-    fuel_rate_lph: Optional[float] = 16.5
-    fuel_level_pct: Optional[float] = 70.0
-    machine_speed_kmh: Optional[float] = 2.0
-    vehicle_speed_kmh: Optional[float] = 2.0
-    idle_duration_min: Optional[float] = 0.0
-    boom_movement_rate: Optional[float] = 24.0
-    arm_movement_rate: Optional[float] = 22.0
-    bucket_movement_rate: Optional[float] = 20.0
-    swing_speed_rpm: Optional[float] = 6.0
-    bucket_cycles_per_min: Optional[float] = 6.0
-    excavation_depth_m: Optional[float] = 1.8
-    bucket_load_pct: Optional[float] = 65.0
-    blade_load_pct: Optional[float] = 60.0
-    blade_angle_deg: Optional[float] = 10.0
-    blade_height_m: Optional[float] = 0.1
-    drawbar_load_pct: Optional[float] = 50.0
-    traction_force_kn: Optional[float] = 100.0
-    track_slip_pct: Optional[float] = 5.0
-    vibration_level: Optional[float] = 1.5
-    slope_deg: Optional[float] = 2.0
-    ambient_temperature_c: Optional[float] = 25.0
+    model_config = ConfigDict(extra="allow")
+    engine_rpm: Optional[float] = None
+    engine_temperature_c: Optional[float] = None
+    hydraulic_pressure_bar: Optional[float] = None
+    hydraulic_oil_temperature_c: Optional[float] = None
+    transmission_temperature_c: Optional[float] = None
+    fuel_rate_lph: Optional[float] = None
+    fuel_level_pct: Optional[float] = None
+    machine_speed_kmh: Optional[float] = None
+    vehicle_speed_kmh: Optional[float] = None
+    idle_duration_min: Optional[float] = None
+    boom_movement_rate: Optional[float] = None
+    arm_movement_rate: Optional[float] = None
+    bucket_movement_rate: Optional[float] = None
+    swing_speed_rpm: Optional[float] = None
+    bucket_cycles_per_min: Optional[float] = None
+    excavation_depth_m: Optional[float] = None
+    bucket_load_pct: Optional[float] = None
+    blade_load_pct: Optional[float] = None
+    blade_angle_deg: Optional[float] = None
+    blade_height_m: Optional[float] = None
+    drawbar_load_pct: Optional[float] = None
+    traction_force_kn: Optional[float] = None
+    track_slip_pct: Optional[float] = None
+    vibration_level: Optional[float] = None
+    slope_deg: Optional[float] = None
+    ambient_temperature_c: Optional[float] = None
 
 
 class AnomalyMachineContext(BaseModel):
-    operator_experience_years: Optional[float] = 5.0
-    machine_hours: Optional[float] = 3000.0
-    maintenance_due_days: Optional[float] = 18.0
-    previous_anomaly_count_1hr: Optional[float] = 0.0
+    model_config = ConfigDict(extra="allow")
+    operator_experience_years: Optional[float] = None
+    machine_hours: Optional[float] = None
+    maintenance_due_days: Optional[float] = None
+    previous_anomaly_count_1hr: Optional[float] = None
 
 
 class AnomalyPredictRequest(BaseModel):
-    machine_type: Optional[str] = Field("excavator", description="excavator, bulldozer, or wheel_loader")
+    machine_type: Optional[str] = Field(None, description="excavator, bulldozer, or wheel_loader")
     context: Optional[AnomalyContext] = Field(default_factory=AnomalyContext)
     telemetry: Optional[AnomalyTelemetry] = Field(default_factory=AnomalyTelemetry)
     machine_context: Optional[AnomalyMachineContext] = Field(default_factory=AnomalyMachineContext)

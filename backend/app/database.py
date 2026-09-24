@@ -215,10 +215,25 @@ CREATE INDEX IF NOT EXISTS idx_task_history_type ON task_history(task_type);
 """
 
 
+# Additive columns for tables that already exist in the shared DB (CREATE TABLE IF NOT EXISTS won't add them).
+# `source` is 'live' or 'simulation' so demo-stream rows can be filtered out or cleaned up.
+MIGRATIONS_SQL = """
+ALTER TABLE telemetry ADD COLUMN IF NOT EXISTS seatbelt_fastened BOOLEAN;
+ALTER TABLE telemetry ADD COLUMN IF NOT EXISTS proximity_m REAL;
+ALTER TABLE telemetry ADD COLUMN IF NOT EXISTS features JSONB;
+ALTER TABLE telemetry ADD COLUMN IF NOT EXISTS source VARCHAR(20) DEFAULT 'live';
+ALTER TABLE alerts ADD COLUMN IF NOT EXISTS source VARCHAR(20) DEFAULT 'live';
+ALTER TABLE incidents ADD COLUMN IF NOT EXISTS source VARCHAR(20) DEFAULT 'live';
+ALTER TABLE incidents ADD COLUMN IF NOT EXISTS alert_id VARCHAR(100);
+CREATE INDEX IF NOT EXISTS idx_telemetry_machine_time ON telemetry(machine_id, recorded_at DESC);
+"""
+
+
 def init_db():
     """Ensure all required tables and indexes exist without dropping existing data."""
     with get_db_cursor(commit=True) as cur:
         cur.execute(SCHEMA_SQL)
+        cur.execute(MIGRATIONS_SQL)
     logger.info("Verified all PostgreSQL tables exist in Supabase.")
 
 
@@ -240,6 +255,7 @@ def reset_db():
     with get_db_cursor(commit=True) as cur:
         cur.execute(drop_sql)
         cur.execute(SCHEMA_SQL)
+        cur.execute(MIGRATIONS_SQL)
     logger.info("PostgreSQL schema reset successfully in Supabase.")
 
 

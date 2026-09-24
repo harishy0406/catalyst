@@ -3,25 +3,9 @@ import pandas as pd
 from typing import Dict, Any, Optional
 from app.inference.registry import model_registry
 from app.inference.estimator import estimator_instance
+from app.machine_types import ML_MACHINE_TYPE, ML_SKILL, ML_TASK_TYPE, ML_WEATHER, machine_type_of
 
 logger = logging.getLogger("catalyst.ml.task_time")
-
-# Canonical task to machine mapping defaults
-TASK_MACHINE_MAP = {
-    "trenching": "Excavator",
-    "earth excavation": "Excavator",
-    "excavation": "Excavator",
-    "grading": "Bulldozer",
-    "dozing": "Bulldozer",
-    "material loading": "Wheel Loader",
-    "loading": "Wheel Loader",
-    "pipe_laying": "Excavator",
-    "pipe laying": "Excavator",
-    "bulk_excavation": "Excavator",
-    "bulk excavation": "Excavator",
-    "demolition": "Excavator",
-}
-
 
 class TaskTimeService:
     """
@@ -34,13 +18,15 @@ class TaskTimeService:
         artifact = model_registry.get_task_time_model()
 
         # Extract or infer inputs
+        # Map app values (e.g. "pipe_laying", "CAT 320 Hydraulic Excavator") onto trained categories;
+        # unknown categories silently skew CatBoost's output
         task_type_raw = str(input_data.get("Task_Type") or input_data.get("taskType") or "Trenching").strip()
-        task_type_title = task_type_raw.title()
+        task_key = task_type_raw.lower().replace(" ", "_")
+        task_type_title = ML_TASK_TYPE.get(task_key, task_type_raw.replace("_", " ").title())
 
-        machine_type_raw = str(
-            input_data.get("Machine_Type") or input_data.get("machineType") or
-            TASK_MACHINE_MAP.get(task_type_raw.lower(), "Excavator")
-        ).strip().title()
+        machine_raw = str(input_data.get("Machine_Type") or input_data.get("machineType") or "Excavator").strip()
+        mtype = machine_type_of(machine_raw)
+        machine_type_raw = ML_MACHINE_TYPE[mtype] if mtype else machine_raw.title()
 
         est_time = float(
             input_data.get("Estimated_Time_min") or
@@ -49,8 +35,10 @@ class TaskTimeService:
             60.0
         )
 
-        weather_raw = str(input_data.get("Weather") or input_data.get("weatherCondition") or "Clear").strip().title()
-        skill_raw = str(input_data.get("Operator_Skill") or input_data.get("operatorSkill") or "Intermediate").strip().title()
+        weather_in = str(input_data.get("Weather") or input_data.get("weatherCondition") or "Clear").strip()
+        weather_raw = ML_WEATHER.get(weather_in.lower(), weather_in.title())
+        skill_in = str(input_data.get("Operator_Skill") or input_data.get("operatorSkill") or "Intermediate").strip()
+        skill_raw = ML_SKILL.get(skill_in.lower(), skill_in.title())
         age = float(input_data.get("Machine_Age_yrs") or input_data.get("machineAgeYears") or 2.0)
 
         # If CatBoost artifact is present, execute gradient-boosted regression
@@ -61,7 +49,9 @@ class TaskTimeService:
                 row = {
                     "Machine_Type": machine_type_raw,
                     "Machine_Age_yrs": age,
-                    "Machine_Maintenance_Status": str(input_data.get("Machine_Maintenance_Status", "Good")).title(),
+                    "Machine_Maintenance_Status": str(
+                        input_data.get("Machine_Maintenance_Status") or input_data.get("machineMaintenanceStatus") or "Good"
+                    ),
                     "Operator_Skill": skill_raw,
                     "Operator_Fatigue_Level": float(input_data.get("Operator_Fatigue_Level", 2.0)),
                     "Task_Type": task_type_title,

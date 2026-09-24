@@ -4,13 +4,34 @@ from datetime import datetime
 
 from app.database import execute_query
 from app.dependencies import get_current_user
-from app.schemas.anomaly import MachineInsightsResponse
+from app.schemas.anomaly import MachineInsightsResponse, MachineResponse
+from app.machine_types import machine_type_of, TASKS_BY_MACHINE
+from app.routers.telemetry import format_telemetry_row
 from app.inference.services.anomaly_service import anomaly_service
 import logging
 
 logger = logging.getLogger("catalyst.anomaly")
 
 router = APIRouter(prefix="/machines", tags=["machines"])
+
+
+@router.get("/{machine_id}", response_model=MachineResponse)
+def get_machine(machine_id: str, current_user: Dict[str, Any] = Depends(get_current_user)):
+    rows = execute_query("SELECT * FROM machines WHERE id = %s", (machine_id,))
+    if not rows:
+        raise HTTPException(status_code=404, detail="Machine not found")
+    m = rows[0]
+    mtype = machine_type_of(m.get("model"), m["id"])
+    return MachineResponse(
+        id=m["id"],
+        model=m["model"],
+        type=mtype,
+        serialNumber=m.get("serial_number"),
+        status=m.get("status") or "active",
+        operatingHours=float(m.get("operating_hours") or 0),
+        healthScore=int(m.get("health_score") or 0),
+        taskTypes=TASKS_BY_MACHINE.get(mtype, []) if mtype else [],
+    )
 
 
 @router.get("/{machine_id}/insights", response_model=MachineInsightsResponse)
@@ -35,15 +56,7 @@ def get_machine_insights(machine_id: str, current_user: Dict[str, Any] = Depends
 
     if telemetry_rows:
         t = telemetry_rows[0]
-        last_tel = {
-            "id": t["id"],
-            "engineRpm": float(t["engine_rpm"]) if t.get("engine_rpm") is not None else None,
-            "fuelRate": float(t["fuel_rate"]) if t.get("fuel_rate") is not None else None,
-            "hydraulicPressure": float(t["hydraulic_pressure"]) if t.get("hydraulic_pressure") is not None else None,
-            "engineTemp": float(t["engine_temp"]) if t.get("engine_temp") is not None else None,
-            "speed": float(t["speed"]) if t.get("speed") is not None else None,
-            "recordedAt": t["recorded_at"].isoformat() if t.get("recorded_at") else None
-        }
+        last_tel = format_telemetry_row(t)
 
         # Check telemetry thresholds
         if t.get("engine_temp") and float(t["engine_temp"]) > 100:
@@ -88,17 +101,16 @@ def get_machine_insights(machine_id: str, current_user: Dict[str, Any] = Depends
                     "timestamp": t["recorded_at"].isoformat() if t.get("recorded_at") else datetime.utcnow().isoformat()
                 },
                 "telemetry": {
-                    "engine_rpm": float(t["engine_rpm"]) if t.get("engine_rpm") is not None else 1750,
-                    "engine_temp": float(t["engine_temp"]) if t.get("engine_temp") is not None else 88,
-                    "hydraulic_pressure": float(t["hydraulic_pressure"]) if t.get("hydraulic_pressure") is not None else 260,
-                    "fuel_rate": float(t["fuel_rate"]) if t.get("fuel_rate") is not None else 16.5,
-                    "speed": float(t["speed"]) if t.get("speed") is not None else 0.0,
-                    "machine_speed_kmh": float(t["speed"]) if t.get("speed") is not None else 0.0,
-                    "vehicle_speed_kmh": float(t["speed"]) if t.get("speed") is not None else 0.0,
+                    # Missing readings are filled with the model's normal profile by the service
+                    **(t.get("features") or {}),
+                    "engine_rpm": t.get("engine_rpm"),
+                    "engine_temp": t.get("engine_temp"),
+                    "hydraulic_pressure": t.get("hydraulic_pressure"),
+                    "fuel_rate": t.get("fuel_rate"),
+                    "speed": t.get("speed"),
                 },
                 "machine_context": {
-                    "machine_hours": float(m.get("hours_operated") or 2500),
-                    "maintenance_due_days": 18
+                    "machine_hours": float(m.get("operating_hours") or 2500),
                 }
             })
 

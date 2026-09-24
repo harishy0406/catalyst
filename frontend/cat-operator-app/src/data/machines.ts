@@ -1,6 +1,6 @@
 /**
- * Fleet catalog (seeded in backend/app/seed.py) and the telemetry payloads for the
- * anomaly models in ml/models/*_anomaly_model.pkl.
+ * The three machine types the ML models are built around (backend/app/machine_types.py),
+ * the seeded machines (backend/app/seed.py) and the payloads for ml/models/*_anomaly_model.pkl.
  */
 import { ImageSourcePropType } from 'react-native';
 
@@ -20,9 +20,8 @@ export type FleetMachine = {
   /** Task context sent with every anomaly request. Values must be categories the model was trained on. */
   context: Record<string, string>;
   /**
-   * Median readings of the "Normal" class in ml/datasets/anomaly. The backend's schema defaults are
-   * outside the training range (e.g. boom rate 24 vs ~0.7), which makes the model flag everything,
-   * so the app always sends a full in-range payload and overlays the live readings on top.
+   * Median readings of the "Normal" class in ml/datasets/anomaly. The backend fills missing features
+   * with the same values; sending them keeps results correct on backends deployed before that fix.
    */
   baseline: Record<string, number>;
   /** Test inputs checked against the models, for demoing each anomaly class. */
@@ -69,6 +68,7 @@ export const FLEET: FleetMachine[] = [
       { id: 'swing', label: 'Swing Overspeed', icon: 'sync', telemetry: { swing_speed_rpm: 20, machine_speed_kmh: 5.5 } },
       { id: 'overload', label: 'Bucket Overload', icon: 'fitness_center', telemetry: { hydraulic_pressure_bar: 335, bucket_load_pct: 105, fuel_rate_lph: 25.4 } },
       { id: 'vibration', label: 'Vibration', icon: 'vibration', telemetry: { vibration_level: 5.5 } },
+      { id: 'lowprod', label: 'Low Productivity', icon: 'trending_down', telemetry: { engine_rpm: 2077, bucket_cycles_per_min: 0.7, fuel_rate_lph: 23 } },
     ],
   },
   {
@@ -99,7 +99,12 @@ export const FLEET: FleetMachine[] = [
     scenarios: [
       { id: 'transmission', label: 'Transmission Heat', icon: 'device_thermostat', telemetry: { transmission_temperature_c: 110, engine_rpm: 2150 } },
       { id: 'hydraulic', label: 'Hydraulic Stress', icon: 'compress', telemetry: { hydraulic_pressure_bar: 344, hydraulic_oil_temperature_c: 88, bucket_load_pct: 100 } },
-      { id: 'idle', label: 'Excess Idling', icon: 'hourglass_empty', telemetry: { engine_rpm: 818, vehicle_speed_kmh: 0.1, machine_speed_kmh: 0.1, idle_duration_min: 31.5 } },
+      { id: 'idle', label: 'Excess Idling', icon: 'hourglass_empty', telemetry: { engine_rpm: 818, vehicle_speed_kmh: 0.1, machine_speed_kmh: 0.1, idle_duration_min: 31.5, loading_cycles_per_hour: 4.9 } },
+      { id: 'overload', label: 'Bucket Overload', icon: 'fitness_center', telemetry: { hydraulic_pressure_bar: 333, bucket_load_pct: 106, bucket_fill_ratio_pct: 109 } },
+      { id: 'tireslip', label: 'Tire Slip', icon: 'swap_horiz', telemetry: { tire_slip_pct: 26, bucket_load_pct: 95, vehicle_speed_kmh: 5.5, machine_speed_kmh: 5.5 } },
+      { id: 'accel', label: 'Harsh Acceleration', icon: 'speed', telemetry: { acceleration_mps2: 4, engine_rpm: 2255, vehicle_speed_kmh: 19.5, machine_speed_kmh: 19.5 } },
+      { id: 'braking', label: 'Harsh Braking', icon: 'report', telemetry: { braking_intensity: 3, vehicle_speed_kmh: 17, machine_speed_kmh: 17 } },
+      { id: 'cycle', label: 'Slow Load Cycle', icon: 'timer', telemetry: { cycle_time_sec: 90, loading_cycles_per_hour: 12, fuel_rate_lph: 24.8 } },
     ],
   },
   {
@@ -137,16 +142,21 @@ export const FLEET: FleetMachine[] = [
       { id: 'idle', label: 'Excess Idling', icon: 'hourglass_empty', telemetry: { engine_rpm: 820, vehicle_speed_kmh: 0.1, machine_speed_kmh: 0.1, idle_duration_min: 31.5 } },
       { id: 'blade', label: 'Blade Overload', icon: 'fitness_center', telemetry: { blade_load_pct: 108, drawbar_load_pct: 103, traction_force_kn: 165 } },
       { id: 'slip', label: 'Track Slip', icon: 'swap_horiz', telemetry: { track_slip_pct: 30.5 } },
+      { id: 'uneven', label: 'Uneven Tracks', icon: 'compare_arrows', telemetry: { track_speed_left_kmh: 3.5, track_speed_right_kmh: 11.6, track_slip_pct: 18 } },
+      { id: 'depth', label: 'Cut Too Deep', icon: 'vertical_align_bottom', telemetry: { dozing_depth_m: 1.2, blade_load_pct: 97, drawbar_load_pct: 98 } },
+      { id: 'grade', label: 'Grading Error', icon: 'straighten', telemetry: { grading_accuracy_error_cm: 10.4, vehicle_speed_kmh: 3.5, machine_speed_kmh: 3.5, blade_angle_deg: 6.7 } },
     ],
   },
 ];
 
-export const fleetMachine = (id: string) => FLEET.find((m) => m.id === id) ?? FLEET[0];
+/** Catalog entry for a seeded machine ID; undefined for anything else. */
+export const fleetMachine = (id: string | null | undefined) => FLEET.find((m) => m.id === id);
 
 /** Maps the live CAN-bus reading onto the model's feature names (speed feeds both speed features). */
 function liveFeatures(t: ApiTelemetry | null | undefined): Record<string, number> {
   if (!t) return {};
-  const out: Record<string, number> = {};
+  // Extra model features streamed with the reading (e.g. transmission temp) come first
+  const out: Record<string, number> = { ...(t.features ?? {}) };
   if (t.engineRpm != null) out.engine_rpm = t.engineRpm;
   if (t.engineTemp != null) out.engine_temperature_c = t.engineTemp;
   if (t.hydraulicPressure != null) out.hydraulic_pressure_bar = t.hydraulicPressure;

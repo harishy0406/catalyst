@@ -4,7 +4,7 @@ import { AutoSubmitSelect } from '@/components/AutoSubmitSelect';
 import { Badge } from '@/components/Badge';
 import { PageHeader } from '@/components/PageHeader';
 import { SubmitButton } from '@/components/SubmitButton';
-import { EDITABLE_TASK_STATUSES, humanize, PRIORITIES, taskStatusTone } from '@/lib/domain';
+import { canPerform, EDITABLE_TASK_STATUSES, humanize, machineTypeOf, PRIORITIES, taskStatusTone } from '@/lib/domain';
 import { minutes, minutesSince, timeAgo } from '@/lib/format';
 import { getMachines, getOperatorOptions, getTasks } from '@/lib/queries';
 import { requireSupervisor } from '@/lib/session';
@@ -130,9 +130,16 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
                             <input type="hidden" name="taskId" value={t.id} />
                             <AutoSubmitSelect name="operatorId" defaultValue={t.assignedTo ?? ''} ariaLabel={`Operator for ${t.title}`}>
                               <option value="">Unassigned</option>
-                              {operators.map((o) => (
-                                <option key={o.id} value={o.id}>{o.name}</option>
-                              ))}
+                              {operators.map((o) => {
+                                // Reassigning moves the task to this operator's machine, which must be able to do it
+                                const m = machines.find((x) => x.id === o.machineId);
+                                const ok = canPerform(machineTypeOf(m?.model, m?.id), t.type);
+                                return (
+                                  <option key={o.id} value={o.id} disabled={!ok && o.id !== t.assignedTo}>
+                                    {o.name}{ok ? '' : ' (wrong machine)'}
+                                  </option>
+                                );
+                              })}
                             </AutoSubmitSelect>
                           </form>
                         ) : (
@@ -179,7 +186,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
         </div>
         <p className="hint">
           Only tasks that have not started can be reassigned or deleted, so an operator is never pulled off work in
-          progress. Unassigned tasks appear in every operator’s queue.
+          progress. An unassigned task appears only in the queue of the operator driving its machine, and a task can only move to an operator whose machine can do it.
         </p>
       </div>
     </>

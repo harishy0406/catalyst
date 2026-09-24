@@ -14,6 +14,7 @@ from app.schemas.tasks import (
 )
 from app.schemas.ml import TaskTimePredictResponse
 from app.inference.services.task_time_service import task_time_service
+from app.machine_types import machine_type_of, maintenance_status
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -54,9 +55,12 @@ def get_today_tasks(current_user: Dict[str, Any] = Depends(get_current_user)):
     if role == "supervisor":
         rows = execute_query("SELECT * FROM tasks ORDER BY priority DESC, id ASC")
     else:
+        # Unassigned tasks are only offered to the operator whose machine they were created for
         rows = execute_query(
-            "SELECT * FROM tasks WHERE assigned_to = %s OR assigned_to IS NULL ORDER BY priority DESC, id ASC",
-            (user_id,)
+            """SELECT * FROM tasks
+               WHERE assigned_to = %s OR (assigned_to IS NULL AND (machine_id IS NULL OR machine_id = %s))
+               ORDER BY priority DESC, id ASC""",
+            (user_id, current_user.get("activeMachineId"))
         )
 
     return [format_task_row(r) for r in rows]
@@ -172,11 +176,14 @@ def estimate_task_duration(
     param_override = override or {}
 
     machine_age = 2.0
-    machine_type = "Excavator"
+    machine_type = "excavator"
+    maintenance = "Good"
     if task.get("machine_id"):
         m_rows = execute_query("SELECT * FROM machines WHERE id = %s", (task["machine_id"],))
         if m_rows:
-            machine_type = m_rows[0].get("model", "Excavator")
+            m = m_rows[0]
+            machine_type = machine_type_of(m.get("model"), m.get("id")) or machine_type
+            maintenance = maintenance_status(m.get("status"), m.get("health_score"))
 
     operator_skill = "Intermediate"
     if task.get("assigned_to"):
@@ -190,6 +197,7 @@ def estimate_task_duration(
         "estimatedMinutes": float(task.get("estimated_minutes") or 60.0),
         "operatorSkill": operator_skill,
         "machineAgeYears": machine_age,
+        "machineMaintenanceStatus": maintenance,
         **param_override
     }
 

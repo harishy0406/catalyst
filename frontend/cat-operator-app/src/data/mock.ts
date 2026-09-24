@@ -77,6 +77,8 @@ export type Task = {
   accent: string;
   status: TaskStatus;
   elapsedMin: number;
+  /** Machine the task runs on (set by the supervisor from the operator's assigned machine). */
+  machineId?: string | null;
   /** ISO timestamp from the backend, used to report actual duration on completion. */
   startedAt?: string | null;
 };
