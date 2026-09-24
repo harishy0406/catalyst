@@ -44,7 +44,16 @@
         }
       ],
       "expo-image",
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "expo-asset"
     ],
     "scheme": "catoperator",
     "backgroundColor": "#121316",

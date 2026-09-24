@@ -31,6 +31,13 @@ export function machineTypeOf(model: string | null | undefined, id?: string | nu
   return null;
 }
 
+/** Product photo for each machine type, served from public/machines/. */
+export const machinePhoto = (type: MachineType | null) => (type ? `/machines/${type}.png` : null);
+
+export function machineStatusTone(s: string): Tone {
+  return s === 'active' ? 'safe' : s === 'maintenance' ? 'warning' : s === 'offline' ? 'danger' : 'neutral';
+}
+
 export const canPerform = (type: MachineType | null, taskType: string) => type !== null && TASKS_BY_MACHINE[type].includes(taskType);
 
 /** The operator app understands these; anything else is shown to the operator as "queued". */

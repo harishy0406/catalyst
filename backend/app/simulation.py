@@ -14,13 +14,14 @@ from app.schemas.telemetry import TelemetryIngestRequest
 
 # (phase, start second, end second). The stream stops itself after the last phase.
 TIMELINES: Dict[str, List[Tuple[str, int, int]]] = {
+    # ~40 s: the seatbelt alert (t=3) is unacknowledged for 20 s by the incident phase, so it auto-escalates
     "safety_crisis": [
-        ("normal", 0, 15),
-        ("seatbelt", 15, 30),
-        ("proximity", 30, 50),
-        ("incident", 50, 60),
-        ("ml_drift", 60, 90),
-        ("hold", 90, 100),
+        ("normal", 0, 3),
+        ("seatbelt", 3, 9),
+        ("proximity", 9, 18),
+        ("incident", 18, 24),
+        ("ml_drift", 24, 36),
+        ("hold", 36, 40),
     ],
     "machine_fault": [("normal", 0, 10), ("ml_drift", 10, 40), ("hold", 40, 50)],
     "normal": [("normal", 0, 180)],

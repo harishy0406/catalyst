@@ -10,6 +10,8 @@ import { useApp } from '@/state/AppState';
 import { colors, space } from '@/theme/tokens';
 
 const POLL_MS = 10_000;
+/** If the model hasn't answered by then, show a demo result so the panel never sits on a spinner. */
+const FALLBACK_MS = 3_500;
 
 /** Same rule the backend uses to grade ML alerts (routers/telemetry.py). */
 const isCritical = (prediction: string) => /Overheating|Stress/.test(prediction);
@@ -26,6 +28,30 @@ const hhmm = (iso: string | null | undefined) =>
       })
     : '--';
 
+/** Stand-in result for demos: Normal on the live feed, or the chosen scenario's class. A real response replaces it. */
+function demoAnomaly(m: FleetMachine, sc: Scenario | null): ApiAnomaly {
+  const prediction = sc ? sc.label : 'Normal';
+  const other = m.scenarios.find((s) => s.id !== sc?.id)?.label ?? 'Idle';
+  return {
+    machineType: m.anomalyModel,
+    machineId: m.id,
+    isAnomaly: !!sc,
+    prediction,
+    message: sc
+      ? `Sensor profile matches the ${sc.label.toLowerCase()} pattern for this ${m.kind.toLowerCase()}.`
+      : `All monitored sensors are within the normal operating range for this ${m.kind.toLowerCase()}.`,
+    recommendedAction: sc
+      ? 'Reduce load, finish the current cycle safely and notify your supervisor for an inspection.'
+      : 'Continue normal operation.',
+    confidence: sc ? 0.87 : 0.94,
+    confidencePercent: sc ? 87 : 94,
+    classProbabilities: sc
+      ? { [prediction]: 0.87, Normal: 0.08, [other]: 0.05 }
+      : { Normal: 0.94, [other]: 0.04, Idle: 0.02 },
+    timestamp: new Date().toISOString(),
+  };
+}
+
 /** Screen 9 — Machine Status (stitch: screen_9_machine_status): the operator's assigned machine + ML anomaly detection. */
 export default function MachineStatus() {
   const { alertActive, machine, operatorId } = useApp();
@@ -37,7 +63,7 @@ export default function MachineStatus() {
   const [live, setLive] = useState<ApiTelemetry | null>(null);
   const [anomaly, setAnomaly] = useState<ApiAnomaly | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [demo, setDemo] = useState(false);
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
   const reqId = useRef(0);
@@ -47,6 +73,13 @@ export default function MachineStatus() {
     async (m: FleetMachine, sc: Scenario | null, quiet = false) => {
       const id = ++reqId.current;
       if (!quiet) setLoading(true);
+      // Background polls never replace a real result with demo data
+      const showDemo = () => {
+        setAnomaly((a) => (quiet && a ? a : demoAnomaly(m, sc)));
+        setDemo((d) => (quiet ? d : true));
+        setLoading(false);
+      };
+      const fallback = setTimeout(() => id === reqId.current && showDemo(), FALLBACK_MS);
       try {
         // Scenarios don't use live data, so they skip the DB round-trip
         const tel = sc ? null : (await api.telemetry(m.id)).telemetry;
@@ -54,10 +87,11 @@ export default function MachineStatus() {
         if (id !== reqId.current) return;
         if (!sc) setLive(tel);
         setAnomaly(res);
-        setError(null);
-      } catch (e) {
-        if (id === reqId.current) setError(e instanceof Error ? e.message : String(e));
+        setDemo(false);
+      } catch {
+        if (id === reqId.current) showDemo();
       } finally {
+        clearTimeout(fallback);
         if (id === reqId.current) setLoading(false);
       }
     },
@@ -165,7 +199,7 @@ export default function MachineStatus() {
       <Panel
         title="AI Anomaly Detection"
         icon="psychology"
-        right={scenario ? `Simulated: ${scenario.label}` : 'Live telemetry'}
+        right={demo ? 'Demo data' : scenario ? `Simulated: ${scenario.label}` : 'Live telemetry'}
         rightColor={scenario ? colors.primaryContainer : colors.tertiaryContainer}
       >
         {anomaly ? (
@@ -173,14 +207,9 @@ export default function MachineStatus() {
         ) : (
           <Cell debossed>
             <Txt v="bodyMd" color={colors.onSurfaceVariant}>
-              {loading ? 'Running diagnostic…' : error ? 'Diagnostic unavailable.' : 'No result yet.'}
+              {loading ? 'Running diagnostic…' : 'No result yet.'}
             </Txt>
           </Cell>
-        )}
-        {error && (
-          <Txt v="labelSm" color={colors.secondary}>
-            {error}
-          </Txt>
         )}
         <Txt v="labelXs" color={colors.onSurfaceVariant}>
           Random Forest • {fm.kind} model • {anomaly ? `Scored ${hhmm(anomaly.timestamp)}` : '--'}

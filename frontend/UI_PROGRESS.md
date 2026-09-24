@@ -31,7 +31,7 @@ cd backend
 cd frontend/cat-operator-app && npx expo start
 ```
 
-- **Deployed backend**: `cat-operator-app/.env` sets `EXPO_PUBLIC_API_URL=https://catalyst-api-wn32.onrender.com`, so `npx expo start` works with no local backend. To use a local backend, put `EXPO_PUBLIC_API_URL=http://<LAN-IP>:3000` in `.env.local`, which overrides `.env`. The Render free tier sleeps when idle, so the first request can take up to about a minute.
+- **Deployed backend**: `cat-operator-app/.env` sets `EXPO_PUBLIC_API_URL=http://13.203.66.37` (AWS EC2, Docker, port 80), so `npx expo start` works with no local backend. To use a local backend, put `EXPO_PUBLIC_API_URL=http://<LAN-IP>:3000` in `.env.local`, which overrides `.env`. Because the backend is plain HTTP, `app.json` configures `expo-build-properties` with `android.usesCleartextTraffic: true` so release APKs can reach it. The supervisor dashboard's `BACKEND_URL` default also points to the EC2 host.
 - **Base URL** (`src/api/client.ts`): `EXPO_PUBLIC_API_URL` if it is set. Otherwise the app uses the Metro host IP on port 3000 (Expo Go on the same Wi-Fi), or `localhost:3000` on web. The login screen shows the URL it is using and whether the API is reachable.
 - **Demo logins** (from `backend/app/seed.py`): `OP-4412` / PIN `4412` (expert, CAT-320-01), `OP-8821` / `8821`, `SUP-101` / `1001`. Tap ⇄ to switch operator. Switching clears the PIN.
 - **To trigger a live alert**, post telemetry above a rule threshold. The app polls alerts every 10 s:
@@ -48,15 +48,15 @@ For presentations, the supervisor dashboard has a **Demo Simulator** tab in the 
 
 1. Sign in to the dashboard as `SUP-101` / `1001`. The simulator uses the same login against the backend, so sessions from before this feature need to sign out and back in.
 2. Sign in to the operator app on the phone as `OP-4412` / `4412`. Its machine is CAT-320-01.
-3. Pick **CAT-320-01** and **Safety crisis**, then press **▶ Start live demo**. The story is 33 readings, about 100 s at the 3 s interval:
+3. Pick **CAT-320-01** and **Safety crisis**, then press **▶ Start live demo**. The story is 14 readings, about 40 s at the 3 s interval:
 
 | Timeline | Phase | What happens |
 |---|---|---|
-| 0–15 s | Normal operation | Normal readings, seatbelt on, 15 m clear. The app shows "Safe to Operate". |
-| 15–30 s | Seatbelt violation | The machine speeds up with the seatbelt off. A critical alert fires, and the app plays an alarm, vibrates and shows a red banner. |
-| 30–50 s | Proximity hazard | The obstacle closes in from 12 m → 4 m (warning) → 1.8 m (critical). |
-| 50–60 s | Hazard unacknowledged | A critical alert left unacknowledged for 20 s is auto-logged as an incident (INC-XXXX) for the supervisor. |
-| 60–100 s | Machine drift | Engine temperature and RPM drift from normal into a fault. The AI flips to "Engine Overheating" around 80 s (Transmission Overheating on the loader). |
+| 0–3 s | Normal operation | Normal readings, seatbelt on, 15 m clear. The app shows "Safe to Operate". |
+| 3–9 s | Seatbelt violation | The machine speeds up with the seatbelt off. A critical alert fires, and the app plays an alarm, vibrates and shows a red banner. |
+| 9–18 s | Proximity hazard | The obstacle closes in from 12 m → 3.5 m (warning). |
+| 18–24 s | Hazard unacknowledged | The obstacle is at 1.8 m (critical). The seatbelt alert has now been unacknowledged for 20 s, so it is auto-logged as an incident (INC-XXXX) for the supervisor. |
+| 24–40 s | Machine drift | Engine temperature and RPM drift from normal into a fault. The AI flips to "Engine Overheating" around 33 s (Transmission Overheating on the loader). |
 
 - **Instant triggers**: Seatbelt, Proximity, plus one button per anomaly type (8 per machine type) for the selected machine.
 - **Other scenarios**: *Machine fault* (only the drift, about 50 s) and *Normal stream* (3 min of healthy readings).
@@ -246,6 +246,11 @@ Source: [`heavy_telematics_display_system/DESIGN.md`](stitch_cat_smart_operator_
 
 ## Changelog
 
+### 2026-09-24 — Demo fallback for AI Anomaly Detection
+- If `POST /ml/anomaly/*` hasn't answered within **3.5 s**, or it fails, the AI Anomaly Detection panel shows a demo result instead of spinning. On the live feed that result is Normal (94%). For a scenario chip it is that scenario's class (87%).
+- The panel header then reads **Demo data**. If the real response arrives later, it replaces the demo result and the header goes back to Live telemetry / Simulated.
+- The 10 s background polls never overwrite a real result with demo data. The inline error text was removed because errors now show the fallback.
+
 ### 2026-09-24 — Live demo stream + real cab sensors
 - **Backend**
   - `POST /telemetry` accepts `seatbeltFastened`, `proximityM`, extra ML `features` and `source`, with new DB columns added by an additive migration in `init_db`.
@@ -345,3 +350,4 @@ Which task types each machine can do:
 - Downloaded the Stitch reference images into `assets/images/`.
 - Checked each screen against the Stitch `screen.png` using headless-Chrome web screenshots. Fixed an overlapping fuel badge and made the Safety Center wording follow the alert state.
 - `tsc --noEmit`, `expo lint` and `expo-doctor` (21/21) all pass.
+- **EAS builds**: the repo-root `.gitignore` starts with `*`, which makes EAS drop the app's files from the archive (`package.json does not exist` error). Build from `cat-operator-app/` with `EAS_NO_VCS=1 EAS_PROJECT_ROOT=$PWD npx eas-cli@latest build -p android --profile preview` so only the app folder is uploaded with its own `.easignore`.

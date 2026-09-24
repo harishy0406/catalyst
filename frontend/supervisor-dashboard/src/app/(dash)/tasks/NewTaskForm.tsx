@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { createTask } from '@/app/actions';
 import { SubmitButton } from '@/components/SubmitButton';
-import { estimateMinutes, humanize, machineTypeOf, PRIORITIES, TASK_TYPES, TASKS_BY_MACHINE, WEATHER } from '@/lib/domain';
+import { estimateMinutes, humanize, machinePhoto, machineTypeOf, PRIORITIES, TASK_TYPES, TASKS_BY_MACHINE, WEATHER } from '@/lib/domain';
 import type { Machine, OperatorBasic } from '@/lib/queries';
 
 export function NewTaskForm({
@@ -105,6 +105,21 @@ export function NewTaskForm({
           </select>
         )}
       </label>
+      {machine && machineType && (
+        <div className="span-2 panel" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center', padding: 12 }}>
+          <div className="machine-photo sm" style={{ flex: '0 0 200px' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={machinePhoto(machineType)!} alt={machine.model} />
+          </div>
+          <div style={{ display: 'grid', gap: 4 }}>
+            <strong>{machine.model}</strong>
+            <span className="muted small">
+              <span className="mono">{machine.id}</span> · {humanize(machineType)} · {humanize(machine.status)} · health {machine.healthScore}%
+            </span>
+            <span className="hint">Can do: {TASKS_BY_MACHINE[machineType].map(humanize).join(', ')}</span>
+          </div>
+        </div>
+      )}
       <label className="field">
         <span className="label">Zone</span>
         <input name="zone" placeholder="Zone A - Sector 3" maxLength={100} />

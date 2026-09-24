@@ -24,6 +24,7 @@ export default async function DashLayout({ children }: { children: React.ReactNo
             { href: '/', label: 'Overview' },
             { href: '/tasks', label: 'Tasks' },
             { href: '/operators', label: 'Operators' },
+            { href: '/machines', label: 'Machines' },
             { href: '/incidents', label: 'Incidents', count: counts.incidents },
             { href: '/alerts', label: 'Safety Alerts', count: counts.alerts },
             { href: '/simulator', label: 'Demo Simulator' },

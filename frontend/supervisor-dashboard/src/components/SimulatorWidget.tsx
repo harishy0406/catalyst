@@ -8,7 +8,7 @@ import { humanize, machineTypeOf } from '@/lib/domain';
 import { Badge } from './Badge';
 
 const SCENARIOS = [
-  { id: 'safety_crisis', label: 'Safety crisis', hint: 'Seatbelt → proximity → auto-incident → AI fault (~100 s)' },
+  { id: 'safety_crisis', label: 'Safety crisis', hint: 'Seatbelt → proximity → auto-incident → AI fault (~40 s)' },
   { id: 'machine_fault', label: 'Machine fault', hint: 'Normal → gradual drift into an AI-detected fault (~50 s)' },
   { id: 'normal', label: 'Normal stream', hint: 'Healthy readings only (3 min)' },
 ];

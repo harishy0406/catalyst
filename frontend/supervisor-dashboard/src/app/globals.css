@@ -232,6 +232,17 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
 .progress { height: 6px; background: var(--surface-highest); border-radius: 3px; overflow: hidden; }
 .progress > span { display: block; height: 100%; background: var(--gold); }
 .progress.over > span { background: var(--danger); }
+.machine-photo {
+  aspect-ratio: 16 / 9; display: grid; place-items: center; padding: 12px; border-radius: var(--radius);
+  background: radial-gradient(ellipse at 50% 85%, var(--surface-high), var(--surface-lowest) 70%);
+}
+.machine-photo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.machine-photo.sm { aspect-ratio: auto; height: 120px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips .tag {
+  padding: 2px 8px; border-radius: 999px; font-size: 12px; color: var(--on-surface-variant);
+  border: 1px solid var(--outline-variant);
+}
 
 /* ---------- demo simulator ---------- */
 .sim { border-color: var(--gold); }

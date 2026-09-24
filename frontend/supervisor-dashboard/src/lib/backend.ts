@@ -4,7 +4,7 @@ import 'server-only';
  * Server-side client for the FastAPI backend. The dashboard reads and writes Postgres directly
  * (lib/db.ts); the backend is only needed for things that live there, like the demo simulator.
  */
-export const BACKEND_URL = (process.env.BACKEND_URL ?? 'https://catalyst-api-wn32.onrender.com').replace(/\/$/, '');
+export const BACKEND_URL = (process.env.BACKEND_URL ?? 'http://13.203.66.37').replace(/\/$/, '');
 
 /** Backend JWT for this user, or undefined if the backend is unreachable or rejects the login. */
 export async function backendLogin(id: string, pin: string): Promise<string | undefined> {
