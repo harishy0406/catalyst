@@ -3,7 +3,6 @@ import { acknowledgeAlert } from '@/app/actions';
 import { Badge } from '@/components/Badge';
 import { GroupedRows, PartsBar, StackedRows, type Series } from '@/components/Charts';
 import { PageHeader } from '@/components/PageHeader';
-import { SimulatorWidget } from '@/components/SimulatorWidget';
 import { SubmitButton } from '@/components/SubmitButton';
 import { humanize, incidentStatusTone, severityTone } from '@/lib/domain';
 import { minutes, minutesSince, timeAgo } from '@/lib/format';
@@ -63,7 +62,6 @@ export default async function OverviewPage() {
     <>
       <PageHeader title="Shift Overview" sub="Live view of your crew, fleet and safety events" />
       <div className="content">
-        <SimulatorWidget machines={machines} />
         <section className="kpis row">
           <Link href="/tasks?status=active" className="kpi primary">
             <div className="label">Active tasks</div>

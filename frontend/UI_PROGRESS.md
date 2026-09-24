@@ -44,7 +44,7 @@ cd frontend/cat-operator-app && npx expo start
 
 ## Live demo stream (simulator)
 
-For presentations, the supervisor dashboard has a **Demo Simulator** panel at the top of the Overview page. It streams synthetic readings through the real `POST /telemetry` pipeline, so safety rules, ML anomaly detection, alerts and auto-incidents all fire as they would for a real machine.
+For presentations, the supervisor dashboard has a **Demo Simulator** tab in the sidebar. It streams synthetic readings through the real `POST /telemetry` pipeline, so safety rules, ML anomaly detection, alerts and auto-incidents all fire as they would for a real machine.
 
 1. Sign in to the dashboard as `SUP-101` / `1001`. The simulator uses the same login against the backend, so sessions from before this feature need to sign out and back in.
 2. Sign in to the operator app on the phone as `OP-4412` / `4412`. Its machine is CAT-320-01.
